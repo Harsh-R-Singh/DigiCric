@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hand Cricket Live - Active Match</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+        }
+        .stadium-gradient {
+            background: linear-gradient(to bottom, rgba(34, 22, 16, 0.4), rgba(34, 22, 16, 0.9)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">sports_cricket</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white font-display">Hand Cricket Live</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 hover:bg-primary/20 text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<main class="flex-1 flex flex-col max-w-4xl mx-auto w-full p-4 gap-6">
+<!-- Scoreboard Section -->
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
+<p class="text-primary text-xs font-bold uppercase tracking-wider">Runs</p>
+<p class="text-3xl font-bold font-display text-slate-900 dark:text-white">42</p>
+</div>
+<div class="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
+<p class="text-primary text-xs font-bold uppercase tracking-wider">Wickets</p>
+<p class="text-3xl font-bold font-display text-slate-900 dark:text-white">1</p>
+</div>
+<div class="flex flex-col gap-1 rounded-xl p-4 bg-primary text-white items-center justify-center shadow-lg shadow-primary/20">
+<p class="text-white/80 text-xs font-bold uppercase tracking-wider">Target</p>
+<p class="text-3xl font-bold font-display">85</p>
+</div>
+</div>
+<!-- Game Arena / Split View -->
+<div class="flex-1 stadium-gradient rounded-2xl overflow-hidden relative border border-white/10 min-h-[400px] flex flex-col justify-center" data-alt="Floodlit cricket stadium at night with energetic atmosphere">
+<div class="flex justify-around items-center w-full px-4 gap-8">
+<!-- Player Side -->
+<div class="flex flex-col items-center gap-6">
+<div class="relative">
+<div class="size-32 rounded-full border-4 border-primary bg-background-dark/80 flex items-center justify-center text-primary overflow-hidden">
+<img alt="Player Avatar" class="w-full h-full object-cover" data-alt="Animated player avatar with a friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLfq4cz8N5xASugyuH6a3-VPqC2FlGZJ1fe0cpqh9tQTgeRLqVLgpMFRo_JePykl7Nd9oLi7cVzXfA170TKIKAlfNs4z9ZP6S814VgmIptcPiXLBpcpU_sHRE0J_RG43-M5O7DMpGTJdzD3jWqobes8_ZAnnvA2NuRKFNAe_6vIqd8X7uyYyyZYHdWxbeWQDaoUgd8EDDIzWDwbdsga6XI4zYGx7MiM4TTLvkdqGtywksH1EJ1ibMthlbCNc5mHNQohJ5xMKnTmlM"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 rounded-full text-xs font-bold text-white uppercase">You</div>
+</div>
+<!-- Current Move Placeholder -->
+<div class="w-20 h-20 bg-white/5 backdrop-blur-md rounded-xl border border-white/20 flex items-center justify-center">
+<span class="text-4xl font-bold text-white font-display">4</span>
+</div>
+</div>
+<!-- VS Divider -->
+<div class="flex flex-col items-center">
+<div class="h-16 w-0.5 bg-gradient-to-b from-transparent via-primary to-transparent"></div>
+<div class="text-primary font-bold text-2xl font-display my-2 italic">VS</div>
+<div class="h-16 w-0.5 bg-gradient-to-b from-primary via-primary to-transparent"></div>
+</div>
+<!-- CPU Side -->
+<div class="flex flex-col items-center gap-6">
+<div class="relative">
+<div class="size-32 rounded-full border-4 border-slate-500 bg-background-dark/80 flex items-center justify-center text-slate-400 overflow-hidden">
+<img alt="CPU Avatar" class="w-full h-full object-cover" data-alt="Cool robot avatar representing the computer opponent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpxlZ0loTDpxwg0HRlhWUGl_0R-N215f0q4Q1chcr0Mg10bNIjak87cVV8LgP5S6U2uXzkk7KhNbDi-37ODnVEBIpYbNi8YHKuUS1M4lAV4Znzq-YVs3E_8t9f8_QFOm6CE1OOS0aNW5CZ6s_bT40Tabe1BhIMiSqMbR5kO_tnj96jXIUz6dHYjneSUa0fuQG1eNMpDelTqn5aY3x5bi5BjqU90WTqnN-wjsg948teHBwim5rclkcdOKIC4_Sw28NlLfXrhdGkHMc"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-slate-600 px-3 py-1 rounded-full text-xs font-bold text-white uppercase">CPU</div>
+</div>
+<!-- CPU Current Move (Hidden until reveal) -->
+<div class="w-20 h-20 bg-primary/20 backdrop-blur-md rounded-xl border border-primary/40 flex items-center justify-center shadow-[0_0_20px_rgba(236,91,19,0.3)]">
+<span class="text-4xl font-bold text-white font-display">2</span>
+</div>
+</div>
+</div>
+<!-- Match Status Overlay -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-background-dark/90 px-6 py-2 rounded-full border border-primary/30">
+<p class="text-primary font-medium text-sm">Need 43 runs from 18 balls</p>
+</div>
+</div>
+<!-- Controls Section -->
+<div class="flex flex-col gap-6 pb-8">
+<h3 class="text-center text-slate-900 dark:text-white text-lg font-bold font-display">Choose your move</h3>
+<div class="grid grid-cols-6 gap-3">
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">1</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">back_hand</span>
+</button>
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">2</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">celebration</span>
+</button>
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">3</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">front_hand</span>
+</button>
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">4</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">back_hand</span>
+</button>
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">5</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">front_hand</span>
+</button>
+<button class="group flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all duration-200">
+<span class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-white font-display leading-none">6</span>
+<span class="material-symbols-outlined text-primary group-hover:text-white">back_hand</span>
+</button>
+</div>
+<!-- Action Info -->
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span>10 seconds to play</span>
+</div>
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Match Live</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar (Optional but useful for UI flow) -->
+<footer class="mt-auto p-4 flex justify-center border-t border-primary/10 bg-background-light dark:bg-background-dark">
+<div class="flex gap-8">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">stadium</span>
+<span class="text-[10px] font-bold uppercase">Match</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-bold uppercase">Stats</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[10px] font-bold uppercase">League</span>
+</button>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ec5b13;
+  --color-background-light: #f8f6f6;
+  --color-background-dark: #221610;
+
+  --font-display: "Space Grotesk", sans-serif;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  html {
+    font-size: 85%;
+  }
+  
+  body {
+    @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display antialiased;
+  }
+}
+
+.stadium-gradient {
+  background: linear-gradient(to bottom, rgba(34, 22, 16, 0.4), rgba(34, 22, 16, 0.9)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=1000&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+}
+
+.glass-panel {
+  background: rgba(236, 91, 19, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(236, 91, 19, 0.1);
+}

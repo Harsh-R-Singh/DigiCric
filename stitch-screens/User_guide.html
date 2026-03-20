@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hand-Cricket Pro | How to Play</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #221610;
+            color: #f8ddd4;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .volt-glow {
+            box-shadow: 0 0 25px rgba(236, 91, 19, 0.3);
+        }
+        .watermark-text {
+            pointer-events: none;
+            user-select: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container-low": "#261813",
+                "secondary": "#ffb599",
+                "surface-container-lowest": "#170b07",
+                "on-primary-fixed": "#370e00",
+                "on-error": "#690005",
+                "surface-tint": "#ffb599",
+                "background": "#221610",
+                "primary-container": "#ec5b13",
+                "on-tertiary-fixed-variant": "#00497c",
+                "on-tertiary-container": "#002b4d",
+                "on-primary-container": "#ffffff",
+                "surface-container-highest": "#41312b",
+                "on-tertiary-fixed": "#001d36",
+                "inverse-on-surface": "#3d2d27",
+                "primary": "#ec5b13",
+                "on-background": "#f8ddd4",
+                "inverse-surface": "#f8ddd4",
+                "on-primary-fixed-variant": "#7f2b00",
+                "outline": "#a98a7f",
+                "on-secondary-fixed-variant": "#783112",
+                "error-container": "#93000a",
+                "tertiary-fixed-dim": "#9ecaff",
+                "secondary-fixed-dim": "#ffb599",
+                "primary-fixed-dim": "#ffb599",
+                "tertiary-fixed": "#d1e4ff",
+                "error": "#ffb4ab",
+                "secondary-container": "#783112",
+                "on-primary": "#ffffff",
+                "outline-variant": "#5a4138",
+                "on-error-container": "#ffdad6",
+                "on-surface": "#f8ddd4",
+                "inverse-primary": "#a73a00",
+                "surface-container-high": "#362621",
+                "surface": "#221610",
+                "surface-bright": "#46352f",
+                "surface-container": "#2b1c17",
+                "secondary-fixed": "#ffdbce",
+                "primary-fixed": "#ffdbce",
+                "on-secondary-fixed": "#370e00",
+                "on-tertiary": "#003258",
+                "tertiary-container": "#1b95f1",
+                "on-secondary-container": "#ff9c74",
+                "on-secondary": "#5a1c00",
+                "surface-variant": "#41312b",
+                "tertiary": "#9ecaff",
+                "surface-dim": "#1d100b",
+                "on-surface-variant": "#e2bfb3"
+              },
+              fontFamily: {
+                "headline": ["Space Grotesk"],
+                "body": ["Space Grotesk"],
+                "label": ["Space Grotesk"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-[#221610] docked full-width top-0 z-50 bg-gradient-to-b from-[#ec5b13]/10 to-transparent sticky">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-black text-[#ec5b13] italic uppercase tracking-tighter">HAND-CRICKET PRO</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-['Space_Grotesk'] font-bold tracking-tight text-[#ec5b13] border-b-2 border-[#ec5b13] pb-1" href="#">How to Play</a>
+<a class="font-['Space_Grotesk'] font-bold tracking-tight text-white/70 hover:text-white transition-colors" href="#">About</a>
+<a class="font-['Space_Grotesk'] font-bold tracking-tight text-white/70 hover:text-white transition-colors" href="#">Play Now</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-[#ec5b13] hover:text-[#ec5b13] transition-all duration-200 Active: scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="text-[#ec5b13] hover:text-[#ec5b13] transition-all duration-200 Active: scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen relative">
+<!-- SideNavBar -->
+<aside class="bg-[#221610] h-full w-64 fixed left-0 top-0 hidden lg:flex flex-col border-r border-[#5a4138]/20 shadow-[4px_0_24px_rgba(236,91,19,0.1)] z-40 pt-24">
+<div class="px-6 mb-8">
+<div class="text-[#ec5b13] font-black font-['Space_Grotesk'] uppercase font-bold text-sm">GAME GUIDE</div>
+<div class="text-white/40 text-[10px] uppercase tracking-widest">Master the Pulse</div>
+</div>
+<nav class="flex flex-col h-full py-2">
+<a class="bg-[#ec5b13]/10 text-[#ec5b13] border-r-4 border-[#ec5b13] py-4 px-6 flex items-center gap-3 font-['Space_Grotesk'] uppercase font-bold text-sm transition-all duration-300 ease-in-out" href="#rules">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span> Rules
+                </a>
+<a class="text-white/50 py-4 px-6 flex items-center gap-3 hover:bg-white/5 font-['Space_Grotesk'] uppercase font-bold text-sm transition-all duration-300 ease-in-out hover:text-white" href="#gestures">
+<span class="material-symbols-outlined" data-icon="front_hand">front_hand</span> Gestures
+                </a>
+<a class="text-white/50 py-4 px-6 flex items-center gap-3 hover:bg-white/5 font-['Space_Grotesk'] uppercase font-bold text-sm transition-all duration-300 ease-in-out hover:text-white" href="#scoring">
+<span class="material-symbols-outlined" data-icon="scoreboard">scoreboard</span> Scoring
+                </a>
+<a class="text-white/50 py-4 px-6 flex items-center gap-3 hover:bg-white/5 font-['Space_Grotesk'] uppercase font-bold text-sm transition-all duration-300 ease-in-out hover:text-white" href="#history">
+<span class="material-symbols-outlined" data-icon="history">history</span> History
+                </a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-64 p-8 lg:p-16 relative overflow-hidden">
+<!-- Background Watermark -->
+<div class="absolute -right-20 top-20 text-[12rem] font-black text-primary opacity-[0.03] rotate-12 watermark-text select-none uppercase">KINETIC</div>
+<div class="absolute -left-20 bottom-40 text-[12rem] font-black text-primary opacity-[0.03] -rotate-12 watermark-text select-none uppercase">PULSE</div>
+<div class="max-w-5xl mx-auto space-y-32">
+<!-- Section 1: The Legend -->
+<section class="relative" id="history">
+<div class="label text-primary font-bold uppercase tracking-widest text-xs mb-4">01 // THE ORIGIN</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="space-y-6">
+<h2 class="text-5xl font-black italic tracking-tighter text-on-surface leading-none">THE LEGEND OF <span class="text-primary">HAND-CRICKET</span></h2>
+<p class="text-xl text-on-surface-variant leading-relaxed">
+                                Born in the concrete playgrounds and school corridors of South Asia, Hand-Cricket was the ultimate equalizer. No bat, no ball—just pure cognitive warfare. 
+                            </p>
+<p class="text-on-surface-variant/80">
+                                Hand-Cricket Pro evolves this nostalgic rivalry into a high-octane digital arena. Using advanced Computer Vision, your physical gestures are translated into virtual strikes, bringing the playground to the global stage.
+                            </p>
+</div>
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/20 rounded-xl blur-2xl group-hover:bg-primary/30 transition-all"></div>
+<img class="relative rounded-xl border border-outline-variant/20 grayscale hover:grayscale-0 transition-all duration-500 w-full h-[400px] object-cover shadow-2xl" data-alt="Abstract dynamic cricket player silhouette in orange light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAILDBrPDa_Lj5vpta5zPGYI5h55Bs7nUs16ytVDicFnsYFCH0gQH1v58axitoGxC3miQjUAkU9JUtSkrVFzgXbpJzlO4ZlQrskFbA3_P3s4fxkz83z1fMmi1qH4oD5iikKo81CigM0ZGRv18CpTs3IQaDstLMHSKc0tHYDRR8Lwy7nIssC_2Ns-DY-sA6HAQJfLZ5a1zYPtNe0aZ5DaKTWqqfdX2ekkGp3vjgCHetxuk7w6bK0dEp9_4MHRkk_8dmZLrjx7jGV5Vs"/>
+</div>
+</div>
+</section>
+<!-- Section 2: Rules -->
+<section class="space-y-12" id="rules">
+<div class="label text-primary font-bold uppercase tracking-widest text-xs">02 // THE PROTOCOL</div>
+<h2 class="text-5xl font-black italic tracking-tighter text-on-surface">THE RULES OF THE GAME</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Rule Card 1 -->
+<div class="bg-surface-container p-8 rounded-xl border-l-4 border-primary space-y-4 hover:bg-surface-container-high transition-colors group relative overflow-hidden">
+<div class="absolute -right-4 -top-4 text-8xl font-black text-white/5 opacity-10">01</div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="psychology">psychology</span>
+<h3 class="text-2xl font-bold uppercase tracking-tight">The Duel</h3>
+<p class="text-sm text-on-surface-variant">Both players (or Player vs CPU) simultaneously choose a number between 1 and 6 using finger gestures.</p>
+</div>
+<!-- Rule Card 2 -->
+<div class="bg-surface-container p-8 rounded-xl border-l-4 border-primary space-y-4 hover:bg-surface-container-high transition-colors group relative overflow-hidden">
+<div class="absolute -right-4 -top-4 text-8xl font-black text-white/5 opacity-10">02</div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="trending_up">trending_up</span>
+<h3 class="text-2xl font-bold uppercase tracking-tight">Scoring</h3>
+<p class="text-sm text-on-surface-variant">If the numbers differ, the Batter adds their chosen number to their total score. Timing is critical.</p>
+</div>
+<!-- Rule Card 3 -->
+<div class="bg-surface-container p-8 rounded-xl border-l-4 border-primary space-y-4 hover:bg-surface-container-high transition-colors group relative overflow-hidden">
+<div class="absolute -right-4 -top-4 text-8xl font-black text-white/5 opacity-10">03</div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="sports_cricket">sports_cricket</span>
+<h3 class="text-2xl font-bold uppercase tracking-tight">The Out</h3>
+<p class="text-sm text-on-surface-variant">If the numbers match exactly, the Batter is OUT. Roles switch immediately. Highest total wins.</p>
+</div>
+</div>
+</section>
+<!-- Section 3: Gestures (Visual Guide) -->
+<section class="space-y-12" id="gestures">
+<div class="label text-primary font-bold uppercase tracking-widest text-xs">03 // KINETIC INTERFACE</div>
+<div class="flex justify-between items-end">
+<h2 class="text-5xl font-black italic tracking-tighter text-on-surface">MASTERING GESTURES</h2>
+<div class="hidden md:block bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
+<span class="text-primary font-bold text-xs uppercase">Camera Mode Active</span>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+<!-- Gesture 1 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_one">looks_one</span>
+</div>
+<div class="text-primary font-black text-2xl italic">1 RUN</div>
+</div>
+<!-- Gesture 2 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_two">looks_two</span>
+</div>
+<div class="text-primary font-black text-2xl italic">2 RUNS</div>
+</div>
+<!-- Gesture 3 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_3">looks_3</span>
+</div>
+<div class="text-primary font-black text-2xl italic">3 RUNS</div>
+</div>
+<!-- Gesture 4 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_4">looks_4</span>
+</div>
+<div class="text-primary font-black text-2xl italic">4 RUNS</div>
+</div>
+<!-- Gesture 5 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_5">looks_5</span>
+</div>
+<div class="text-primary font-black text-2xl italic">5 RUNS</div>
+</div>
+<!-- Gesture 6 -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 text-center hover:border-primary/40 transition-all group">
+<div class="h-24 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="looks_6">looks_6</span>
+</div>
+<div class="text-primary font-black text-2xl italic">6 RUNS</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Scoring Guide -->
+<section class="space-y-12 pb-20" id="scoring">
+<div class="label text-primary font-bold uppercase tracking-widest text-xs">04 // TOURNAMENT METRICS</div>
+<div class="bg-surface-container-highest/30 rounded-2xl p-8 lg:p-12 border border-primary/10 relative overflow-hidden">
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="space-y-6">
+<h2 class="text-5xl font-black italic tracking-tighter text-on-surface uppercase">SCORING GUIDE</h2>
+<ul class="space-y-4">
+<li class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg">
+<div class="w-12 h-12 bg-primary flex items-center justify-center rounded-lg font-black italic">6</div>
+<div>
+<div class="font-bold text-lg uppercase tracking-tight leading-none">THE POWER PLAY</div>
+<div class="text-xs text-on-surface-variant uppercase">3 Consecutive 6s grants a 'Life'</div>
+</div>
+</li>
+<li class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center rounded-lg font-black italic text-primary">0</div>
+<div>
+<div class="font-bold text-lg uppercase tracking-tight leading-none">THE DUCK</div>
+<div class="text-xs text-on-surface-variant uppercase">Getting out on the first ball resets Elo</div>
+</div>
+</li>
+<li class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg">
+<div class="w-12 h-12 bg-surface-container-highest flex items-center justify-center rounded-lg font-black italic text-primary">X2</div>
+<div>
+<div class="font-bold text-lg uppercase tracking-tight leading-none">COMBO MULTIPLIER</div>
+<div class="text-xs text-on-surface-variant uppercase">Maintain a rhythm for bonus points</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container p-8 rounded-xl border border-primary/20 flex flex-col justify-center space-y-8">
+<div class="space-y-2">
+<div class="text-xs font-bold text-primary uppercase">Tournament Structure</div>
+<div class="h-2 w-full bg-surface-container-highest">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+<div class="flex justify-between text-[10px] uppercase font-bold text-on-surface-variant">
+<span>Qualifiers</span>
+<span>Semifinals</span>
+<span class="text-primary">Finals</span>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                        Tournament matches follow a strictly timed structure. Each 'Innings' lasts for 12 gestures or 2 minutes, whichever occurs first. 
+                                    </p>
+<button class="w-full bg-primary text-white py-4 rounded-lg font-black uppercase italic tracking-widest volt-glow hover:scale-105 transition-transform">
+                                        JOIN NEXT TOURNAMENT
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#221610] lg:hidden z-50 border-t border-[#5a4138]/30 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-[#ec5b13] bg-[#ec5b13]/10 rounded-xl py-2 px-4 shadow-[0_0_15px_rgba(236,91,19,0.3)] Active: scale-110 duration-150" href="#rules">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] uppercase tracking-widest">Rules</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/40 py-2 px-4 active:bg-[#ec5b13]/20 transition-all" href="#gestures">
+<span class="material-symbols-outlined" data-icon="front_hand">front_hand</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] uppercase tracking-widest">Gestures</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/40 py-2 px-4 active:bg-[#ec5b13]/20 transition-all" href="#scoring">
+<span class="material-symbols-outlined" data-icon="scoreboard">scoreboard</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] uppercase tracking-widest">Scoring</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/40 py-2 px-4 active:bg-[#ec5b13]/20 transition-all" href="#history">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] uppercase tracking-widest">History</span>
+</a>
+</nav>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 mt-auto bg-[#221610] border-t border-[#5a4138]/10">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
+<div class="text-[#ec5b13] font-black opacity-20 text-xl tracking-tighter">HAND-CRICKET PRO</div>
+<div class="flex gap-8">
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-white/30 hover:text-[#ec5b13] hover:tracking-[0.1em] transition-all" href="#">Privacy Policy</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-white/30 hover:text-[#ec5b13] hover:tracking-[0.1em] transition-all" href="#">Terms of Play</a>
+<a class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-white/30 hover:text-[#ec5b13] hover:tracking-[0.1em] transition-all" href="#">Contact Support</a>
+</div>
+<div class="font-['Space_Grotesk'] text-xs uppercase tracking-widest text-white/30">© 2024 HAND-CRICKET PRO. KINETIC PULSE ENGINE.</div>
+</div>
+</footer>
+</body></html>

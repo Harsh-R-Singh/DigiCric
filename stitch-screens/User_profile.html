@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile | ORANGE VOLT</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#d1e4ff",
+              "surface-container-high": "#362621",
+              "primary-fixed-dim": "#ffb599",
+              "secondary-container": "#783112",
+              "on-tertiary": "#003258",
+              "primary": "#ec5b13",
+              "on-error-container": "#ffdad6",
+              "error-container": "#93000a",
+              "outline-variant": "#5a4138",
+              "surface-bright": "#46352f",
+              "primary-fixed": "#ffdbce",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#e2bfb3",
+              "secondary-fixed-dim": "#ffb599",
+              "on-primary-container": "#ffffff",
+              "background": "#221610",
+              "on-error": "#690005",
+              "tertiary": "#9ecaff",
+              "outline": "#a98a7f",
+              "on-primary-fixed-variant": "#7f2b00",
+              "on-primary-fixed": "#370e00",
+              "on-background": "#f8ddd4",
+              "inverse-primary": "#a73a00",
+              "secondary-fixed": "#ffdbce",
+              "secondary": "#ffb599",
+              "inverse-surface": "#f8ddd4",
+              "surface-tint": "#ffb599",
+              "on-secondary-fixed-variant": "#783112",
+              "surface-dim": "#1d100b",
+              "surface-container": "#2b1c17",
+              "on-tertiary-fixed-variant": "#00497c",
+              "on-secondary": "#5a1c00",
+              "surface-container-highest": "#41312b",
+              "inverse-on-surface": "#3d2d27",
+              "on-secondary-fixed": "#370e00",
+              "on-secondary-container": "#ff9c74",
+              "tertiary-container": "#1b95f1",
+              "on-primary": "#ffffff",
+              "surface-variant": "#41312b",
+              "surface-container-lowest": "#170b07",
+              "surface": "#221610",
+              "on-surface": "#f8ddd4",
+              "on-tertiary-container": "#002b4d",
+              "on-tertiary-fixed": "#001d36",
+              "primary-container": "#ec5b13",
+              "tertiary-fixed-dim": "#9ecaff"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Space Grotesk"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(236, 91, 19, 0.4);
+        }
+        .volt-gradient {
+            background: linear-gradient(135deg, #ec5b13 0%, #783112 100%);
+        }
+        .watermark {
+            font-size: 8rem;
+            line-height: 1;
+            font-weight: 900;
+            color: rgba(236, 91, 19, 0.05);
+            transform: rotate(-12deg);
+            pointer-events: none;
+            position: absolute;
+            z-index: 0;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen pb-24 selection:bg-primary selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#221610] border-b border-[#5a4138]/20 shadow-[0_0_15px_rgba(236,91,19,0.1)] flex justify-between items-center px-6 h-16 w-full max-w-none">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-black text-[#ec5b13] italic tracking-tighter font-['Space_Grotesk']">ORANGE VOLT</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 items-center font-['Space_Grotesk'] font-bold tracking-tight">
+<a class="text-white/70 hover:text-[#ec5b13] transition-colors duration-200" href="#">Play</a>
+<a class="text-white/70 hover:text-[#ec5b13] transition-colors duration-200" href="#">Leaderboard</a>
+<a class="text-[#ec5b13] transition-colors duration-200" href="#">Profile</a>
+<a class="text-white/70 hover:text-[#ec5b13] transition-colors duration-200" href="#">Store</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform text-white/70 hover:text-[#ec5b13]">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="active:scale-95 transition-transform text-white/70 hover:text-[#ec5b13]">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</header>
+<main class="relative pt-24 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden">
+<!-- Background Decorative Watermark -->
+<div class="watermark top-20 -left-20">PRO PLAYER</div>
+<div class="watermark bottom-40 -right-20">SHIKHAR_D</div>
+<!-- User Overview & Hero -->
+<section class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+<div class="lg:col-span-8 flex flex-col md:flex-row items-center md:items-end gap-8 bg-surface-container p-8 rounded-xl shadow-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+<div class="relative">
+<div class="w-40 h-40 rounded-xl overflow-hidden border-4 border-primary shadow-[0_0_25px_rgba(236,91,19,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Professional esports player profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL 24</div>
+</div>
+<div class="flex-1 space-y-4 text-center md:text-left">
+<div>
+<span class="text-primary font-label uppercase tracking-[0.2em] font-bold text-xs">Elite Member</span>
+<h1 class="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">SHIKHAR_D</h1>
+<p class="text-white/50 font-medium mt-2">Member since Oct 12, 2023</p>
+</div>
+<div class="flex flex-wrap gap-3 justify-center md:justify-start">
+<button class="bg-primary text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">edit</span> EDIT PROFILE
+                        </button>
+<button class="bg-surface-container-highest border border-outline-variant/30 text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-surface-bright transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">lock</span> SECURITY
+                        </button>
+</div>
+</div>
+</div>
+<!-- Stats Quick View -->
+<div class="lg:col-span-4 grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-6 rounded-xl flex flex-col justify-between border-b-4 border-primary/20">
+<span class="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
+<span class="text-4xl font-black text-white italic">142</span>
+</div>
+<div class="bg-surface-container p-6 rounded-xl flex flex-col justify-between border-b-4 border-primary">
+<span class="text-white/50 text-xs font-bold uppercase tracking-widest">Wins</span>
+<span class="text-4xl font-black text-primary italic">89</span>
+</div>
+<div class="bg-surface-container p-6 rounded-xl flex flex-col justify-between border-b-4 border-primary/20">
+<span class="text-white/50 text-xs font-bold uppercase tracking-widest">Win Rate</span>
+<span class="text-4xl font-black text-white italic">62%</span>
+</div>
+<div class="bg-surface-container p-6 rounded-xl flex flex-col justify-between border-b-4 border-primary/20">
+<span class="text-white/50 text-xs font-bold uppercase tracking-widest">High Score</span>
+<span class="text-4xl font-black text-white italic">214</span>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+<!-- Left Column: Account & Performance -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Performance Trend -->
+<div class="bg-surface-container p-8 rounded-xl relative overflow-hidden">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-2xl font-black italic tracking-tight">PERFORMANCE TREND</h2>
+<p class="text-white/50 text-sm">Score progression over last 10 games</p>
+</div>
+<span class="text-primary font-bold text-sm bg-primary/10 px-3 py-1 rounded-full">+12.4% vs Last Week</span>
+</div>
+<div class="h-48 flex items-end justify-between gap-2 px-2">
+<!-- Mock Chart Bars -->
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[40%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[65%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[55%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[80%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-primary rounded-t-sm h-[95%] shadow-[0_0_15px_rgba(236,91,19,0.3)]"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[45%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[70%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[60%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-surface-container-highest rounded-t-sm h-[85%] hover:bg-primary transition-all duration-300"></div>
+<div class="w-full bg-primary rounded-t-sm h-[90%] shadow-[0_0_15px_rgba(236,91,19,0.3)]"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-white/30 font-bold uppercase tracking-widest">
+<span>Game 1</span>
+<span>Game 10</span>
+</div>
+</div>
+<!-- Recent Match History -->
+<div class="bg-surface-container rounded-xl overflow-hidden">
+<div class="p-8 pb-4">
+<h2 class="text-2xl font-black italic tracking-tight uppercase">Recent Match History</h2>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<!-- Match 1 -->
+<div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
+<div>
+<div class="font-bold text-white text-lg">142 - 128</div>
+<div class="text-white/50 text-sm">VS Computer • 5 Overs</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-white/70 text-sm font-medium">2 hours ago</div>
+<span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Match 2 -->
+<div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center font-black italic">LOSS</div>
+<div>
+<div class="font-bold text-white text-lg">110 - 114</div>
+<div class="text-white/50 text-sm">Camera Mode • 2 Overs</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-white/70 text-sm font-medium">Yesterday</div>
+<span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Match 3 -->
+<div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
+<div>
+<div class="font-bold text-white text-lg">186 - 140</div>
+<div class="text-white/50 text-sm">VS Computer • 5 Overs</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-white/70 text-sm font-medium">2 days ago</div>
+<span class="material-symbols-outlined text-white/20 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Account & Achievements -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Account Info -->
+<div class="bg-surface-container p-8 rounded-xl border border-outline-variant/10">
+<h3 class="text-sm font-bold text-primary uppercase tracking-widest mb-6">Account Details</h3>
+<div class="space-y-6">
+<div>
+<label class="text-white/40 text-xs font-bold uppercase">Email Address</label>
+<p class="text-white font-medium mt-1">shikhar.d***@gmail.com</p>
+</div>
+<div>
+<label class="text-white/40 text-xs font-bold uppercase">Connected Platforms</label>
+<div class="flex gap-4 mt-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">google</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-white/30 border border-outline-variant/20 grayscale">
+<span class="material-symbols-outlined">chat</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Achievements -->
+<div class="bg-surface-container p-8 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-sm font-bold text-primary uppercase tracking-widest">Achievements</h3>
+<span class="text-xs font-bold text-white/50">12 / 24</span>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<!-- Badge 1 -->
+<div class="aspect-square rounded-xl bg-surface-container-highest flex flex-col items-center justify-center p-2 text-center group cursor-pointer border border-primary/30 shadow-[0_0_10px_rgba(236,91,19,0.1)]">
+<span class="material-symbols-outlined text-primary text-3xl mb-1 group-hover:scale-110 transition-transform">social_leaderboard</span>
+<span class="text-[9px] font-bold text-white leading-tight">Century Maker</span>
+</div>
+<!-- Badge 2 -->
+<div class="aspect-square rounded-xl bg-surface-container-highest flex flex-col items-center justify-center p-2 text-center group cursor-pointer border border-primary/30 shadow-[0_0_10px_rgba(236,91,19,0.1)]">
+<span class="material-symbols-outlined text-primary text-3xl mb-1 group-hover:scale-110 transition-transform">sports_cricket</span>
+<span class="text-[9px] font-bold text-white leading-tight">5-Wicket Haul</span>
+</div>
+<!-- Badge 3 -->
+<div class="aspect-square rounded-xl bg-surface-container-highest flex flex-col items-center justify-center p-2 text-center group cursor-pointer border border-primary/30 shadow-[0_0_10px_rgba(236,91,19,0.1)]">
+<span class="material-symbols-outlined text-primary text-3xl mb-1 group-hover:scale-110 transition-transform">photo_camera</span>
+<span class="text-[9px] font-bold text-white leading-tight">Camera Pro</span>
+</div>
+<!-- Locked Badge 1 -->
+<div class="aspect-square rounded-xl bg-surface-container-lowest flex flex-col items-center justify-center p-2 text-center opacity-30">
+<span class="material-symbols-outlined text-white text-3xl mb-1">lock</span>
+<span class="text-[9px] font-bold text-white leading-tight">World Class</span>
+</div>
+<!-- Locked Badge 2 -->
+<div class="aspect-square rounded-xl bg-surface-container-lowest flex flex-col items-center justify-center p-2 text-center opacity-30">
+<span class="material-symbols-outlined text-white text-3xl mb-1">lock</span>
+<span class="text-[9px] font-bold text-white leading-tight">Hat Trick</span>
+</div>
+<!-- Locked Badge 3 -->
+<div class="aspect-square rounded-xl bg-surface-container-lowest flex flex-col items-center justify-center p-2 text-center opacity-30">
+<span class="material-symbols-outlined text-white text-3xl mb-1">lock</span>
+<span class="text-[9px] font-bold text-white leading-tight">Finisher</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant/30 rounded-lg text-xs font-black tracking-widest uppercase hover:bg-white/5 transition-all">View All Badges</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 pb-2 bg-[#221610]/95 backdrop-blur-md border-t border-[#5a4138]/30 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-[#ec5b13] hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined">sports_cricket</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-wider mt-1">Play</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-[#ec5b13] hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-wider mt-1">Leaderboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ec5b13] bg-[#ec5b13]/10 rounded-xl px-4 py-1 shadow-[0_0_20px_rgba(236,91,19,0.3)] transition-all duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-wider mt-1">Profile</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-[#ec5b13] hover:bg-white/5 px-4 py-1 rounded-xl transition-all duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-wider mt-1">Store</span>
+</a>
+</nav>
+</body></html>
