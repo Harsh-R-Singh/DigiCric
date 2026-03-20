@@ -5,10 +5,8 @@ export default function ActiveGame() {
   const navigate = useNavigate();
   
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
-
-
-      <main className="flex-1 flex flex-col max-w-4xl mx-auto w-full p-4 gap-6">
+    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen w-full flex flex-col">
+      <main className="flex-1 flex flex-col max-w-6xl mx-auto w-full p-4 gap-6">
         {/* Scoreboard Section */}
         <div className="grid grid-cols-3 gap-4">
           <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
