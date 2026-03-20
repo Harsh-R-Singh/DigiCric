@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function GameLobby() {
+  const [selectedMode, setSelectedMode] = useState(null);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
@@ -42,32 +44,68 @@ export default function GameLobby() {
                 </div>
                 {/* Game Modes */}
                 <div className="flex flex-col gap-4">
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">sports_cricket</span>
-                    Play Now
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Link to="/camera" className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
-                      <div className="relative z-10">
-                        <h3 className="text-2xl font-bold mb-2">Camera Mode</h3>
-                        <p className="text-white/80 text-sm">Play using real hand gestures via your webcam</p>
-                      </div>
-                      <div className="flex justify-end relative z-10">
-                        <span className="material-symbols-outlined text-5xl">photo_camera</span>
-                      </div>
-                      <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">CAM</div>
-                    </Link>
-                    <Link to="/game" className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
-                      <div className="relative z-10">
-                        <h3 className="text-2xl font-bold mb-2">VS Computer</h3>
-                        <p className="text-slate-300 text-sm">Practice and sharpen your skills</p>
-                      </div>
-                      <div className="flex justify-end relative z-10">
-                        <span className="material-symbols-outlined text-5xl">memory</span>
-                      </div>
-                      <div className="absolute -right-4 -bottom-4 text-white/5 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">CPU</div>
-                    </Link>
+                  <div className="flex items-center gap-2 mb-2">
+                    {selectedMode && (
+                      <button 
+                        onClick={() => setSelectedMode(null)} 
+                        className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-xl">arrow_back</span>
+                      </button>
+                    )}
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      {!selectedMode && <span className="material-symbols-outlined text-primary">sports_cricket</span>}
+                      {selectedMode ? 'Select Match Format' : 'Play Now'}
+                    </h2>
                   </div>
+                  
+                  {!selectedMode ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button onClick={() => setSelectedMode('camera')} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
+                        <div className="relative z-10">
+                          <h3 className="text-2xl font-bold mb-2">Camera Mode</h3>
+                          <p className="text-white/80 text-sm">Play using real hand gestures via your webcam</p>
+                        </div>
+                        <div className="flex justify-end relative z-10">
+                          <span className="material-symbols-outlined text-5xl">photo_camera</span>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">CAM</div>
+                      </button>
+                      <button onClick={() => setSelectedMode('classic')} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
+                        <div className="relative z-10">
+                          <h3 className="text-2xl font-bold mb-2">Classic Mode</h3>
+                          <p className="text-slate-300 text-sm">Play using mouse or keyboard</p>
+                        </div>
+                        <div className="flex justify-end relative z-10">
+                          <span className="material-symbols-outlined text-5xl">memory</span>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 text-white/5 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">CPU</div>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
+                        <div className="relative z-10">
+                          <h3 className="text-2xl font-bold mb-2">Single Wicket</h3>
+                          <p className="text-white/80 text-sm">Quick play. One wicket to decide the game.</p>
+                        </div>
+                        <div className="flex justify-end relative z-10">
+                          <span className="material-symbols-outlined text-5xl">sports</span>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">1W</div>
+                      </Link>
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
+                        <div className="relative z-10">
+                          <h3 className="text-2xl font-bold mb-2">5 Overs</h3>
+                          <p className="text-slate-300 text-sm">A longer format game. Strategize and score.</p>
+                        </div>
+                        <div className="flex justify-end relative z-10">
+                          <span className="material-symbols-outlined text-5xl">scoreboard</span>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 text-white/5 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">5V</div>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Right Column: Leaderboard */}
@@ -125,24 +163,6 @@ export default function GameLobby() {
               </div>
             </div>
           </main>
-          {/* Footer Area */}
-          <footer className="px-6 py-8 lg:px-20 max-w-[1440px] mx-auto w-full mt-auto border-t border-slate-200 dark:border-slate-800">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400 text-sm">
-              <div className="flex items-center gap-4">
-                <div className="size-6 text-primary/60">
-                  <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
-                  </svg>
-                </div>
-                <p>© 2024 Hand Cricket Pro. All rights reserved.</p>
-              </div>
-              <div className="flex gap-8">
-                <a className="hover:text-primary transition-colors font-medium" href="#">Terms of Service</a>
-                <a className="hover:text-primary transition-colors font-medium" href="#">Privacy Policy</a>
-                <a className="hover:text-primary transition-colors font-medium" href="#">Help Center</a>
-              </div>
-            </div>
-          </footer>
         </div>
       </div>
     </div>

@@ -116,30 +116,7 @@ export default function LandingPage() {
           </section>
         </main>
 
-        <footer className="border-t border-primary/10 px-6 md:px-20 lg:px-40 py-12 bg-slate-50 dark:bg-primary/5">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary text-3xl">front_hand</span>
-                <span className="text-xl font-bold uppercase tracking-tight">HandCricket<span className="text-primary">Pro</span></span>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">© 2024 HandCricket Pro Digital. All rights reserved.</p>
-            </div>
-            <div className="flex gap-8">
-              <a className="text-slate-500 hover:text-primary transition-colors font-medium" href="#">Terms</a>
-              <a className="text-slate-500 hover:text-primary transition-colors font-medium" href="#">Privacy</a>
-              <a className="text-slate-500 hover:text-primary transition-colors font-medium" href="#">Support</a>
-            </div>
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-primary/20 flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all">
-                <span className="material-symbols-outlined text-xl">share</span>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-primary/20 flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all">
-                <span className="material-symbols-outlined text-xl">trophy</span>
-              </div>
-            </div>
-          </div>
-        </footer>
+        
       </div>
     </div>
   );
