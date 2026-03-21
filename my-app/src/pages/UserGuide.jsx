@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import image from '../assets/Gemini_Generated_Image_at6pi2at6pi2at6p.png';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function UserGuide() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="bg-[#221610] text-[#f8ddd4] font-sans min-h-screen overflow-x-hidden selection:bg-primary selection:text-white">
+    <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-sans min-h-screen overflow-x-hidden selection:bg-primary selection:text-white">
 
       <div className="flex min-h-screen relative">
         {/* Main Content Canvas */}
@@ -15,7 +29,7 @@ export default function UserGuide() {
 
           <div className="max-w-10xl mx-auto space-y-32">
             {/* Section 1: The Legend */}
-            <section className="relative" id="history">
+            <section className="relative animate-in" id="history">
               <div className="text-primary font-bold uppercase tracking-widest text-xs mb-4">01 - THE ORIGIN</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="space-y-6">
@@ -35,7 +49,7 @@ export default function UserGuide() {
             </section>
 
             {/* Section 2: The Setup */}
-            <section className="space-y-12" id="setup">
+            <section className="space-y-12 animate-in" id="setup">
               <div className="text-primary font-bold uppercase tracking-widest text-xs">02 - THE SETUP</div>
               <h2 className="text-5xl font-black italic tracking-tighter text-[#f8ddd4]">CAMERA PREPARATION</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -58,7 +72,7 @@ export default function UserGuide() {
             </section>
 
             {/* Section 3: The Gestures */}
-            <section className="space-y-12" id="gestures">
+            <section className="space-y-12 animate-in" id="gestures">
               <div className="text-primary font-bold uppercase tracking-widest text-xs">03 - THE GESTURES (RUNS)</div>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
@@ -85,7 +99,7 @@ export default function UserGuide() {
             </section>
 
             {/* Section 4: Gameplay Loop */}
-            <section className="space-y-12 pb-20" id="scoring">
+            <section className="space-y-12 pb-20 animate-in" id="scoring">
               <div className="text-primary font-bold uppercase tracking-widest text-xs">04 - THE GAMEPLAY LOOP</div>
               <div className="bg-[#41312b]/30 rounded-2xl p-8 lg:p-12 border border-primary/10 relative overflow-hidden">
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">

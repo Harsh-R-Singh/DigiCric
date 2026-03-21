@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function ActiveGame() {
   const navigate = useNavigate();
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
   
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen w-full flex flex-col">
+    <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen w-full flex flex-col">
       <main className="flex-1 flex flex-col max-w-6xl mx-auto w-full p-4 gap-6">
         {/* Scoreboard Section */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 animate-in">
           <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
             <p className="text-primary text-xs font-bold uppercase tracking-wider">Runs</p>
             <p className="text-3xl font-bold font-display text-slate-900 dark:text-white">42</p>
@@ -24,7 +37,7 @@ export default function ActiveGame() {
         </div>
 
         {/* Game Arena / Split View */}
-        <div className="flex-1 stadium-gradient rounded-2xl overflow-hidden relative border border-white/10 min-h-[400px] flex flex-col justify-center">
+        <div className="flex-1 stadium-gradient rounded-2xl overflow-hidden relative border border-white/10 min-h-[400px] flex flex-col justify-center animate-in">
           <div className="flex justify-around items-center w-full px-4 gap-8">
             {/* Player Side */}
             <div className="flex flex-col items-center gap-6">
@@ -66,7 +79,7 @@ export default function ActiveGame() {
         </div>
 
         {/* Controls Section */}
-        <div className="flex flex-col gap-6 pb-8">
+        <div className="flex flex-col gap-6 pb-8 animate-in">
           <h3 className="text-center text-slate-900 dark:text-white text-lg font-bold font-display">Choose your move</h3>
           <div className="grid grid-cols-6 gap-3">
             {[1, 2, 3, 4, 5, 6].map((num) => (

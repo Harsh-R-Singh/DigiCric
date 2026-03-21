@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function GameOver() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
+    <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col grow">
 
 
         {/* Result Section */}
         <main className="flex flex-col items-center text-center grow justify-center space-y-8">
-          <div className="space-y-2">
+          <div className="space-y-2 animate-in">
             <div className="inline-flex items-center justify-center p-4 rounded-full bg-primary/20 mb-4">
               <span className="material-symbols-outlined text-primary text-6xl">emoji_events</span>
             </div>
@@ -18,7 +31,7 @@ export default function GameOver() {
           </div>
 
           {/* Scoreboard */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full animate-in">
             <div className="flex flex-col items-center justify-center p-8 rounded-xl bg-primary/10 border border-primary/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-2 opacity-10">
                 <span className="material-symbols-outlined text-8xl">person</span>
@@ -38,7 +51,7 @@ export default function GameOver() {
           </div>
 
           {/* Stats Grid */}
-          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 animate-in">
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">bolt</span>
               <p className="text-xs text-slate-500 uppercase font-bold">Most Runs</p>
@@ -62,7 +75,7 @@ export default function GameOver() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full pt-6">
+          <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
             <Link to="/game" className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH

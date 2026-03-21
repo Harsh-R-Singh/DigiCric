@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function Rankings() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
   return (
-    <div className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen selection:bg-primary py-12 selection:text-white overflow-x-hidden min-h-screen relative" 
+    <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen selection:bg-primary py-12 selection:text-white overflow-x-hidden min-h-screen relative" 
       style={{ backgroundImage: "radial-gradient(circle at 20% 30%, rgba(236, 91, 19, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(236, 91, 19, 0.05) 0%, transparent 50%)" }}>
       
       <main className="max-w-7xl mx-auto px-6 pt-2 pb-32 relative text-white">
@@ -13,7 +26,7 @@ export default function Rankings() {
         </div>
 
         {/* Section Header */}
-        <div className="relative z-10 mb-12">
+        <div className="relative z-10 mb-12 animate-in">
           <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase font-headline text-[#f8ddd4] mb-4">
             Global <span className="text-[#ec5b13]">rankings</span>
           </h1>
@@ -27,7 +40,7 @@ export default function Rankings() {
         </div>
 
         {/* Podium / Rank Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-16 relative z-10 animate-in">
           {/* Rank 2: Silver */}
           <div className="order-2 md:order-1 group">
             <div className="bg-[#2b1c17] border-b-4 border-slate-400 p-8 rounded-xl relative overflow-hidden transition-all duration-300 hover:translate-y-[-8px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
@@ -93,7 +106,7 @@ export default function Rankings() {
         </div>
 
         {/* Leaderboard Table */}
-        <div className="relative z-10 bg-[#2b1c17]/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-[#5a4138]/10">
+        <div className="relative z-10 bg-[#2b1c17]/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-[#5a4138]/10 animate-in">
           <div className="grid grid-cols-[80px_1fr_120px] gap-4 px-8 py-6 border-b border-[#5a4138]/20 font-bold text-white/30 text-xs uppercase tracking-[0.2em]">
             <div>Rank</div>
             <div>Contender</div>
@@ -164,7 +177,7 @@ export default function Rankings() {
       </main>
 
       {/* User's Fixed Rank Footer */}
-      <div className="fixed bottom-16 md:bottom-0 left-0 w-full z-40 px-6 py-4 md:py-6">
+      <div className="fixed bottom-16 md:bottom-0 left-0 w-full z-40 px-6 py-4 md:py-6 animate-in">
         <div className="max-w-4xl mx-auto">
           <div className="bg-[#ec5b13] p-1 rounded-2xl shadow-[0_-10px_40px_rgba(236,91,19,0.3)]">
             <div className="bg-[#261813] rounded-xl px-4 md:px-6 py-4 flex items-center justify-between border border-[#ec5b13]/20">

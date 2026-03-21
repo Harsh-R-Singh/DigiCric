@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function UserProfile() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
+    <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
       <main className="relative pt-24 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden">
         {/* Background Decorative Watermark */}
         <div className="absolute top-20 -left-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">PRO PLAYER</div>
@@ -11,7 +25,7 @@ export default function UserProfile() {
 
         {/* User Overview & Hero */}
         <section className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-          <div className="lg:col-span-8 flex flex-col md:flex-row items-center md:items-end gap-8 bg-[#2b1c17] p-8 rounded-xl shadow-xl relative overflow-hidden group">
+          <div className="lg:col-span-8 flex flex-col md:flex-row items-center md:items-end gap-8 bg-[#2b1c17] p-8 rounded-xl shadow-xl relative overflow-hidden group animate-in">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#ec5b13]/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#ec5b13]/10 transition-colors"></div>
             <div className="relative">
               <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)]">
@@ -37,7 +51,7 @@ export default function UserProfile() {
           </div>
 
           {/* Stats Quick View */}
-          <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+          <div className="lg:col-span-4 grid grid-cols-2 gap-4 animate-in">
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
               <span className="text-4xl font-black text-white italic">142</span>
@@ -60,7 +74,7 @@ export default function UserProfile() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
           {/* Left Column: Account & Performance */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-8 animate-in">
             {/* Performance Trend */}
             <div className="bg-[#2b1c17] p-8 rounded-xl relative overflow-hidden">
               <div className="flex justify-between items-end mb-8 border-b border-[#5a4138]/20 pb-4">
@@ -131,7 +145,7 @@ export default function UserProfile() {
           </div>
 
           {/* Right Column: Account & Achievements */}
-          <div className="lg:col-span-4 space-y-8">
+          <div className="lg:col-span-4 space-y-8 animate-in">
             <div className="bg-[#2b1c17] p-8 rounded-xl border border-[#5a4138]/10 text-white">
               <h3 className="text-sm font-bold text-[#ec5b13] uppercase tracking-widest mb-6">Account Details</h3>
               <div className="space-y-6">

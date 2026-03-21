@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function LandingPage() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div ref={containerRef} className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       <div className="layout-container flex h-full grow flex-col">
 
 
         <main className="flex-1 px-6 md:px-20 lg:px-40 py-10">
           <section className="flex flex-col gap-50 lg:flex-row items-center mb-16">
             <div className="flex flex-col gap-8 lg:w-1/2">
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 animate-in">
                 <span className="text-primary font-bold tracking-widest uppercase text-sm">Nostalgia Reimagined</span>
                 <h1 className="text-slate-900 dark:text-slate-100 text-5xl md:text-6xl font-black leading-tight tracking-tight">
                   The Ultimate Digital <span className="text-primary">Hand-Cricket</span> Battle
@@ -19,7 +32,7 @@ export default function LandingPage() {
                   Experience the thrill of school-time hand cricket. Master the gestures, outsmart the bowler, and climb the global leaderboard.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 animate-in">
                 <Link to="/lobby" className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-8 bg-primary text-white text-lg font-bold hover:brightness-110 shadow-xl shadow-primary/30 transition-all">
                   <span>Play Now</span>
                 </Link>
@@ -28,7 +41,7 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-            <div className="lg:w-1/2 w-full">
+            <div className="lg:w-1/2 w-full animate-in">
               <div className="relative aspect-square md:aspect-video lg:aspect-square bg-gradient-to-br from-primary/20 to-transparent rounded-3xl overflow-hidden border border-primary/10 flex items-center justify-center">
                 <img className="w-full h-full object-cover opacity-80 mix-blend-overlay" alt="Illustration of hand gestures showing cricket scores" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF-Fls_69vCv-pJJZdsTHrS6OhaYgkteYKF-oiEvnIbCHC-tXfdfReLafJe6h09iLu7y3UTU5E_aB8pSI1VQ-B1yCJ5-5fFutpSZxOQgEsErpmJwOQmGl88cocsGCSAqGCLUoPlT82KoENMfH53bkaA4GDiWFIH3pM3yqk7TfN14bY62H2SFIOuB_Di2TZ5L47tfoG6ISv6GSGqIu_ptDPNpoWAFDSl2pZfpFazECEwP9ZxD5Jo-plnfFdTI7YLu-yULNWsiQ7hTY" />
                 <div className="absolute inset-0 flex items-center justify-center gap-8">
@@ -55,7 +68,7 @@ export default function LandingPage() {
           </section> */}
 
           <section className="py-16" id="how-to-play">
-            <div className="flex flex-col items-center text-center mb-16">
+            <div className="flex flex-col items-center text-center mb-16 animate-in">
               <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-4">The Mechanics</h2>
               <h3 className="text-slate-900 dark:text-slate-100 text-4xl font-black mb-6">Simple Rules, Infinite Strategy</h3>
               <p className="text-slate-600 dark:text-slate-400 max-w-2xl text-lg">
@@ -63,7 +76,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm">
+              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm animate-in">
                 <div className="bg-primary text-white w-12 h-12 rounded-lg flex items-center justify-center">
                   <span className="material-symbols-outlined">touch_app</span>
                 </div>
@@ -72,7 +85,7 @@ export default function LandingPage() {
                   <p className="text-slate-600 dark:text-slate-400">Choose any number from 1 to 6. Each number represents the runs you want to score in that delivery.</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm">
+              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm animate-in">
                 <div className="bg-primary text-white w-12 h-12 rounded-lg flex items-center justify-center">
                   <span className="material-symbols-outlined">compare_arrows</span>
                 </div>
@@ -81,7 +94,7 @@ export default function LandingPage() {
                   <p className="text-slate-600 dark:text-slate-400">If your number matches the computer's or opponent's number, you're OUT! The innings ends immediately.</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm">
+              <div className="flex flex-col gap-6 p-8 rounded-2xl bg-white dark:bg-primary/5 border border-slate-200 dark:border-primary/10 shadow-sm animate-in">
                 <div className="bg-primary text-white w-12 h-12 rounded-lg flex items-center justify-center">
                   <span className="material-symbols-outlined">scoreboard</span>
                 </div>
@@ -94,7 +107,7 @@ export default function LandingPage() {
           </section>
 
           <section className="py-20">
-            <div className="bg-gradient-to-r from-primary to-primary/80 rounded-[2rem] p-10 md:p-20 text-center text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-primary to-primary/80 rounded-[2rem] p-10 md:p-20 text-center text-white relative overflow-hidden animate-in">
               <div className="absolute top-0 right-0 p-10 opacity-20 transform translate-x-1/4 -translate-y-1/4">
                 <span className="material-symbols-outlined text-[20rem]">sports_cricket</span>
               </div>

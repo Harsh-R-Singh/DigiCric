@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function GameLobby() {
   const [selectedMode, setSelectedMode] = useState(null);
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+    <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
         <div className="layout-container flex h-full grow flex-col">
 
@@ -14,7 +27,7 @@ export default function GameLobby() {
               {/* Left Column: User Profile & Play Now */}
               <div className="md:col-span-1 lg:col-span-7 flex flex-col gap-8">
                 {/* Profile Card */}
-                <div className="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-8">
+                <div className="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-8 animate-in">
                   <div className="flex items-center gap-6 mb-8">
                     <div className="size-24 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-4xl overflow-hidden">
                       <img alt="Avatar" className="w-full h-full" data-alt="Avatar of the player with orange highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB99QwXJuXKj52iE71i_kWkbnCJgiQY7tu4K8tyHTwqx-nohdmAFJTmHDgsTyfd3yWxFiaC9rqLK1uQKfk_zdBenyLevMGCuPeuw0BFO0n-Z7apbYXV0v87JVxL8BZtsr-IyZ1UqmppYtcNnbLwC3xTz2WW2lrJ622GSv6dqo4__W2e-s7YqoNhGKqHTucEQBqoYLcNu2_0ztASizZn5nLRgWRMF-vSJS2zs-OalZC1h7QbqcCR05c08DpSgMJmcJz_kuXRf7IkK2Y"/>
@@ -43,7 +56,7 @@ export default function GameLobby() {
                   </div>
                 </div>
                 {/* Game Modes */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 animate-in">
                   <div className="flex items-center gap-2 mb-2">
                     {selectedMode && (
                       <button 
@@ -109,7 +122,7 @@ export default function GameLobby() {
                 </div>
               </div>
               {/* Right Column: Leaderboard */}
-              <div className="md:col-span-1 lg:col-span-5 flex flex-col gap-6">
+              <div className="md:col-span-1 lg:col-span-5 flex flex-col gap-6 animate-in">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Leaderboard</h2>
                   <Link to="/rankings" className="text-primary font-bold hover:underline">Full Rankings</Link>

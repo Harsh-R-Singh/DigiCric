@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 export default function CameraMode() {
+  const containerRef = useRef();
+
+  useGSAP(() => {
+    gsap.from(".animate-in", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden min-h-screen">
+    <div ref={containerRef} className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden min-h-screen">
       <div className="relative flex min-h-screen w-full flex-col">
 
 
         <main className="flex-1 flex flex-col items-center justify-start p-4 lg:p-8 max-w-7xl mx-auto w-full gap-6">
           {/* Game Status Header */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center animate-in">
             {/* Score Stats */}
             <div className="flex flex-wrap gap-3 order-2 md:order-1">
               <div className="flex-1 bg-white dark:bg-primary/5 border border-primary/10 rounded-xl p-4 flex flex-col items-center justify-center shadow-lg">
@@ -45,7 +59,7 @@ export default function CameraMode() {
           </div>
 
           {/* Main Gameplay Arena */}
-          <div className="relative w-full aspect-video md:aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20 group">
+          <div className="relative w-full aspect-video md:aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20 group animate-in">
             {/* Camera Feed Placeholder */}
             <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
               <img alt="Live camera feed background" className="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUmSynQOqEcvdL1jqSZPTSUVQqbV8LJ0MHOF-ZlIL23r9U81f6_kbrniamV3Rbyul75B-IyaH7vomX7bTI65BZyPzsKc05UpMP1QvdFKgYOsP0LZ0esNiFSpx7wsqmnTDXnEw5C8im3H4z0XtcVmOlGLahoIMgNsZ177RIU96EHLdvQNat_vMRpCpLQkp0n-fnSHnjFptn1wPJXKEWGdcDq_AaDsDCgezamr_UGeDtC3zJ0rh1B-0SP5qTxj4sV01StFzwvn9FLSs"/>
@@ -90,7 +104,7 @@ export default function CameraMode() {
           </div>
 
           {/* Footer Controls & Indicators */}
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 pb-10">
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 pb-10 animate-in">
             <div className="flex gap-4">
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] font-bold uppercase text-slate-500">Camera Status</span>
