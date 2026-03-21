@@ -171,7 +171,7 @@ export default function UserGuide() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full py-12 px-8 mt-auto bg-[#221610] border-t border-[#5a4138]/10">
+      {/* <footer className="w-full py-12 px-8 mt-auto bg-[#221610] border-t border-[#5a4138]/10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-screen-2xl mx-auto">
           <div className="text-[#ec5b13] font-black opacity-20 text-xl tracking-tighter">HAND-CRICKET PRO</div>
           <div className="flex gap-8">
@@ -181,7 +181,7 @@ export default function UserGuide() {
           </div>
           <div className="text-xs uppercase tracking-widest text-white/30">© 2024 HAND-CRICKET PRO. KINETIC PULSE ENGINE.</div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
