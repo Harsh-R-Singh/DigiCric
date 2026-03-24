@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+// import {Avatar1 ,Avatar2,Avatar3,Avatar4,Avatar5} from "../assets/avatars"
 const userSchema = new mongoose.Schema({
     username: {
         type:String,
@@ -31,8 +31,10 @@ const userSchema = new mongoose.Schema({
     },
     // avatar:{
     //     type:String,
-    //     required:[true,"Avatar is required"]
-    // }
+    //     enum:["avatar1","avatar2","avatar3","avatar4","avatar5",],
+    //     default:"avatar1"
+    // },
+    
 },{timestamps:true})
 
 const User = mongoose.model("User", userSchema)
