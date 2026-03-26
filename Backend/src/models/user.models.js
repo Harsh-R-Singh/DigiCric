@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-    // avatar:{
-    //     type:String,
-    //     enum:["avatar1","avatar2","avatar3","avatar4","avatar5",],
-    //     default:"avatar1"
-    // },
+    avatar:{
+        type:String,
+        enum:["avatar1","avatar2","avatar3","avatar4","avatar5","avatar6","avatar7","avatar8","avatar9","avatar10","avatar11"],
+        default:"avatar1"
+    },
     
 },{timestamps:true})
 

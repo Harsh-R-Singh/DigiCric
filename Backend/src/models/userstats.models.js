@@ -4,7 +4,12 @@ const userStatsSchema = new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        required:true
+        required:true,
+        unique:true
+    },
+    volts:{
+        type:Number,
+        default:0
     },
     matchesPlayed:{
         type:Number,
