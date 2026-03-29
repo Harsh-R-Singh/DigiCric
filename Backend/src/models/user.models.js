@@ -74,4 +74,4 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-export default User
+export {User}
