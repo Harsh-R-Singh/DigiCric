@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 // import {Avatar1 ,Avatar2,Avatar3,Avatar4,Avatar5} from "../assets/avatars"
 const userSchema = new mongoose.Schema({
     username: {
@@ -32,12 +34,10 @@ const userSchema = new mongoose.Schema({
     
 },{timestamps:true})
 
-const User = mongoose.model("User", userSchema)
-userSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+    if(!this.isModified("password")) return;
 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 userSchema.methods.isPasswordCorrect = async function(password){
@@ -69,4 +69,4 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-export {User}
+export const User = mongoose.model("User", userSchema)
