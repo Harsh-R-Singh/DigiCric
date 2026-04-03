@@ -1,43 +1,95 @@
-import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function UserProfile() {
   const containerRef = useRef();
+  const { username } = useParams();
+  
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const targetUsername = username || "SHIKHAR_D"; // Fallback for testing
+    
+    fetch(`/api/v1/users/profile/${targetUsername}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setUserData(data.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [username]);
 
   useGSAP(() => {
-    gsap.from(".animate-in", {
-      opacity: 0,
-      y: 50,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: "power3.out",
-    });
-  }, { scope: containerRef });
+    if (!loading) {
+      gsap.from(".animate-in", {
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power3.out",
+      });
+    }
+  }, { scope: containerRef, dependencies: [loading] });
+
+  if (loading) {
+    return <div className="min-h-screen bg-[#221610] text-[#ec5b13] flex items-center justify-center font-black text-2xl uppercase italic">Loading Profile...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-[#221610] text-red-500 flex items-center justify-center font-black text-2xl uppercase italic">Error: {error}</div>;
+  }
+
+  const stats = userData?.stats || {
+    matchesPlayed: 0,
+    totalWins: 0,
+    totalLosses: 0,
+    totalRunsScored: 0,
+    totalRunsConceded: 0,
+    totalWicketsTaken: 0,
+    highestScore: 0
+  };
+
+  const winRate = stats.matchesPlayed > 0 ? Math.round((stats.totalWins / stats.matchesPlayed) * 100) : 0;
+  const joinDate = userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown';
 
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
       <main className="relative pt-24 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden">
         {/* Background Decorative Watermark */}
         <div className="absolute top-20 -left-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">PRO PLAYER</div>
-        <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">SHIKHAR_D</div>
+        <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">{userData?.username || 'PLAYER'}</div>
 
         {/* User Overview & Hero */}
         <section className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           <div className="lg:col-span-8 flex flex-col md:flex-row items-center md:items-end gap-8 bg-[#2b1c17] p-8 rounded-xl shadow-xl relative overflow-hidden group animate-in">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#ec5b13]/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#ec5b13]/10 transition-colors"></div>
             <div className="relative">
-              <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)]">
-                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE" alt="Portrait"/>
+              <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-[#41312b] flex items-center justify-center">
+                {userData?.avatar ? (
+                  <img className="w-full h-full object-cover" src={userData.avatar.startsWith('http') ? userData.avatar : `/${userData.avatar}.png`} alt="Portrait" onError={(e) => { e.target.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE'; }}/>
+                ) : (
+                  <span className="material-symbols-outlined text-6xl text-[#ec5b13]/50">person</span>
+                )}
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL 24</div>
+              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {Math.floor(stats.matchesPlayed / 5) + 1 || 1}</div>
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
-                <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">Elite Member</span>
-                <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">SHIKHAR_D</h1>
-                <p className="text-white/50 font-medium mt-2">Member since Oct 12, 2023</p>
+                <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">{stats.matchesPlayed > 50 ? 'Elite Member' : 'Rookie'}</span>
+                <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">{userData?.username || 'UNKNOWN'}</h1>
+                <p className="text-white/50 font-medium mt-2">Member since {joinDate}</p>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <button className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
@@ -54,19 +106,35 @@ export default function UserProfile() {
           <div className="lg:col-span-4 grid grid-cols-2 gap-4 animate-in">
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
-              <span className="text-4xl font-black text-white italic">142</span>
+              <span className="text-4xl font-black text-white italic">{stats.matchesPlayed}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Wins</span>
-              <span className="text-4xl font-black text-[#ec5b13] italic">89</span>
+              <span className="text-4xl font-black text-[#ec5b13] italic">{stats.totalWins}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Losses</span>
+              <span className="text-4xl font-black text-white italic">{stats.totalLosses}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Win Rate</span>
-              <span className="text-4xl font-black text-white italic">62%</span>
+              <span className="text-4xl font-black text-[#ec5b13] italic">{winRate}%</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
-              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">High Score</span>
-              <span className="text-4xl font-black text-white italic">214</span>
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Runs Scored</span>
+              <span className="text-4xl font-black text-white italic">{stats.totalRunsScored}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Runs Conceded</span>
+              <span className="text-4xl font-black text-white italic">{stats.totalRunsConceded}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Wickets Taken</span>
+              <span className="text-4xl font-black text-white italic">{stats.totalWicketsTaken}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Highest Score</span>
+              <span className="text-4xl font-black text-white italic">{stats.highestScore}</span>
             </div>
           </div>
         </section>
@@ -151,7 +219,7 @@ export default function UserProfile() {
               <div className="space-y-6">
                 <div>
                   <label className="text-white/40 text-xs font-bold uppercase">Email Address</label>
-                  <p className="text-white font-medium mt-1">shikhar.d***@gmail.com</p>
+                  <p className="text-white font-medium mt-1">{userData?.email || 'N/A'}</p>
                 </div>
                 <div>
                   <label className="text-white/40 text-xs font-bold uppercase">Connected Platforms</label>

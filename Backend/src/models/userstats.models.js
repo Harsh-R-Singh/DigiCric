@@ -35,6 +35,10 @@ const userStatsSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+    totalRunsConceded:{
+        type:Number,
+        default:0
+    },
     totalWicketsTaken:{
         type:Number,
         default:0
