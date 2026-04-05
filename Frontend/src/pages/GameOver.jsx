@@ -69,7 +69,7 @@ export default function GameOver() {
               </span>
             </div>
             <h1 className={`text-5xl md:text-7xl font-bold tracking-tighter ${titleColor}`}>{titleText}</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-lg">{state.gameFormat}</p>
+            <p className="text-slate-500 dark:text-slate-400 text-lg">{state.gameFormat==='5_overs' ? '5 Overs' : 'Single Wicket'} {state.gameMode==='camera' ? 'Camera' : 'Classic'} Mode</p>
           </div>
 
           {/* Scoreboard */}
@@ -118,7 +118,7 @@ export default function GameOver() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
-            <Link to="/game" state={{ gameFormat: state.gameFormat }} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            <Link to="/game" state={{ gameFormat: state.gameFormat, gameMode: state.gameMode }} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH
             </Link>

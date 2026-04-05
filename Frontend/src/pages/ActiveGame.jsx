@@ -12,7 +12,7 @@ export default function ActiveGame() {
 
   // Mode from routing: 'single_wicket' or '5_overs'. Default to 'single_wicket'
   const mode = location.state?.gameFormat || 'single_wicket';
-  // console.log(location);
+  const gameMode = location.state?.gameMode || 'classic';
 
   // We unconditionally call both hooks to satisfy React's rules of hooks
   const singleWicketGame = useSingleWicketGame();
@@ -52,7 +52,8 @@ export default function ActiveGame() {
             userWickets: userWickets ?? 1, // Single wicket doesn't emit userWickets count so fallback to 1 Wicket max
             cpuWickets: cpuWickets ?? 1,
             target,
-            gameFormat: mode
+            gameFormat: mode,
+            gameMode: gameMode
         } });
       }, 3500); 
       return ;
@@ -218,7 +219,7 @@ export default function ActiveGame() {
           <div className="flex justify-between items-center px-2">
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm">
               <span className="material-symbols-outlined text-sm">timer</span>
-              <span>{gameFormat} {maxOvers ? `(Max ${maxOvers} Overs)` : ''}</span>
+              <span>{mode === '5_overs' ? '5 Overs' : 'Single Wicket'} {gameMode === 'camera' ? 'Camera' : 'Classic'} Mode</span>
             </div>
             <div className="flex items-center gap-1">
               <div className={`w-2 h-2 rounded-full ${isGameOver ? 'bg-red-500' : 'bg-green-500 animate-pulse'}`}></div>
