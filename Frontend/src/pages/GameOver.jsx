@@ -41,13 +41,13 @@ export default function GameOver() {
   let xp = 200;
   
   if (isUserWin) {
-    titleText = 'YOU WIN!';
+    titleText = 'YOU WON!';
     titleColor = 'text-primary';
-    xp = 500;
+    xp = (((state.userScore / state.userBallsFaced) -(state.cpuScore / state.cpuBallsFaced))*100);
   } else if (isCpuWin) {
     titleText = 'DEFEAT!';
     titleColor = 'text-red-500';
-    xp = 50;
+    xp = (((state.cpuScore / state.cpuBallsFaced) -(state.userScore / state.userBallsFaced))*100);
   }
 
   const userStrikeRate = state.userBallsFaced > 0 ? ((state.userScore / state.userBallsFaced) * 100).toFixed(2) : '0.00';
@@ -96,8 +96,8 @@ export default function GameOver() {
           <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 animate-in">
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">bolt</span>
-              <p className="text-xs text-slate-500 uppercase font-bold">Highest Score</p>
-              <p className="font-bold">{highestScorer} ({highestScore})</p>
+              <p className="text-xs text-slate-500 uppercase font-bold">NET RUN-RATE</p>
+              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>{isUserWin ? '+' : '-'}{(xp/100).toFixed(3)}</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">speed</span>
@@ -111,8 +111,8 @@ export default function GameOver() {
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
-              <p className="text-xs text-slate-500 uppercase font-bold">XP Gained</p>
-              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>+{xp} XP</p>
+              <p className="text-xs text-slate-500 uppercase font-bold">Volts</p>
+              <p className="font-bold">{isUserWin ? `+${xp}` : `+${Math.floor(xp/9)}`} Volts</p>
             </div>
           </div>
 

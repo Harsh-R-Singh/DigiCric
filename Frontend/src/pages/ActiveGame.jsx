@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -9,6 +9,11 @@ export default function ActiveGame() {
   const navigate = useNavigate();
   const location = useLocation();
   const containerRef = useRef();
+  
+  const userHandRef = useRef();
+  const cpuHandRef = useRef();
+  const [inningsBreakWait, setInningsBreakWait] = useState(false);
+  const prevInnings = useRef(1);
 
   // Mode from routing: 'single_wicket' or '5_overs'. Default to 'single_wicket'
   const mode = location.state?.gameFormat || 'single_wicket';
@@ -38,6 +43,30 @@ export default function ActiveGame() {
       ease: "power3.out",
     });
   }, { scope: containerRef });
+
+  useGSAP(() => {
+    if (userLastChoice !== null) {
+      gsap.fromTo(userHandRef.current, 
+        { scale: 0.5, y: 20, opacity: 0, rotation: -15 }, 
+        { scale: 1, y: 0, opacity: 1, rotation: 0, duration: 0.5, ease: "back.out(2)" }
+      );
+      gsap.fromTo(cpuHandRef.current, 
+        { scale: 0.5, y: 20, opacity: 0, rotation: 15 }, 
+        { scale: 1, y: 0, opacity: 1, rotation: 0, duration: 0.5, ease: "back.out(2)", delay: 0.1 }
+      );
+    }
+  }, { dependencies: [comments] });
+
+  useEffect(() => {
+    if (innings === 2 && prevInnings.current === 1) {
+      setInningsBreakWait(true);
+      const t = setTimeout(() => {
+        setInningsBreakWait(false);
+      }, 3000);
+      prevInnings.current = 2;
+      return () => clearTimeout(t);
+    }
+  }, [innings]);
 
   useEffect(() => {
     if (isGameOver) {
@@ -122,7 +151,7 @@ export default function ActiveGame() {
                   You {phase === 'playing' ? (userBatting ? '(Batting)' : '(Bowling)') : ''}
                 </div>
               </div>
-              <div className="w-20 h-20 bg-background-dark/50 backdrop-blur-md rounded-xl border border-primary/30 flex items-center justify-center text-primary shadow-inner">
+              <div ref={userHandRef} className="w-20 h-20 bg-background-dark/50 backdrop-blur-md rounded-xl border border-primary/30 flex items-center justify-center text-primary shadow-inner">
                 <span className="text-4xl font-bold font-display">{userLastChoice || '?'}</span>
               </div>
             </div>
@@ -144,7 +173,7 @@ export default function ActiveGame() {
                   CPU {phase === 'playing' ? (!userBatting ? '(Batting)' : '(Bowling)') : ''}
                 </div>
               </div>
-              <div className="w-20 h-20 bg-background-dark/50 backdrop-blur-md rounded-xl border border-slate-500/30 flex items-center justify-center text-slate-400 shadow-inner">
+              <div ref={cpuHandRef} className="w-20 h-20 bg-background-dark/50 backdrop-blur-md rounded-xl border border-slate-500/30 flex items-center justify-center text-slate-400 shadow-inner">
                 <span className="text-4xl font-bold font-display">{cpuLastChoice || '?'}</span>
               </div>
             </div>
@@ -188,7 +217,7 @@ export default function ActiveGame() {
             </>
           )}
 
-          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && (
+          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && (
             <>
               <h3 className="text-center text-slate-900 dark:text-white text-lg font-bold font-display">
                 {phase === 'toss_play' ? 'Play for Toss' : 'Choose your move'}
@@ -208,6 +237,13 @@ export default function ActiveGame() {
                 ))}
               </div>
             </>
+          )}
+
+          {inningsBreakWait && (
+            <div className="text-center py-6 bg-primary/10 rounded-xl border border-primary/20 animate-in">
+               <h3 className="text-primary text-2xl font-bold font-display animate-pulse">Innings Break!</h3>
+               <p className="text-slate-500 font-medium mt-2">Target is {target}</p>
+            </div>
           )}
 
           {isGameOver && (
