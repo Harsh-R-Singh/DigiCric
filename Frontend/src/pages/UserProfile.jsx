@@ -90,7 +90,7 @@ export default function UserProfile() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
           {/* Left Column: Account & Performance */}
-          <div className="lg:col-span-8 space-y-8 animate-in">
+          <div className="lg:col-span-8 space-y-8 animate-in ">
             {/* Performance Trend */}
             <div className="bg-[#2b1c17] p-8 rounded-xl relative overflow-hidden">
               <div className="flex justify-between items-end mb-8 border-b border-[#5a4138]/20 pb-4">
@@ -98,14 +98,14 @@ export default function UserProfile() {
                   <h2 className="text-2xl font-black italic tracking-tight text-white">PERFORMANCE TREND</h2>
                   <p className="text-white/50 text-sm">Score progression over last 10 games</p>
                 </div>
-                <span className="text-[#ec5b13] font-bold text-sm bg-[#ec5b13]/10 px-3 py-1 rounded-full">+12.4% vs Last Week</span>
+                <span className="text-[#ec5b13] font-bold text-sm bg-[#ec5b13]/10 px-3 py-1 rounded-full blur-[2px]">+12.4% vs Last Week</span>
               </div>
-              <div className="h-48 flex items-end justify-between gap-2 px-2">
+              <div className="h-48 flex items-end justify-between gap-2 px-2 blur-[2px]">
                 {[40, 65, 55, 80, 95, 45, 70, 60, 85, 90].map((h, i) => (
                   <div key={i} className={`w-full rounded-t-sm transition-all duration-300 ${h >= 90 ? 'bg-[#ec5b13] shadow-[0_0_15px_rgba(236,91,19,0.3)]' : 'bg-[#41312b] hover:bg-[#ec5b13]'}`} style={{ height: `${h}%` }}></div>
                 ))}
               </div>
-              <div className="flex justify-between mt-4 text-[10px] text-white/30 font-bold uppercase tracking-widest">
+              <div className="flex justify-between mt-4 text-[10px] text-white/30 font-bold uppercase tracking-widest blur-[2px]">
                 <span>Game 1</span>
                 <span>Game 10</span>
               </div>
@@ -116,7 +116,7 @@ export default function UserProfile() {
               <div className="p-8 pb-4">
                 <h2 className="text-2xl font-black italic tracking-tight uppercase">Recent Match History</h2>
               </div>
-              <div className="divide-y divide-[#5a4138]/10">
+              <div className="divide-y divide-[#5a4138]/10 blur-[2px]">
                 <div className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
                   <div className="flex items-center gap-6">
                     <div className="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
