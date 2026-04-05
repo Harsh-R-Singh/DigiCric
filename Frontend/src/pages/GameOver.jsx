@@ -1,10 +1,20 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function GameOver() {
   const containerRef = useRef();
+  const location = useLocation();
+  
+  // Default fallback if navigated directly without state
+  const state = location.state || {
+    winner: 'tie',
+    userScore: 0,
+    cpuScore: 0,
+    userBallsFaced: 0,
+    cpuBallsFaced: 0,
+  };
 
   useGSAP(() => {
     gsap.from(".animate-in", {
@@ -15,38 +25,70 @@ export default function GameOver() {
       ease: "power3.out",
     });
   }, { scope: containerRef });
+
+  const formatOvers = (balls) => {
+    const overs = Math.floor(balls / 6);
+    const remainder = balls % 6;
+    return `${overs}.${remainder}`;
+  };
+
+  const isUserWin = state.winner === 'user';
+  const isCpuWin = state.winner === 'cpu';
+  const isTie = state.winner === 'tie';
+
+  let titleText = 'MATCH TIED!';
+  let titleColor = 'text-yellow-500';
+  let xp = 200;
+  
+  if (isUserWin) {
+    titleText = 'YOU WIN!';
+    titleColor = 'text-primary';
+    xp = 500;
+  } else if (isCpuWin) {
+    titleText = 'DEFEAT!';
+    titleColor = 'text-red-500';
+    xp = 50;
+  }
+
+  const userStrikeRate = state.userBallsFaced > 0 ? ((state.userScore / state.userBallsFaced) * 100).toFixed(2) : '0.00';
+  const cpuStrikeRate = state.cpuBallsFaced > 0 ? ((state.cpuScore / state.cpuBallsFaced) * 100).toFixed(2) : '0.00';
+
+  const highestScore = Math.max(state.userScore, state.cpuScore);
+  const highestScorer = state.userScore > state.cpuScore ? 'You' : (state.cpuScore > state.userScore ? 'CPU' : 'Tie');
+
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col grow">
 
-
         {/* Result Section */}
         <main className="flex flex-col items-center text-center grow justify-center space-y-8">
           <div className="space-y-2 animate-in">
-            <div className="inline-flex items-center justify-center p-4 rounded-full bg-primary/20 mb-4">
-              <span className="material-symbols-outlined text-primary text-6xl">emoji_events</span>
+            <div className="inline-flex items-center justify-center p-4 rounded-full bg-slate-800/20 mb-4 border border-slate-700/30">
+              <span className={`material-symbols-outlined text-6xl ${titleColor}`}>
+                {isUserWin ? 'emoji_events' : isTie ? 'handshake' : 'sentiment_dissatisfied'}
+              </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-primary tracking-tighter">YOU WIN!</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-lg">Championship Series • Match #1,242</p>
+            <h1 className={`text-5xl md:text-7xl font-bold tracking-tighter ${titleColor}`}>{titleText}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-lg">{state.gameFormat}</p>
           </div>
 
           {/* Scoreboard */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full animate-in">
-            <div className="flex flex-col items-center justify-center p-8 rounded-xl bg-primary/10 border border-primary/20 relative overflow-hidden">
+            <div className={`flex flex-col items-center justify-center p-8 rounded-xl ${isUserWin ? 'bg-primary/20 border-primary' : 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700'} border relative overflow-hidden transition-all shadow-lg`}>
               <div className="absolute top-0 right-0 p-2 opacity-10">
                 <span className="material-symbols-outlined text-8xl">person</span>
               </div>
-              <span className="text-sm font-semibold uppercase tracking-widest text-primary mb-1">Your Score</span>
-              <span className="text-4xl font-bold">148 / 4</span>
-              <span className="text-slate-500 text-sm mt-1">(10.0 Overs)</span>
+              <span className={`text-sm font-semibold uppercase tracking-widest ${isUserWin ? 'text-primary' : 'text-slate-500'} mb-1`}>Your Score</span>
+              <span className="text-4xl font-bold">{state.userScore}</span>
+              <span className="text-slate-500 text-sm mt-1">({formatOvers(state.userBallsFaced)} Overs)</span>
             </div>
-            <div className="flex flex-col items-center justify-center p-8 rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+            <div className={`flex flex-col items-center justify-center p-8 rounded-xl ${isCpuWin ? 'bg-red-500/20 border-red-500' : 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700'} border relative overflow-hidden transition-all shadow-lg`}>
               <div className="absolute top-0 right-0 p-2 opacity-10">
                 <span className="material-symbols-outlined text-8xl">smart_toy</span>
               </div>
-              <span className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-1">Opponent</span>
-              <span className="text-4xl font-bold">132 / 10</span>
-              <span className="text-slate-500 text-sm mt-1">(9.2 Overs)</span>
+              <span className={`text-sm font-semibold uppercase tracking-widest ${isCpuWin ? 'text-red-500' : 'text-slate-500'} mb-1`}>CPU Score</span>
+              <span className="text-4xl font-bold">{state.cpuScore}</span>
+              <span className="text-slate-500 text-sm mt-1">({formatOvers(state.cpuBallsFaced)} Overs)</span>
             </div>
           </div>
 
@@ -54,29 +96,29 @@ export default function GameOver() {
           <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 animate-in">
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">bolt</span>
-              <p className="text-xs text-slate-500 uppercase font-bold">Most Runs</p>
-              <p className="font-bold">Rahul (62)</p>
-            </div>
-            <div className="p-4 rounded-lg glass-panel text-left">
-              <span className="material-symbols-outlined text-primary text-xl mb-2">target</span>
-              <p className="text-xs text-slate-500 uppercase font-bold">Most Wickets</p>
-              <p className="font-bold">You (4)</p>
+              <p className="text-xs text-slate-500 uppercase font-bold">Highest Score</p>
+              <p className="font-bold">{highestScorer} ({highestScore})</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">speed</span>
-              <p className="text-xs text-slate-500 uppercase font-bold">Strike Rate</p>
-              <p className="font-bold">148.00</p>
+              <p className="text-xs text-slate-500 uppercase font-bold">Your Strike Rate</p>
+              <p className="font-bold">{userStrikeRate}</p>
+            </div>
+            <div className="p-4 rounded-lg glass-panel text-left">
+              <span className="material-symbols-outlined text-primary text-xl mb-2">analytics</span>
+              <p className="text-xs text-slate-500 uppercase font-bold">CPU Strike Rate</p>
+              <p className="font-bold">{cpuStrikeRate}</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
               <p className="text-xs text-slate-500 uppercase font-bold">XP Gained</p>
-              <p className="font-bold text-primary">+450 XP</p>
+              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>+{xp} XP</p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
-            <Link to="/game" className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            <Link to="/game" state={{ gameFormat: state.gameFormat }} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH
             </Link>
@@ -89,14 +131,6 @@ export default function GameOver() {
 
         {/* Footer Info */}
         <footer className="mt-12 text-center text-slate-500 text-sm flex flex-col items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex -space-x-2">
-              <div className="size-8 rounded-full border-2 border-background-dark bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDm16CRFAL9DoIQPCi-jH1uG_K-htMUEzVBdW5hYfCuKfwOQnoRZCcN0_CBkUcXBFUXLZrUIaHrzZt9QZJ2jHIjbUI5W1fNy1H-loMcj4EEyCNoCvGohzu8fMG-quSAF3butiNp_Sqm_OHMhwDwJ7KNSsthTuRw-0B1Vt4GiUjSjE3dmGQ9coj4yQ9RP2kTUTosIo06biPpMrt_aONEp5oomErHhnTiwOm7CKS5wB_V3KaD-2ac575hRMeQt14fG1X_VjSVoi-6n9o')" }}></div>
-              <div className="size-8 rounded-full border-2 border-background-dark bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHHOBLyS7tPSsi16N3N7adTb-8lBymW-bJjYkxk2ccwOqJQw4UwfFp9FSAwAUHeR5vXUyB2qxesoaNGN9XCyR1YyszVyx0F6tRJDkdHNvnusyMjBzpkHBIAPaY2RGJWaOIUtTrjXpn8iOpeXbuCS3U877Qz2GOiMN9Akr-oGNVQrn-M6CR8TYRQNUsBiMGht2nab6quqckjvaY-7G_NuxNfAzIvRLWbl9wAJXGESDXBVcAnaozH4SWG-LyJ9Hii-L86BE9tjtvGYc')" }}></div>
-              <div className="size-8 rounded-full border-2 border-background-dark bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAuqBX-WgFwk-flTsUgM7zAHfaH-IN2CMmruALe1MGfW7qu3m330m-ZfeQzsyommbCCqKdztfKc8rr3QkPiRMyOr9XkHHVzyUOQZGXvCc12uRg6gpJVGyLIwn1iejsXcv-O3UFrJzUZDm79Xn8Htq_G_SaAYs1pjWoxQK9VGjrBew302DBZ86RbNFVDOlf-k9n6vRxrCnJp0zTsN3zPuPWhI19OAUCuPa2MbZyk55JsAurNM43zguJjStWBjuEqh0Mh9IGhqAmeoFw')" }}></div>
-            </div>
-            <p>12,402 players online now</p>
-          </div>
           <p>© 2024 Hand Cricket Pro League</p>
         </footer>
       </div>
