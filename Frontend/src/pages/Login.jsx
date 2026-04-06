@@ -1,8 +1,48 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
 const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/v1/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed.');
+      }
+
+      // Optionally, you can store data.data.accessToken and user data in localStorage or Context
+      // localStorage.setItem('user', JSON.stringify(data.data.user));
+      
+      // Login successful, redirect to lobby or profile
+      navigate('/lobby');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     // Basic GSAP animation following the previous style
     gsap.fromTo(".login-container", 
@@ -42,11 +82,26 @@ const Login = () => {
           </div>
 
           {/* Form */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-200 text-sm py-3 px-4 rounded-lg flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">error</span>
+                {error}
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="block text-[12px] font-bold uppercase tracking-[0.05em] text-[#ec5b13]">Email Address</label>
               <div className="relative">
-                <input className="w-full bg-[#41312b]/50 border border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-1 focus:ring-[#ec5b13] rounded-lg py-4 px-4 text-[#f8ddd4] placeholder:text-[#e2bfb3]/40 transition-all outline-none font-bold" placeholder="PLAYER@DIGICRIC.COM" type="email" />
+                <input 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#41312b]/50 border border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-1 focus:ring-[#ec5b13] rounded-lg py-4 px-4 text-[#f8ddd4] placeholder:text-[#e2bfb3]/40 transition-all outline-none font-bold" 
+                  placeholder="PLAYER@DIGICRIC.COM" 
+                  type="email" 
+                  required
+                />
               </div>
             </div>
 
@@ -56,14 +111,26 @@ const Login = () => {
                 <a className="text-[10px] font-bold uppercase tracking-wider text-[#e2bfb3] hover:text-[#ec5b13] transition-colors" href="#">Forgot Password?</a>
               </div>
               <div className="relative">
-                <input className="w-full bg-[#41312b]/50 border border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-1 focus:ring-[#ec5b13] rounded-lg py-4 px-4 text-[#f8ddd4] placeholder:text-[#e2bfb3]/40 transition-all outline-none font-bold" placeholder="••••••••••••" type="password" />
+                <input 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#41312b]/50 border border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-1 focus:ring-[#ec5b13] rounded-lg py-4 px-4 text-[#f8ddd4] placeholder:text-[#e2bfb3]/40 transition-all outline-none font-bold" 
+                  placeholder="••••••••••••" 
+                  type="password" 
+                  required
+                />
               </div>
             </div>
 
             <div className="pt-4">
-              <button className="w-full bg-[#ec5b13] hover:bg-[#ec5b13]/90 text-white font-headline font-black py-5 rounded-lg uppercase tracking-widest text-lg transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(236,91,19,0.3)] hover:shadow-[0_0_35px_rgba(236,91,19,0.5)] flex items-center justify-center gap-3 group" type="button">
-                Enter Arena
-                <span className="material-symbols-outlined text-2xl group-hover:translate-x-1 transition-transform">bolt</span>
+              <button 
+                className={`w-full bg-[#ec5b13] hover:bg-[#ec5b13]/90 text-white font-headline font-black py-5 rounded-lg uppercase tracking-widest text-lg transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(236,91,19,0.3)] hover:shadow-[0_0_35px_rgba(236,91,19,0.5)] flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed`} 
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? 'Authenticating...' : 'Enter Arena'}
+                {!loading && <span className="material-symbols-outlined text-2xl group-hover:translate-x-1 transition-transform">bolt</span>}
               </button>
             </div>
           </form>

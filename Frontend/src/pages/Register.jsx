@@ -1,8 +1,44 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
 const Register = () => {
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/v1/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed.');
+      }
+
+      // Registration successful
+      navigate('/login');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     // Basic GSAP animation following the previous style
     gsap.fromTo(".register-container", 
@@ -36,12 +72,27 @@ const Register = () => {
           </div>
 
           {/* Registration Form */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleRegister}>
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 text-red-200 text-sm py-3 px-4 rounded-lg flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">error</span>
+                {error}
+              </div>
+            )}
+            
             <div className="space-y-2">
               <label className="font-label text-[12px] font-bold uppercase tracking-[0.05em] text-[#e2bfb3] block ml-1">USERNAME</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ec5b13]/60 text-[20px]">person</span>
-                <input className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" placeholder="CRIC_MASTER_99" type="text" />
+                <input 
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" 
+                  placeholder="CRIC_MASTER_99" 
+                  type="text" 
+                  required
+                />
               </div>
             </div>
 
@@ -49,7 +100,15 @@ const Register = () => {
               <label className="font-label text-[12px] font-bold uppercase tracking-[0.05em] text-[#e2bfb3] block ml-1">EMAIL ADDRESS</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ec5b13]/60 text-[20px]">alternate_email</span>
-                <input className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" placeholder="PLAYER@DIGICRIC.GG" type="email" />
+                <input 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" 
+                  placeholder="PLAYER@DIGICRIC.GG" 
+                  type="email" 
+                  required
+                />
               </div>
             </div>
 
@@ -57,12 +116,24 @@ const Register = () => {
               <label className="font-label text-[12px] font-bold uppercase tracking-[0.05em] text-[#e2bfb3] block ml-1">PASSWORD</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ec5b13]/60 text-[20px]">lock</span>
-                <input className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" placeholder="••••••••••••" type="password" />
+                <input 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#261813] border-0 border-b-2 border-[#5a4138]/30 focus:border-[#ec5b13] focus:ring-0 text-[#f8ddd4] placeholder:text-[#e2bfb3]/30 font-medium py-4 pl-12 pr-4 transition-all duration-300 outline-none" 
+                  placeholder="••••••••••••" 
+                  type="password" 
+                  required
+                />
               </div>
             </div>
 
-            <button className="w-full bg-[#ec5b13] hover:bg-[#ec5b13]/90 text-white font-headline font-black text-lg py-5 rounded-lg transition-all duration-300 shadow-[0_0_25px_rgba(236,91,19,0.3)] hover:shadow-[0_0_40px_rgba(236,91,19,0.5)] active:scale-[0.98] uppercase tracking-wider mt-4" type="button">
-              CREATE ACCOUNT
+            <button 
+              className={`w-full bg-[#ec5b13] px-4 hover:bg-[#ec5b13]/90 text-white font-headline font-black text-lg py-5 rounded-lg transition-all duration-300 shadow-[0_0_25px_rgba(236,91,19,0.3)] hover:shadow-[0_0_40px_rgba(236,91,19,0.5)] active:scale-[0.98] uppercase tracking-wider mt-4 disabled:opacity-50 disabled:cursor-not-allowed`} 
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Processing...' : 'CREATE ACCOUNT'}
             </button>
           </form>
 

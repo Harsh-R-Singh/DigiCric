@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     })
 
     if (existedUser) {
-        throw new ApiError(409, "User with email or username already exists")
+        return res.status(409).json(new ApiResponse(409, {}, "User with email or username already exists"))
     }
 
     const user = await User.create({
@@ -61,10 +61,19 @@ const loginUser = asyncHandler(async (req, res) =>{
     //send cookie
 
     const {email, username, password} = req.body
-    console.log(email);
+    console.log(email,username);
 
     if (!username && !email) {
-        throw new ApiError(400, "username or email is required")
+        return res
+        .status(400)
+        .json(
+            new ApiResponse(
+            400, 
+            {},
+            "username or email is required"
+            )
+        )
+        // throw new ApiError(400, "username or email is required")
     }
     
     // Here is an alternative of above code based on logic discussed in video:
@@ -78,16 +87,32 @@ const loginUser = asyncHandler(async (req, res) =>{
     })
 
     if (!user) {
-        throw new ApiError(404, "User does not exist")
+        return res
+        .status(404)
+        .json(
+            new ApiResponse(
+            404, 
+            {},
+            "User does not exist"
+            )
+        )
     }
 
-   const isPasswordValid = await user.isPasswordCorrect(password)
+    const isPasswordValid = await user.isPasswordCorrect(password)
 
-   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials")
+    if (!isPasswordValid) {
+        return res
+        .status(401)
+        .json(
+            new ApiResponse(
+            401, 
+            {},
+            "Invalid user credentials"
+            )
+        )
     }
 
-   const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -129,7 +154,7 @@ const logoutUser = asyncHandler(async(req, res) => {
         httpOnly: true,
         secure: true
     }
-
+    console.log(req.user);
     return res
     .status(200)
     .clearCookie("accessToken", options)

@@ -1,10 +1,35 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname;
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      const response = await fetch('/api/v1/users/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      // console.log("Logout", response);
+      if (!response.ok) {
+        console.error('Logout failed on server:', await response.text());
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      localStorage.removeItem('user');
+      setIsLoggingOut(false);
+      navigate('/login');
+    }
+  };
 
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 py-4 lg:px-20 bg-background-light dark:bg-background-dark sticky top-0 z-50">
@@ -51,6 +76,14 @@ export default function Navbar() {
           </button>
           <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
             <span className="material-symbols-outlined">settings</span>
+          </button>
+          <button 
+            disabled={isLoggingOut}
+            onClick={handleLogout} 
+            title="Logout"
+            className="flex items-center justify-center rounded-lg h-10 w-10 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-all disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined">logout</span>
           </button>
         </div>
         
