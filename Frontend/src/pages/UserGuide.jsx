@@ -28,29 +28,10 @@ export default function UserGuide() {
           <div className="absolute right-280 top-160 text-[12rem] font-black pointer-events-none text-primary opacity-[0.03] rotate-12 select-none uppercase">GUIDE</div>
 
           <div className="max-w-10xl mx-auto space-y-32">
-            {/* Section 1: The Legend */}
-            <section className="relative animate-in" id="history">
-              <div className="text-primary font-bold uppercase tracking-widest text-xs mb-4">01 - THE ORIGIN</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6">
-                  <h2 className="text-5xl font-black italic tracking-tighter text-[#f8ddd4] leading-none">THE LEGEND OF <span className="text-primary">HAND-CRICKET</span></h2>
-                  <p className="text-xl text-[#e2bfb3] leading-relaxed">
-                    Born in the classrooms and school corridors of South Asia, Hand-Cricket was the ultimate equalizer. No bat, no ball—just pure cognitive warfare. 
-                  </p>
-                  <p className="text-[#e2bfb3]/80">
-                    Hand-Cricket Pro evolves this nostalgic rivalry into a high-octane digital arena. Using advanced Computer Vision, your physical gestures are translated into virtual strikes, bringing the playground to the global stage.
-                  </p>
-                </div>
-                <div className="relative group ">
-                  <div className="absolute inset-0 bg-primary/20 rounded-xl blur-2xl group-hover:bg-primary/30 transition-all"></div>
-                  <img className="relative rounded-xl border border-[#5a4138]/20 grayscale hover:grayscale-0 transition-all duration-400 w-full h-[450px] object-cover shadow-2xl" data-alt="Abstract dynamic cricket player silhouette in orange light" src={image} alt=""/>
-                </div>
-              </div>
-            </section>
 
             {/* Section 2: The Setup */}
             <section className="space-y-12 animate-in" id="setup">
-              <div className="text-primary font-bold uppercase tracking-widest text-xs">02 - THE SETUP</div>
+              <div className="text-primary font-bold uppercase tracking-widest text-xs">01 - THE SETUP</div>
               <h2 className="text-5xl font-black italic tracking-tighter text-[#f8ddd4]">CAMERA PREPARATION</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="bg-[#2b1c17] p-8 rounded-xl border-l-4 border-primary space-y-4 hover:bg-[#362621] transition-colors group relative overflow-hidden">
@@ -73,7 +54,7 @@ export default function UserGuide() {
 
             {/* Section 3: The Gestures */}
             <section className="space-y-12 animate-in" id="gestures">
-              <div className="text-primary font-bold uppercase tracking-widest text-xs">03 - THE GESTURES (RUNS)</div>
+              <div className="text-primary font-bold uppercase tracking-widest text-xs">02 - THE GESTURES (RUNS)</div>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
                   <h2 className="text-5xl font-black italic tracking-tighter text-[#f8ddd4]">KINETIC INTERFACE</h2>
@@ -100,7 +81,7 @@ export default function UserGuide() {
 
             {/* Section 4: Gameplay Loop */}
             <section className="space-y-12 pb-20 animate-in" id="scoring">
-              <div className="text-primary font-bold uppercase tracking-widest text-xs">04 - THE GAMEPLAY LOOP</div>
+              <div className="text-primary font-bold uppercase tracking-widest text-xs">03 - THE GAMEPLAY LOOP</div>
               <div className="bg-[#41312b]/30 rounded-2xl p-8 lg:p-12 border border-primary/10 relative overflow-hidden">
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
                   <div className="space-y-6">
@@ -163,6 +144,25 @@ export default function UserGuide() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </section>
+            {/* Section 1: The Legend */}
+            <section className="relative animate-in" id="history">
+              <div className="text-primary font-bold uppercase tracking-widest text-xs mb-4">04 - THE ORIGIN</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6">
+                  <h2 className="text-5xl font-black italic tracking-tighter text-[#f8ddd4] leading-none">THE LEGEND OF <span className="text-primary">HAND-CRICKET</span></h2>
+                  <p className="text-xl text-[#e2bfb3] leading-relaxed">
+                    Born in the classrooms and school corridors of South Asia, Hand-Cricket was the ultimate equalizer. No bat, no ball—just pure cognitive warfare. 
+                  </p>
+                  <p className="text-[#e2bfb3]/80">
+                    Hand-Cricket Pro evolves this nostalgic rivalry into a high-octane digital arena. Using advanced Computer Vision, your physical gestures are translated into virtual strikes, bringing the playground to the global stage.
+                  </p>
+                </div>
+                <div className="relative group ">
+                  <div className="absolute inset-0 bg-primary/20 rounded-xl blur-2xl group-hover:bg-primary/30 transition-all"></div>
+                  <img className="relative rounded-xl border border-[#5a4138]/20 grayscale hover:grayscale-0 transition-all duration-400 w-full h-[450px] object-cover shadow-2xl" data-alt="Abstract dynamic cricket player silhouette in orange light" src={image} alt=""/>
                 </div>
               </div>
             </section>

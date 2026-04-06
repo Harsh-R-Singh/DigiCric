@@ -112,7 +112,7 @@ export default function GameOver() {
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
               <p className="text-xs text-slate-500 uppercase font-bold">Volts</p>
-              <p className="font-bold">{isUserWin ? `+${xp}` : `+${Math.floor(xp/9)}`} Volts</p>
+              <p className="font-bold">{isUserWin ? `+${Math.round(xp)}` : `-${Math.round(xp/3)}`} Volts</p>
             </div>
           </div>
 

@@ -7,10 +7,6 @@ const userStatsSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    volts:{
-        type:Number,
-        default:0
-    },
     matchesPlayed:{
         type:Number,
         default:0
@@ -27,10 +23,6 @@ const userStatsSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-    totalPoints:{
-        type:Number,
-        default:0
-    },
     totalRunsScored:{
         type:Number,
         default:0
@@ -44,6 +36,14 @@ const userStatsSchema = new mongoose.Schema({
         default:0
     },
     highestScore:{
+        type:Number,
+        default:0
+    },
+    netRunRate:{
+        type:Number,
+        default:0
+    },
+    volts:{
         type:Number,
         default:0
     },
