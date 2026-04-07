@@ -1,12 +1,17 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef,useEffect } from 'react';
+import { Link,useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function GameLobby() {
   const [selectedMode, setSelectedMode] = useState(null);
   const containerRef = useRef();
-
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   useGSAP(() => {
     gsap.from(".animate-in", {
       opacity: 0,
@@ -17,6 +22,39 @@ export default function GameLobby() {
     });
   }, { scope: containerRef });
 
+useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        // Step 1: Get the current user session
+        const currentUserRes = await fetch('/api/v1/users/current-user', {
+          credentials: 'include'
+        });
+        if (!currentUserRes.ok) {
+           navigate('/login');
+           return;
+        }
+        const currentUserData = await currentUserRes.json();
+        setCurrentUser(currentUserData.data.username);
+        const username = currentUserData.data.username;
+
+        // Step 2: Get full profile including stats using the retrieved username
+        const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
+          credentials: 'include'
+        });
+        if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
+        const profileData = await profileRes.json();
+        // console.log(profileData);
+        setUserProfile(profileData.data);
+      } catch (err) {
+        console.error(err);
+        setError('Could not load user profile details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfileData();
+  }, [navigate]);
+  console.log(userProfile);
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
@@ -30,11 +68,11 @@ export default function GameLobby() {
                 <div className="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-8 animate-in">
                   <div className="flex items-center gap-6 mb-8">
                     <div className="size-24 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-4xl overflow-hidden">
-                      <img alt="Avatar" className="w-full h-full" data-alt="Avatar of the player with orange highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB99QwXJuXKj52iE71i_kWkbnCJgiQY7tu4K8tyHTwqx-nohdmAFJTmHDgsTyfd3yWxFiaC9rqLK1uQKfk_zdBenyLevMGCuPeuw0BFO0n-Z7apbYXV0v87JVxL8BZtsr-IyZ1UqmppYtcNnbLwC3xTz2WW2lrJ622GSv6dqo4__W2e-s7YqoNhGKqHTucEQBqoYLcNu2_0ztASizZn5nLRgWRMF-vSJS2zs-OalZC1h7QbqcCR05c08DpSgMJmcJz_kuXRf7IkK2Y"/>
+                      <img alt="Avatar" className="w-full h-full" data-alt="Avatar of the player with orange highlights" src={`../assets/avatar/${userProfile?.avatar}.png`}/>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Shikhar_D</h3>
-                      <p className="text-primary font-medium text-lg">Level 24 Elite</p>
+                      <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{userProfile?.username}</h3>
+                      <p className="text-primary font-medium text-lg">Level {userProfile?.level?userProfile?.level:0} {userProfile?.rank?userProfile?.rank:"Newbie"}</p>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
                         <div className="bg-primary h-full rounded-full" style={{ width: '75%' }}></div>
                       </div>
@@ -43,15 +81,15 @@ export default function GameLobby() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="bg-background-light dark:bg-background-dark/50 border border-primary/10 rounded-lg p-4 text-center">
                       <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Matches</p>
-                      <p className="text-2xl font-bold text-primary">142</p>
+                      <p className="text-2xl font-bold text-primary">{userProfile?.matchesPlayed}</p>
                     </div>
                     <div className="bg-background-light dark:bg-background-dark/50 border border-primary/10 rounded-lg p-4 text-center">
                       <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Wins</p>
-                      <p className="text-2xl font-bold text-primary">89</p>
+                      <p className="text-2xl font-bold text-primary">{userProfile?.totalWins}</p>
                     </div>
                     <div className="bg-background-light dark:bg-background-dark/50 border border-primary/10 rounded-lg p-4 text-center">
                       <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">High Score</p>
-                      <p className="text-2xl font-bold text-primary">214</p>
+                      <p className="text-2xl font-bold text-primary">{userProfile?.highestScore}</p>
                     </div>
                   </div>
                 </div>
@@ -97,7 +135,7 @@ export default function GameLobby() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: 'single_wicket' }} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: 'single_wicket' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">Single Wicket</h3>
                           <p className="text-white/80 text-sm">Quick play. One wicket to decide the game.</p>
@@ -107,7 +145,7 @@ export default function GameLobby() {
                         </div>
                         <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">1W</div>
                       </Link>
-                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: '5_overs' }} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: '5_overs' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">5 Overs</h3>
                           <p className="text-slate-300 text-sm">A longer format game. Strategize and score.</p>
@@ -167,8 +205,8 @@ export default function GameLobby() {
                         <img alt="Your Rank" className="w-full h-full object-cover" data-alt="Avatar of the current player in the leaderboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjlNWhHKKtMkFR3FDg5bR51PkYVHbIOIc-vP5TkOykYgELSmm8Tg6G3dm3dEXukbB-qMq87wCf0MugxMhuZYVkggeMz9oR6yFsu8a3Rh1cRzeq9NcDkT-pT3fWSdfdlTd4gw0ZmwyifIvYDxfYyOgLIcRQFAlvIUQSkWWckrR87dErnJJ_p9-qKW2bJMySiXMqKWjGpXoz06-MiDRiEuBOenudwD0Zh76xRcJwRwhSKTBta8M8a5LLkLsWgJgznyETNMLOHPxswG8"/>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">Shikhar_D (You)</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">3,120 Pts</p>
+                        <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">{userProfile?.username}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{userProfile?.volts} Volts</p>
                       </div>
                     </div>
                   </div>

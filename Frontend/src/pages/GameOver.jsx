@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef,useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -56,6 +56,36 @@ export default function GameOver() {
   const highestScore = Math.max(state.userScore, state.cpuScore);
   const highestScorer = state.userScore > state.cpuScore ? 'You' : (state.cpuScore > state.userScore ? 'CPU' : 'Tie');
 
+  const formData = { 
+    winner: isUserWin ? 1 : 0,
+    loses: isCpuWin ? 1 : 0,
+    draws: isTie ? 1 : 0,
+    volts: isUserWin ? Math.round(xp) : -Math.round(xp/3),
+    userScore: state.userScore || 0,
+    runsConceded: state.cpuScore || 0,
+    wicketsTaken: state.cpuWickets || 0,
+    netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+    user: location.state?.userProfile.username
+  };
+  
+  const updateDb=async()=>{
+    try {
+      const response = await fetch('/api/v1/users/update-stats', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    updateDb();
+  }, []);
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col grow">
@@ -118,11 +148,11 @@ export default function GameOver() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
-            <Link to="/game" state={{ gameFormat: state.gameFormat, gameMode: state.gameMode }} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            <Link to="/game" state={{ gameFormat: state.gameFormat, gameMode: state.gameMode ,userProfile:state.userProfile}} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH
             </Link>
-            <Link to="/lobby" className="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+            <Link to="/lobby" state={{userProfile:state.userProfile}} className="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">grid_view</span>
               BACK TO LOBBY
             </Link>

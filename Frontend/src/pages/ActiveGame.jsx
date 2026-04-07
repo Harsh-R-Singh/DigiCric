@@ -18,7 +18,9 @@ export default function ActiveGame() {
   // Mode from routing: 'single_wicket' or '5_overs'. Default to 'single_wicket'
   const mode = location.state?.gameFormat || 'single_wicket';
   const gameMode = location.state?.gameMode || 'classic';
-
+  const userProfile = location.state?.userProfile;
+  console.log(location.state);
+  // console.log(userProfile);
   // We unconditionally call both hooks to satisfy React's rules of hooks
   const singleWicketGame = useSingleWicketGame();
   const fiveOverGame = useFiveOverGame();
@@ -82,7 +84,8 @@ export default function ActiveGame() {
             cpuWickets: cpuWickets ?? 1,
             target,
             gameFormat: mode,
-            gameMode: gameMode
+            gameMode: gameMode,
+            userProfile: userProfile,
         } });
       }, 3500); 
       return ;

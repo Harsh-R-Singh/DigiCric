@@ -1,10 +1,46 @@
-import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function UserProfile() {
   const containerRef = useRef();
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        // Step 1: Get the current user session
+        const currentUserRes = await fetch('/api/v1/users/current-user', {
+          credentials: 'include'
+        });
+        if (!currentUserRes.ok) {
+           navigate('/login');
+           return;
+        }
+        const currentUserData = await currentUserRes.json();
+        const username = currentUserData.data.username;
+
+        // Step 2: Get full profile including stats using the retrieved username
+        const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
+          credentials: 'include'
+        });
+        if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
+        const profileData = await profileRes.json();
+        
+        setUserProfile(profileData.data);
+      } catch (err) {
+        console.error(err);
+        setError('Could not load user profile details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfileData();
+  }, [navigate]);
 
   useGSAP(() => {
     gsap.from(".animate-in", {
@@ -21,23 +57,35 @@ export default function UserProfile() {
       <main className="relative pt-24 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
         {/* Background Decorative Watermark */}
         <div className="absolute top-20 -left-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">PRO PLAYER</div>
-        <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">SHIKHAR_D</div>
+        <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">
+          {userProfile?.username || 'VOLT'}
+        </div>
 
-        {/* User Overview & Hero */}
+        {loading ? (
+          <div className="flex h-64 items-center justify-center text-[#ec5b13] font-bold uppercase tracking-widest animate-pulse">
+            Loading player data...
+          </div>
+        ) : error ? (
+          <div className="flex h-64 items-center justify-center text-red-500 font-bold uppercase tracking-widest bg-red-500/10 rounded-xl">
+            {error}
+          </div>
+        ) : (
+          <>
+            {/* User Overview & Hero */}
         <section className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           <div className="lg:col-span-6 flex flex-col md:flex-row items-center md:items-start gap-8 bg-[#2b1c17] p-8 rounded-xl shadow-xl relative overflow-hidden group animate-in">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#ec5b13]/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#ec5b13]/10 transition-colors"></div>
             <div className="relative">
-              <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)]">
-                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE" alt="Portrait"/>
+              <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-black/50">
+                <img className="w-full h-full object-cover" src={userProfile?.avatar === "avatar1" ? "https://lh3.googleusercontent.com/aida-public/AB6AXuBC0M_QMZXHTOsoCBa7nVEec60s2sjZlL4O9ph9-EUIftmuEB4YGxYckk-ClH2HeGguKeKrC_lNbFhFRel-FXXrmo2DMnonWY7SkF_jl1gn9QBLQaoON8oysYGzRfgjof0E3LpFeokhzU_P-Adr301o3lbvqgHYF_ysT-e6hPF4YAozxTu1gTjuqIIq1vveZdR-FAm1esADZDuPN8zfLXcWdAm-q2YepEgQ1bHvtdWXzeXxl1UVutdSRrY1wUzdPjiXU_BUoi-ENU8" : "https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE"} alt="Portrait"/>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL 24</div>
+              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {userProfile?.stats?.level || 1}</div>
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
                 <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">Elite Member</span>
-                <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">SHIKHAR_D</h1>
-                <p className="text-white/50 font-medium mt-2">Member since Oct 12, 2023</p>
+                <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all">{userProfile?.username}</h1>
+                <p className="text-white/50 font-medium mt-2">Member since {new Date(userProfile?.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <button className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
@@ -54,35 +102,29 @@ export default function UserProfile() {
           <div className="lg:col-span-6 grid grid-cols-3 gap-4 animate-in">
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.totalMatches || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Wins</span>
-              <span className="text-4xl font-black text-[#ec5b13] italic">{0}</span>
+              <span className="text-4xl font-black text-[#ec5b13] italic">{userProfile?.stats?.matchesWon || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Losses</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.matchesLost || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Win Rate</span>
-              <span className="text-4xl font-black text-[#ec5b13] italic">{0}%</span>
+              <span className="text-4xl font-black text-[#ec5b13] italic">
+                {userProfile?.stats?.totalMatches ? Math.round((userProfile.stats.matchesWon / userProfile.stats.totalMatches) * 100) : 0}%
+              </span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Runs Scored</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.totalRunsScored || 0}</span>
             </div>
-            {/* <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
-              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Runs Conceded</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
-            </div>
-            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
-              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Wickets Taken</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
-            </div> */}
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Highest Score</span>
-              <span className="text-4xl font-black text-white italic">{0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.highestScore || 0}</span>
             </div>
           </div>
         </section>
@@ -167,7 +209,7 @@ export default function UserProfile() {
               <div className="space-y-6">
                 <div>
                   <label className="text-white/40 text-xs font-bold uppercase">Email Address</label>
-                  <p className="text-white font-medium mt-1">shikhar.d***@gmail.com</p>
+                  <p className="text-white font-medium mt-1">{userProfile?.email}</p>
                 </div>
                 {/* <div>
                   <label className="text-white/40 text-xs font-bold uppercase">Connected Platforms</label>
@@ -218,6 +260,8 @@ export default function UserProfile() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </main>
 
 

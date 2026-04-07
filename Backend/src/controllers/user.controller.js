@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import UserStats from "../models/userstats.models.js";
 import jwt from "jsonwebtoken"
 // import mongoose from "mongoose";
 
@@ -61,7 +62,6 @@ const loginUser = asyncHandler(async (req, res) =>{
     //send cookie
 
     const {email, username, password} = req.body
-    console.log(email,username);
 
     if (!username && !email) {
         return res
@@ -154,7 +154,7 @@ const logoutUser = asyncHandler(async(req, res) => {
         httpOnly: true,
         secure: true
     }
-    console.log(req.user);
+
     return res
     .status(200)
     .clearCookie("accessToken", options)
@@ -315,6 +315,46 @@ const getUserProfile = asyncHandler(async(req, res) => {
     )
 })
 
+const updateUserStats = asyncHandler(async(req, res) => {
+    const {winner, loses, draws, volts, userScore, runsConceded, wicketsTaken, netRunRate} = req.body;
+    
+    // verifyJWT middleware already appends the authenticated user to req.user
+    const userId = req.user?._id;
+
+    if (!userId) {
+        throw new ApiError(401, "Unauthorized: User details missing from request");
+    }
+
+    const updateQuery = {
+        $inc: {
+            matchesPlayed: 1,
+            totalWins: winner ? 1 : 0,
+            totalLosses: loses ? 1 : 0,
+            totalDraws: draws ? 1 : 0,
+            totalRunsScored: Number(userScore) || 0,
+            totalRunsConceded: Number(runsConceded) || 0,
+            totalWicketsTaken: Number(wicketsTaken) || 0,
+            netRunRate: Number(netRunRate) || 0,
+            volts: Number(volts) || 0
+        },
+        $max: {
+            highestScore: Number(userScore) || 0
+        }
+    };
+
+    const updatedStats = await UserStats.findOneAndUpdate(
+        { userId: userId },
+        updateQuery,
+        { new: true, upsert: true }
+    );
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, updatedStats, "User stats updated successfully")
+    );
+})
+
 export {
      registerUser,
      loginUser, 
@@ -323,5 +363,6 @@ export {
      changeCurrentPassword , 
      getCurrentUser , 
      updateAccountDetails,
-     getUserProfile
+     getUserProfile,
+     updateUserStats
 }

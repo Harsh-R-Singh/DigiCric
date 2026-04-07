@@ -36,7 +36,9 @@ const Login = () => {
       // localStorage.setItem('user', JSON.stringify(data.data.user));
       
       // Login successful, redirect to lobby or profile
-      navigate('/lobby');
+      navigate('/lobby',{state:{
+        user:data.data.user
+      }});
     } catch (err) {
       setError(err.message);
     } finally {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
@@ -7,6 +7,24 @@ export default function Navbar() {
   const navigate = useNavigate();
   const path = location.pathname;
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const res = await fetch('/api/v1/users/current-user', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.data);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        setUser(null);
+      }
+    };
+    checkUser();
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -25,7 +43,7 @@ export default function Navbar() {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      localStorage.removeItem('user');
+      setUser(null);
       setIsLoggingOut(false);
       navigate('/login');
     }
@@ -70,26 +88,39 @@ export default function Navbar() {
           </Link>
         </div>
         
-        <div className="flex gap-4">
-          <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
-            <span className="material-symbols-outlined">settings</span>
-          </button>
-          <button 
-            disabled={isLoggingOut}
-            onClick={handleLogout} 
-            title="Logout"
-            className="flex items-center justify-center rounded-lg h-10 w-10 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-all disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined">logout</span>
-          </button>
-        </div>
-        
-        <Link to="/profile" className={`h-10 w-10 rounded-full bg-primary border-2 ${path === '/profile' ? 'border-primary' : 'border-primary/30'} overflow-hidden cursor-pointer hover:border-primary transition-colors`}>
-          <img alt="User Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC0M_QMZXHTOsoCBa7nVEec60s2sjZlL4O9ph9-EUIftmuEB4YGxYckk-ClH2HeGguKeKrC_lNbFhFRel-FXXrmo2DMnonWY7SkF_jl1gn9QBLQaoON8oysYGzRfgjof0E3LpFeokhzU_P-Adr301o3lbvqgHYF_ysT-e6hPF4YAozxTu1gTjuqIIq1vveZdR-FAm1esADZDuPN8zfLXcWdAm-q2YepEgQ1bHvtdWXzeXxl1UVutdSRrY1wUzdPjiXU_BUoi-ENU8"/>
-        </Link>
+        {user ? (
+          <>
+            <div className="flex gap-4">
+              <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
+                <span className="material-symbols-outlined">notifications</span>
+              </button>
+              <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
+                <span className="material-symbols-outlined">settings</span>
+              </button>
+              <button 
+                disabled={isLoggingOut}
+                onClick={handleLogout} 
+                title="Logout"
+                className="flex items-center justify-center rounded-lg h-10 w-10 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-all disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined">logout</span>
+              </button>
+            </div>
+            
+            <Link to="/profile" className={`h-10 w-10 rounded-full bg-primary border-2 ${path === '/profile' ? 'border-primary' : 'border-primary/30'} overflow-hidden cursor-pointer hover:border-primary transition-colors`}>
+              <img alt="User Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC0M_QMZXHTOsoCBa7nVEec60s2sjZlL4O9ph9-EUIftmuEB4YGxYckk-ClH2HeGguKeKrC_lNbFhFRel-FXXrmo2DMnonWY7SkF_jl1gn9QBLQaoON8oysYGzRfgjof0E3LpFeokhzU_P-Adr301o3lbvqgHYF_ysT-e6hPF4YAozxTu1gTjuqIIq1vveZdR-FAm1esADZDuPN8zfLXcWdAm-q2YepEgQ1bHvtdWXzeXxl1UVutdSRrY1wUzdPjiXU_BUoi-ENU8"/>
+            </Link>
+          </>
+        ) : (
+          <div className="flex gap-4">
+            <Link to="/login" className="flex items-center justify-center rounded-lg h-10 px-6 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all font-bold uppercase tracking-wider text-xs">
+              Login
+            </Link>
+            <Link to="/register" className="flex items-center justify-center rounded-lg h-10 px-6 bg-primary text-white hover:bg-primary/90 transition-all font-bold uppercase tracking-wider text-xs shadow-[0_0_15px_rgba(236,91,19,0.3)]">
+              Register
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
