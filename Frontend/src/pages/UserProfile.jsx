@@ -3,6 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
+const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
+const getAvatarUrl = (avatarName) => {
+  if (!avatarName) return avatarImages['../assets/avatar/Avatar1.png'];
+  const normalizedName = avatarName.charAt(0).toUpperCase() + avatarName.slice(1);
+  return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
+};
+
 export default function UserProfile() {
   const containerRef = useRef();
   const navigate = useNavigate();
@@ -51,7 +58,6 @@ export default function UserProfile() {
       ease: "power3.out",
     });
   }, { scope: containerRef });
-
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
       <main className="relative pt-24 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
@@ -77,15 +83,18 @@ export default function UserProfile() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#ec5b13]/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#ec5b13]/10 transition-colors"></div>
             <div className="relative">
               <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-black/50">
-                <img className="w-full h-full object-cover" src={userProfile?.avatar === "avatar1" ? "https://lh3.googleusercontent.com/aida-public/AB6AXuBC0M_QMZXHTOsoCBa7nVEec60s2sjZlL4O9ph9-EUIftmuEB4YGxYckk-ClH2HeGguKeKrC_lNbFhFRel-FXXrmo2DMnonWY7SkF_jl1gn9QBLQaoON8oysYGzRfgjof0E3LpFeokhzU_P-Adr301o3lbvqgHYF_ysT-e6hPF4YAozxTu1gTjuqIIq1vveZdR-FAm1esADZDuPN8zfLXcWdAm-q2YepEgQ1bHvtdWXzeXxl1UVutdSRrY1wUzdPjiXU_BUoi-ENU8" : "https://lh3.googleusercontent.com/aida-public/AB6AXuBqxowsK0gff2Kpji6nl0gRFSCH5Ahe3_0VAM3fy95Ou2amPsvUjBDqr2G1LfmrmFCLLSS86BKrAaAKP-2ro16cU9GXzziUGkXlF29mR721LycDWmyO3F0RSlZjPUSRUHzOfoWKgF5nE9OynfQp2IfYfL6ypIKauY_DUdqsuR6IZWLV1GcVrKl8-k6tQ1577Bc1H9rMGNy0YRm3CrOWKJGH2h2ELIYwQKL4JQoennLRIbusChYN0zlE-t2BzUhhfENtetQXEPUDygE"} alt="Portrait"/>
+                <img className="w-full h-full object-cover" src={getAvatarUrl(userProfile?.avatar)} alt="Portrait"/>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {userProfile?.stats?.level || 1}</div>
+              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {Math.round(userProfile?.volts/3000) +1|| 1}</div>
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
                 <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">Elite Member</span>
                 <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all">{userProfile?.username}</h1>
-                <p className="text-white/50 font-medium mt-2">Member since {new Date(userProfile?.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
+                  <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>
+                </div>
+                
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <button className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
@@ -99,32 +108,40 @@ export default function UserProfile() {
           </div>
 
           {/* Stats Quick View */}
-          <div className="lg:col-span-6 grid grid-cols-3 gap-4 animate-in">
+          <div className="lg:col-span-6 grid grid-cols-4 gap-4 animate-in">
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
-              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.totalMatches || 0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.matchesPlayed || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Wins</span>
-              <span className="text-4xl font-black text-[#ec5b13] italic">{userProfile?.stats?.matchesWon || 0}</span>
+              <span className="text-4xl font-black text-[#ec5b13] italic">{userProfile?.totalWins || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Losses</span>
-              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.matchesLost || 0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.totalLosses || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Win Rate</span>
               <span className="text-4xl font-black text-[#ec5b13] italic">
-                {userProfile?.stats?.totalMatches ? Math.round((userProfile.stats.matchesWon / userProfile.stats.totalMatches) * 100) : 0}%
+                {userProfile?.matchesPlayed ? Math.round((userProfile.totalWins / userProfile.matchesPlayed) * 100) : 0}%
               </span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Runs Scored</span>
-              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.totalRunsScored || 0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.totalRunsScored || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Highest Score</span>
-              <span className="text-4xl font-black text-white italic">{userProfile?.stats?.highestScore || 0}</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.highestScore || 0}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Net Run Rate</span>
+              <span className="text-4xl font-black text-white italic">{(userProfile?.netRunRate/userProfile?.matchesPlayed).toFixed(3) || 0}</span>
+            </div>
+            <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Volts</span>
+              <span className="text-4xl font-black text-white italic">{userProfile?.volts || 0}</span>
             </div>
           </div>
         </section>
@@ -206,10 +223,14 @@ export default function UserProfile() {
           <div className="lg:col-span-4 space-y-8 animate-in">
             <div className="bg-[#2b1c17] p-8 rounded-xl border border-[#5a4138]/10 text-white">
               <h3 className="text-sm font-bold text-[#ec5b13] uppercase tracking-widest mb-6">Account Details</h3>
-              <div className="space-y-6">
-                <div>
-                  <label className="text-white/40 text-xs font-bold uppercase">Email Address</label>
-                  <p className="text-white font-medium mt-1">{userProfile?.email}</p>
+              <div className="space-y-6 ">
+                <div className='flex flex-row items-center'>
+                  <label className="text-white/40 text-xs font-bold uppercase">Email Address : </label>
+                  <p className="text-white text-sm ml-2">{userProfile?.email}</p>
+                </div>
+                <div className='flex flex-row items-center'>
+                  <label className="text-white/40 text-xs font-bold uppercase">Member since : </label>
+                  <p className="text-white text-sm ml-2 ">{new Date(userProfile?.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 {/* <div>
                   <label className="text-white/40 text-xs font-bold uppercase">Connected Platforms</label>

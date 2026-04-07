@@ -3,6 +3,13 @@ import { Link,useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
+const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
+const getAvatarUrl = (avatarName) => {
+  if (!avatarName) return avatarImages['../assets/avatar/Avatar1.png'];
+  const normalizedName = avatarName.charAt(0).toUpperCase() + avatarName.slice(1);
+  return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
+};
+
 export default function GameLobby() {
   const [selectedMode, setSelectedMode] = useState(null);
   const containerRef = useRef();
@@ -68,13 +75,13 @@ useEffect(() => {
                 <div className="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-8 animate-in">
                   <div className="flex items-center gap-6 mb-8">
                     <div className="size-24 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-4xl overflow-hidden">
-                      <img alt="Avatar" className="w-full h-full" data-alt="Avatar of the player with orange highlights" src={`../assets/avatar/${userProfile?.avatar}.png`}/>
+                      <img alt="Avatar" className="w-full h-full object-cover" data-alt="Avatar of the player with orange highlights" src={getAvatarUrl(userProfile?.avatar)}/>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{userProfile?.username}</h3>
-                      <p className="text-primary font-medium text-lg">Level {userProfile?.level?userProfile?.level:0} {userProfile?.rank?userProfile?.rank:"Newbie"}</p>
+                      <p className="text-primary font-medium text-lg">Level {Math.round(userProfile?.volts/3000) +1|| 1} {userProfile?.rank?userProfile?.rank:"Newbie"}</p>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
-                        <div className="bg-primary h-full rounded-full" style={{ width: '75%' }}></div>
+                        <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>
                       </div>
                     </div>
                   </div>
@@ -202,7 +209,7 @@ useEffect(() => {
                     <div className="mt-auto flex items-center gap-4 p-6 bg-primary/10 border-t border-primary/20">
                       <span className="text-primary font-bold text-2xl w-8">12</span>
                       <div className="size-14 rounded-full border-2 border-primary/40 overflow-hidden">
-                        <img alt="Your Rank" className="w-full h-full object-cover" data-alt="Avatar of the current player in the leaderboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjlNWhHKKtMkFR3FDg5bR51PkYVHbIOIc-vP5TkOykYgELSmm8Tg6G3dm3dEXukbB-qMq87wCf0MugxMhuZYVkggeMz9oR6yFsu8a3Rh1cRzeq9NcDkT-pT3fWSdfdlTd4gw0ZmwyifIvYDxfYyOgLIcRQFAlvIUQSkWWckrR87dErnJJ_p9-qKW2bJMySiXMqKWjGpXoz06-MiDRiEuBOenudwD0Zh76xRcJwRwhSKTBta8M8a5LLkLsWgJgznyETNMLOHPxswG8"/>
+                        <img alt="Your Rank" className="w-full h-full object-cover" data-alt="Avatar of the current player in the leaderboard" src={getAvatarUrl(userProfile?.avatar)}/>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">{userProfile?.username}</p>

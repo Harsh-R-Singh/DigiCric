@@ -298,8 +298,17 @@ const getUserProfile = asyncHandler(async(req, res) => {
                 username: 1,
                 email: 1,
                 avatar: 1,
-                stats: 1,
-                createdAt: 1
+                createdAt: 1,
+                matchesPlayed: { $ifNull: ["$stats.matchesPlayed", 0] },
+                totalWins: { $ifNull: ["$stats.totalWins", 0] },
+                totalLosses: { $ifNull: ["$stats.totalLosses", 0] },
+                totalDraws: { $ifNull: ["$stats.totalDraws", 0] },
+                totalRunsScored: { $ifNull: ["$stats.totalRunsScored", 0] },
+                totalRunsConceded: { $ifNull: ["$stats.totalRunsConceded", 0] },
+                totalWicketsTaken: { $ifNull: ["$stats.totalWicketsTaken", 0] },
+                netRunRate: { $ifNull: ["$stats.netRunRate", 0] },
+                volts: { $ifNull: ["$stats.volts", 0] },
+                highestScore: { $ifNull: ["$stats.highestScore", 0] },
             }
         }
     ])

@@ -25,9 +25,18 @@ const userSchema = new mongoose.Schema({
     },
     avatar:{
         type:String,
-        enum:["avatar1","avatar2","avatar3","avatar4","avatar5","avatar6","avatar7","avatar8","avatar9","avatar10","avatar11"],
-        default:"avatar1"
+        enum:["Avatar1","Avatar2","Avatar3","Avatar4","Avatar5","Avatar6","Avatar7","Avatar8","Avatar9","Avatar10","Avatar11"],
+        default:"Avatar1"
     },
+    level:{
+        type:Number,
+        default:1
+    },
+    rank:{
+        type:String,
+        default:"Newbie"
+    },
+
     refreshToken: {
         type: String
     }

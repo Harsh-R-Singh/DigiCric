@@ -23,7 +23,7 @@ const INITIAL_STATE = {
 
 const MAX_OVERS = 5;
 const MAX_BALLS = MAX_OVERS * 6;
-const MAX_WICKETS = 10;
+const MAX_WICKETS = 5;
 
 export function useFiveOverGame() {
   const [gameState, setGameState] = useState(INITIAL_STATE);
