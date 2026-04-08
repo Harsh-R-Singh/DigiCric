@@ -75,7 +75,7 @@ useEffect(() => {
                 <div className="bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 p-8 animate-in">
                   <div className="flex items-center gap-6 mb-8">
                     <div className="size-24 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-4xl overflow-hidden">
-                      <img alt="Avatar" className="w-full h-full object-cover" data-alt="Avatar of the player with orange highlights" src={getAvatarUrl(userProfile?.avatar)}/>
+                      <img alt="Avatar" className="w-full h-full object-cover scale-120" data-alt="Avatar of the player with orange highlights" src={getAvatarUrl(userProfile?.avatar)}/>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{userProfile?.username}</h3>

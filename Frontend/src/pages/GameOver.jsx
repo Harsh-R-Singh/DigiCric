@@ -60,7 +60,7 @@ export default function GameOver() {
     winner: isUserWin ? 1 : 0,
     loses: isCpuWin ? 1 : 0,
     draws: isTie ? 1 : 0,
-    volts: isUserWin ? Math.round(xp) : -Math.round(xp/3),
+    volts: isUserWin ? Math.round(xp) : -Math.round(xp/2),
     userScore: state.userScore || 0,
     runsConceded: state.cpuScore || 0,
     wicketsTaken: state.cpuWickets || 0,
@@ -142,7 +142,7 @@ export default function GameOver() {
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
               <p className="text-xs text-slate-500 uppercase font-bold">Volts</p>
-              <p className="font-bold">{isUserWin ? `+${Math.round(xp)}` : `-${Math.round(xp/3)}`} Volts</p>
+              <p className="font-bold">{isUserWin ? `+${Math.round(xp)}` : `-${Math.round(xp/2)}`} Volts</p>
             </div>
           </div>
 

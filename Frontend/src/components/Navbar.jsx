@@ -107,7 +107,7 @@ export default function Navbar() {
               </button>
             </div>
             
-            <Link to="/profile" className={`h-10 w-10 rounded-full bg-primary border-2 ${path === '/profile' ? 'border-primary' : 'border-primary/30'} overflow-hidden cursor-pointer hover:border-primary transition-colors`}>
+            <Link to={`/profile/${user.username}`} className={`h-10 w-10 rounded-full bg-primary border-2 ${path.startsWith('/profile') ? 'border-primary' : 'border-primary/30'} overflow-hidden cursor-pointer hover:border-primary transition-colors`}>
               <img alt="User Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC0M_QMZXHTOsoCBa7nVEec60s2sjZlL4O9ph9-EUIftmuEB4YGxYckk-ClH2HeGguKeKrC_lNbFhFRel-FXXrmo2DMnonWY7SkF_jl1gn9QBLQaoON8oysYGzRfgjof0E3LpFeokhzU_P-Adr301o3lbvqgHYF_ysT-e6hPF4YAozxTu1gTjuqIIq1vveZdR-FAm1esADZDuPN8zfLXcWdAm-q2YepEgQ1bHvtdWXzeXxl1UVutdSRrY1wUzdPjiXU_BUoi-ENU8"/>
             </Link>
           </>

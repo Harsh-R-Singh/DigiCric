@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
@@ -13,6 +13,7 @@ const getAvatarUrl = (avatarName) => {
 export default function UserProfile() {
   const containerRef = useRef();
   const navigate = useNavigate();
+  const { username } = useParams();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +21,7 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Step 1: Get the current user session
+        // Step 1: Check if user is authenticated
         const currentUserRes = await fetch('/api/v1/users/current-user', {
           credentials: 'include'
         });
@@ -28,10 +29,8 @@ export default function UserProfile() {
            navigate('/login');
            return;
         }
-        const currentUserData = await currentUserRes.json();
-        const username = currentUserData.data.username;
 
-        // Step 2: Get full profile including stats using the retrieved username
+        // Step 2: Get full profile including stats using the param username
         const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
           credentials: 'include'
         });
@@ -60,7 +59,7 @@ export default function UserProfile() {
   }, { scope: containerRef });
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
-      <main className="relative pt-24 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
+      <main className="relative pt-12 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
         {/* Background Decorative Watermark */}
         <div className="absolute top-20 -left-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">PRO PLAYER</div>
         <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">
@@ -82,8 +81,8 @@ export default function UserProfile() {
           <div className="lg:col-span-6 flex flex-col md:flex-row items-center md:items-start gap-8 bg-[#2b1c17] p-8 rounded-xl shadow-xl relative overflow-hidden group animate-in">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#ec5b13]/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#ec5b13]/10 transition-colors"></div>
             <div className="relative">
-              <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-black/50">
-                <img className="w-full h-full object-cover" src={getAvatarUrl(userProfile?.avatar)} alt="Portrait"/>
+              <div className="w-40 h-40 rounded-full scale-120 overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-black/50">
+                <img className="w-full h-full object-cover scale-120" src={getAvatarUrl(userProfile?.avatar)} alt="Portrait"/>
               </div>
               <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {Math.round(userProfile?.volts/3000) +1|| 1}</div>
             </div>
@@ -284,8 +283,6 @@ export default function UserProfile() {
           </>
         )}
       </main>
-
-
     </div>
   );
 }

@@ -23,7 +23,7 @@ function App() {
           <Route path="/game" element={<ActiveGame />} />
           <Route path="/game-over" element={<GameOver />} />
           <Route path="/guide" element={<UserGuide />} />
-          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/profile/:username" element={<UserProfile />} />
           <Route path="/rankings" element={<Rankings />} />
           <Route path="/camera" element={<CameraMode />} />
           <Route path="/login" element={<Login />} />
