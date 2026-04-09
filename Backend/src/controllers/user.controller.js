@@ -242,18 +242,28 @@ const getCurrentUser = asyncHandler(async(req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {fullName, email} = req.body
+    const {username, email} = req.body
 
-    if (!fullName || !email) {
+    if (!username || !email) {
         throw new ApiError(400, "All fields are required")
+    }
+
+    const existingUser = await User.findOne({ username, _id: { $ne: req.user._id } });
+    if (existingUser) {
+        throw new ApiError(409, "Username already exists");
+    }
+
+    const existingEmail = await User.findOne({ email, _id: { $ne: req.user._id } });
+    if (existingEmail) {
+        throw new ApiError(409, "Email already exists");
     }
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
-                fullName,
-                email: email
+                username,
+                email
             }
         },
         {new: true}
@@ -364,6 +374,26 @@ const updateUserStats = asyncHandler(async(req, res) => {
     );
 })
 
+const deleteAccount = asyncHandler(async(req, res) => {
+    // Delete user stats from UserStats collection
+    await UserStats.findOneAndDelete({ userId: req.user._id });
+    // Delete user from User collection
+    await User.findByIdAndDelete(req.user._id);
+    
+
+    // Clear cookies
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User account successfully deleted"));
+});
+
 export {
      registerUser,
      loginUser, 
@@ -373,5 +403,6 @@ export {
      getCurrentUser , 
      updateAccountDetails,
      getUserProfile,
-     updateUserStats
+     updateUserStats,
+     deleteAccount
 }

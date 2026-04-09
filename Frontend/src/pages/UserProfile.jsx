@@ -96,10 +96,10 @@ export default function UserProfile() {
                 
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <button className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
+                <button onClick={() => navigate('/settings')} className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
                   <span className="material-symbols-outlined text-sm">edit</span> EDIT PROFILE
                 </button>
-                <button className="bg-[#41312b] border border-[#5a4138]/30 text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-[#46352f] transition-all active:scale-95">
+                <button onClick={() => navigate('/settings')} className="bg-[#41312b] border border-[#5a4138]/30 text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-[#46352f] transition-all active:scale-95">
                   <span className="material-symbols-outlined text-sm">lock</span> SECURITY
                 </button>
               </div>

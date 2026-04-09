@@ -8,7 +8,8 @@ import {
     updateAccountDetails,
     getUserProfile,
     getCurrentUser,
-    updateUserStats
+    updateUserStats,
+    deleteAccount
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -24,5 +25,6 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails)
 router.route("/profile/:username").get(verifyJWT, getUserProfile)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 router.route("/update-stats").patch(verifyJWT, updateUserStats)
+router.route("/delete-account").delete(verifyJWT, deleteAccount)
 
 export default router

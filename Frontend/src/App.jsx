@@ -9,6 +9,7 @@ import Rankings from './pages/Rankings';
 import CameraMode from './pages/CameraMode';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Settings from './pages/Settings';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/camera" element={<CameraMode />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
       <Footer />
