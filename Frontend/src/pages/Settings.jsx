@@ -70,8 +70,8 @@ export default function Settings() {
       const data = await res.json();
       
       if (!res.ok) throw new Error(data.message || 'Failed to update account details');
-      
       setAccountMsg({ type: 'success', text: 'Account details updated successfully.' });
+      navigate(`/profile/${username}`);
     } catch (err) {
       setAccountMsg({ type: 'error', text: err.message });
     }
@@ -82,7 +82,7 @@ export default function Settings() {
     setPasswordMsg({ type: '', text: '' });
     
     if (newPassword !== confirmPassword) {
-      setPasswordMsg({ type: 'error', text: 'New passwords do not match.' });
+      setPasswordMsg({ type: 'error', text: 'New password and confirm password do not match.' });
       return;
     }
 
@@ -123,7 +123,9 @@ export default function Settings() {
       });
       const data = await res.json();
       
-      if (!res.ok) throw new Error(data.message || 'Failed to delete account');
+      if (!res.ok){
+        throw new Error(data.message || 'Failed to delete account');
+      }
       
       navigate('/login');
     } catch (err) {
@@ -267,7 +269,7 @@ export default function Settings() {
               <button 
                 onClick={handleDeleteAccount}
                 disabled={deleteConfirmation !== username}
-                className={`mt-4 font-bold px-6 py-3 rounded-lg flex items-center gap-2 text-sm uppercase tracking-wider transition-all
+                className={`mt-4 font-bold px-6 py-3 rounded-lg flex items-center gap-2 text-sm tracking-wider transition-all
                   ${deleteConfirmation === username 
                     ? 'bg-red-500 text-white hover:bg-red-600 active:scale-95' 
                     : 'bg-[#41312b] text-white/30 cursor-not-allowed border border-[#5a4138]/30'

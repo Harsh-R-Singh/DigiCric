@@ -88,9 +88,13 @@ export default function UserProfile() {
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
-                <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">Elite Member</span>
+                <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">{userProfile?.rank}</span>
                 <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all">{userProfile?.username}</h1>
-                <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
+                <div className="flex justify-between">
+                  <p>Lvl {Math.round(userProfile?.volts/3000) +1}</p>
+                  <p>Lvl {Math.round(userProfile?.volts/3000) +2}</p>
+                </div>
+                <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full ">
                   <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>
                 </div>
                 

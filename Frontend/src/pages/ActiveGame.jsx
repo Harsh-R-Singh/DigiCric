@@ -70,8 +70,61 @@ export default function ActiveGame() {
     }
   }, [innings]);
 
+  const updateDbDone = useRef(false);
+
   useEffect(() => {
     if (isGameOver) {
+      if (!updateDbDone.current) {
+        updateDbDone.current = true;
+        
+        const isUserWin = winner === 'user';
+        const isCpuWin = winner === 'cpu';
+        const isTie = winner === 'tie';
+
+        let xp = 100;
+        const uBalls = userBallsFaced || 1;
+        const cBalls = cpuBallsFaced || 1;
+
+        if (isUserWin) {
+          xp = (((userScore / Math.max(uBalls,cBalls)) -(cpuScore / Math.max(cBalls,uBalls)))*100);
+        } else if (isCpuWin) {
+          xp = (((cpuScore / Math.max(cBalls,uBalls)) -(userScore / Math.max(uBalls,cBalls)))*100);
+        }
+
+        const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
+        const xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
+
+        const formData = {
+          winner: isUserWin ? 1 : 0,
+          loses: isCpuWin ? 1 : 0,
+          draws: isTie ? 1 : 0,
+          userScore: userScore || 0,
+          runsConceded: cpuScore || 0,
+          wicketsTaken: cpuWickets || 0,
+          user: userProfile?.username,
+          netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+          volts: voltsEarned,
+          xp: xpEarned
+        };
+
+        const pushStats = async () => {
+          try {
+            const response = await fetch('/api/v1/users/update-stats', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData),
+              credentials: 'include'
+            });
+            const data = await response.json();
+            console.log("Stats updated:", data);
+          } catch (error) {
+            console.log("Stats update failed:", error);
+          }
+        };
+
+        pushStats();
+      }
+
       const timer = setTimeout(() => {
         // Pass full state to game over scoreboard
         navigate('/game-over', { state: { 
@@ -88,7 +141,7 @@ export default function ActiveGame() {
             userProfile: userProfile,
         } });
       }, 3500); 
-      return ;
+      return () => clearTimeout(timer);
     }
   }, [isGameOver, navigate, winner, userScore, cpuScore, userBallsFaced, cpuBallsFaced, userWickets, cpuWickets, target, mode]);
 

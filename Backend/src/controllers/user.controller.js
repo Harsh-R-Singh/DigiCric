@@ -26,7 +26,8 @@ const generateAccessAndRefreshTokens = async(userId) =>{
 const registerUser = asyncHandler(async (req, res, next) => {
     const { username, email, password } = req.body
     if(!username || !email || !password){
-        throw new ApiError(400, "All fields are required")
+        return res.status(400).json(new ApiResponse(400, {}, "All fields are required"))
+        // throw new ApiError(400, "All fields are required")
     }
     const existedUser = await User.findOne({
         $or: [{ username }, { email }]
@@ -40,14 +41,15 @@ const registerUser = asyncHandler(async (req, res, next) => {
         username,
         email,
         password,
-        avatar: "avatar1"
+        avatar: "Avatar1"
     })
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
     
     if (!createdUser) {
-        throw new ApiError(500, "Something went wrong while registering the user")
+        return res.status(500).json(new ApiResponse(500, {}, "Something went wrong while registering the user"))
+        // throw new ApiError(500, "Something went wrong while registering the user")
     }
 
     return res.status(201).json(new ApiResponse(200, createdUser, "User registered successfully"))
@@ -219,9 +221,19 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
 
     if (!isPasswordCorrect) {
-        throw new ApiError(400, "Invalid old password")
+        return res.status(400).json(new ApiResponse(400, {}, "Invalid old password"));
+        // throw new ApiError(400, "Invalid old password")
     }
 
+    if (!newPassword) {
+        return res.status(400).json(new ApiResponse(400, {}, "New password is required"));
+        // throw new ApiError(400, "New password is required")
+    }
+
+    if(oldPassword === newPassword) {
+        return res.status(400).json(new ApiResponse(400, {}, "New password cannot be same as old password"));
+        // throw new ApiError(400, "New password cannot be same as old password")
+    }
     user.password = newPassword
     await user.save({validateBeforeSave: false})
 
@@ -245,17 +257,20 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
     const {username, email} = req.body
 
     if (!username || !email) {
-        throw new ApiError(400, "All fields are required")
+        return res.status(400).json(new ApiResponse(400, {}, "All fields are required"));
+        // throw new ApiError(400, "All fields are required")
     }
 
     const existingUser = await User.findOne({ username, _id: { $ne: req.user._id } });
     if (existingUser) {
-        throw new ApiError(409, "Username already exists");
+        return res.status(409).json(new ApiResponse(409, {}, "Username already exists"));
+        // throw new ApiError(409, "Username already exists");
     }
 
     const existingEmail = await User.findOne({ email, _id: { $ne: req.user._id } });
     if (existingEmail) {
-        throw new ApiError(409, "Email already exists");
+        return res.status(409).json(new ApiResponse(409, {}, "Email already exists"));
+        // throw new ApiError(409, "Email already exists");
     }
 
     const user = await User.findByIdAndUpdate(
@@ -319,6 +334,9 @@ const getUserProfile = asyncHandler(async(req, res) => {
                 netRunRate: { $ifNull: ["$stats.netRunRate", 0] },
                 volts: { $ifNull: ["$stats.volts", 0] },
                 highestScore: { $ifNull: ["$stats.highestScore", 0] },
+                level: { $ifNull: ["$stats.level", 1] },
+                rank: { $ifNull: ["$stats.rank", "Newbie"] },
+                xp: { $ifNull: ["$stats.xp", 0] },
             }
         }
     ])
@@ -335,7 +353,7 @@ const getUserProfile = asyncHandler(async(req, res) => {
 })
 
 const updateUserStats = asyncHandler(async(req, res) => {
-    const {winner, loses, draws, volts, userScore, runsConceded, wicketsTaken, netRunRate} = req.body;
+    const {winner, loses, draws, volts, userScore, runsConceded, wicketsTaken, netRunRate,xp} = req.body;
     
     // verifyJWT middleware already appends the authenticated user to req.user
     const userId = req.user?._id;
@@ -354,10 +372,15 @@ const updateUserStats = asyncHandler(async(req, res) => {
             totalRunsConceded: Number(runsConceded) || 0,
             totalWicketsTaken: Number(wicketsTaken) || 0,
             netRunRate: Number(netRunRate) || 0,
-            volts: Number(volts) || 0
+            volts: Number(volts) || 0,
+            xp: Number(xp) || 0
         },
         $max: {
             highestScore: Number(userScore) || 0
+        },
+        $set: {
+            level: Math.floor((xp /3000)+1),
+            rank: volts >= 50000 ? "Legend" : volts >= 25000 ? "Master" : volts >= 10000 ? "Pro" : volts >= 5000 ? "Intermediate" : "Newbie"
         }
     };
 
@@ -396,7 +419,7 @@ const deleteAccount = asyncHandler(async(req, res) => {
 
 export {
      registerUser,
-     loginUser, 
+     loginUser,
      logoutUser, 
      refreshAccessToken , 
      changeCurrentPassword , 

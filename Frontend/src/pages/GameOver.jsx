@@ -1,10 +1,11 @@
 import React, { useRef,useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function GameOver() {
   const containerRef = useRef();
+  const navigate = useNavigate();
   const location = useLocation();
   
   // Default fallback if navigated directly without state
@@ -38,7 +39,7 @@ export default function GameOver() {
 
   let titleText = 'MATCH TIED!';
   let titleColor = 'text-yellow-500';
-  let xp = 200;
+  let xp = 100;
   
   if (isUserWin) {
     titleText = 'YOU WON!';
@@ -56,36 +57,10 @@ export default function GameOver() {
   const highestScore = Math.max(state.userScore, state.cpuScore);
   const highestScorer = state.userScore > state.cpuScore ? 'You' : (state.cpuScore > state.userScore ? 'CPU' : 'Tie');
 
-  const formData = { 
-    winner: isUserWin ? 1 : 0,
-    loses: isCpuWin ? 1 : 0,
-    draws: isTie ? 1 : 0,
-    volts: isUserWin ? Math.round(xp) : -Math.round(xp/2),
-    userScore: state.userScore || 0,
-    runsConceded: state.cpuScore || 0,
-    wicketsTaken: state.cpuWickets || 0,
-    netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
-    user: location.state?.userProfile.username
-  };
-  
-  const updateDb=async()=>{
-    try {
-      const response = await fetch('/api/v1/users/update-stats', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-        credentials: 'include'
-      });
+  const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
+  const xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
 
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  useEffect(() => {
-    updateDb();
-  }, []);
+
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col grow">
@@ -123,11 +98,11 @@ export default function GameOver() {
           </div>
 
           {/* Stats Grid */}
-          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 animate-in">
+          <div className="w-full grid grid-cols-2 md:grid-cols-5 gap-3 animate-in">
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">bolt</span>
               <p className="text-xs text-slate-500 uppercase font-bold">NET RUN-RATE</p>
-              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>{isUserWin ? '+' : '-'}{(xp/100).toFixed(3)}</p>
+              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>{isUserWin ? '+' : (isTie ? '' : '-')}{(xp/100).toFixed(3)}</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">speed</span>
@@ -142,20 +117,25 @@ export default function GameOver() {
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
               <p className="text-xs text-slate-500 uppercase font-bold">Volts</p>
-              <p className="font-bold">{isUserWin ? `+${Math.round(xp)}` : `-${Math.round(xp/2)}`} Volts</p>
+              <p className={`font-bold ${voltsEarned > 0 ? 'text-primary' : (voltsEarned < 0 ? 'text-red-500' : 'text-slate-400')}`}>{voltsEarned > 0 ? `+${voltsEarned}` : voltsEarned} Volts</p>
+            </div>
+            <div className="p-4 rounded-lg glass-panel text-left">
+              <span className="material-symbols-outlined text-purple-500 text-xl mb-2">military_tech</span>
+              <p className="text-xs text-slate-500 uppercase font-bold">XP Gained</p>
+              <p className="font-bold text-purple-500">+{xpEarned} XP</p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
-            <Link to="/game" state={{ gameFormat: state.gameFormat, gameMode: state.gameMode ,userProfile:state.userProfile}} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            <button onClick={() => navigate('/game', { state: { gameFormat: state.gameFormat, gameMode: state.gameMode, userProfile: state.userProfile } })} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH
-            </Link>
-            <Link to="/lobby" state={{userProfile:state.userProfile}} className="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+            </button>
+            <button onClick={() => navigate('/lobby', { state: { userProfile: state.userProfile } })} className="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">grid_view</span>
               BACK TO LOBBY
-            </Link>
+            </button>
           </div>
         </main>
 

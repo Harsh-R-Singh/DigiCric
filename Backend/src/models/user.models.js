@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"Newbie"
     },
-
+    
     refreshToken: {
         type: String
     }
