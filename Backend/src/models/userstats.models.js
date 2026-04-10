@@ -43,14 +43,7 @@ const userStatsSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
-    volts:{
-        type:Number,
-        default:0
-    },
-    xp:{
-        type:Number,
-        default:0
-    }
+   
 })
 
 const UserStats = mongoose.model("UserStats", userStatsSchema)

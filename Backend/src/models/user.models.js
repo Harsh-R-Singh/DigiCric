@@ -36,7 +36,14 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"Newbie"
     },
-    
+     volts:{
+        type:Number,
+        default:0
+    },
+    xp:{
+        type:Number,
+        default:0
+    },
     refreshToken: {
         type: String
     }

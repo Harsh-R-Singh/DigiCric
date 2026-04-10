@@ -57,6 +57,18 @@ export default function UserProfile() {
       ease: "power3.out",
     });
   }, { scope: containerRef });
+
+  const getFireClass = (rank) => {
+    switch (rank?.toLowerCase()) {
+      case 'legend': return 'anim-fire-legend';
+      case 'master': return 'anim-fire-master';
+      case 'pro': return 'anim-fire-pro';
+      case 'intermediate': return 'anim-fire-intermediate';
+      case 'newbie': return 'anim-fire-newbie text-[#f8ddd4]/80';
+      default: return 'anim-fire-newbie text-[#f8ddd4]/80';
+    }
+  };
+  console.log(userProfile);
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
       <main className="relative pt-12 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
@@ -84,15 +96,15 @@ export default function UserProfile() {
               <div className="w-40 h-40 rounded-full scale-120 overflow-hidden border-4 border-[#ec5b13] shadow-[0_0_25px_rgba(236,91,19,0.3)] bg-black/50">
                 <img className="w-full h-full object-cover scale-120" src={getAvatarUrl(userProfile?.avatar)} alt="Portrait"/>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {Math.round(userProfile?.volts/3000) +1|| 1}</div>
+              <div className="absolute -bottom-2 -right-2 bg-[#ec5b13] text-white font-black px-3 py-1 rounded-lg text-sm italic">LVL {userProfile?.level|| 1}</div>
             </div>
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
                 <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">{userProfile?.rank}</span>
-                <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all">{userProfile?.username}</h1>
+                <h1 className={`text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all py-2 ${getFireClass(userProfile?.rank)}`}>{userProfile?.username}</h1>
                 <div className="flex justify-between">
-                  <p>Lvl {Math.round(userProfile?.volts/3000) +1}</p>
-                  <p>Lvl {Math.round(userProfile?.volts/3000) +2}</p>
+                  <p>Lvl {userProfile?.level}</p>
+                  <p>Lvl {userProfile?.level+1}</p>
                 </div>
                 <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full ">
                   <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>

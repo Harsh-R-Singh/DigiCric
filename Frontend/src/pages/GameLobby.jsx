@@ -50,7 +50,7 @@ useEffect(() => {
         });
         if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
         const profileData = await profileRes.json();
-        // console.log(profileData);
+
         setUserProfile(profileData.data);
       } catch (err) {
         console.error(err);
@@ -61,7 +61,7 @@ useEffect(() => {
     };
     fetchProfileData();
   }, [navigate]);
-  console.log(userProfile);
+
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">

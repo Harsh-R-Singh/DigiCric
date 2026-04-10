@@ -17,7 +17,7 @@
   html {
     font-size: 80%;
   }
-  
+
   body {
     @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display antialiased;
   }
@@ -33,4 +33,96 @@
   background: rgba(236, 91, 19, 0.05);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(236, 91, 19, 0.1);
+}
+
+@keyframes fire-newbie {
+
+  0%,
+  100% {
+    text-shadow: 0 0 5px rgba(255, 165, 0, 0.4);
+  }
+
+  50% {
+    text-shadow: 0 0 8px rgba(255, 165, 0, 0.8), 0 -2px 4px rgba(255, 140, 0, 0.6);
+  }
+}
+
+@keyframes fire-intermediate {
+
+  0%,
+  100% {
+    text-shadow: 0 0 4px #ff8c00, 0 0 10px #ff4500, 0 -4px 6px #ff0000;
+  }
+
+  50% {
+    text-shadow: 0 0 8px #ff8c00, 0 0 15px #ff4500, 0 -8px 12px #ff0000;
+    color: #fff8eb;
+  }
+}
+
+@keyframes fire-pro {
+
+  0%,
+  100% {
+    text-shadow: 0 -2px 4px #fff, 0 -4px 10px #ff0, 0 -8px 20px #ff8000, 0 -12px 35px #ff0000;
+    color: white;
+  }
+
+  50% {
+    text-shadow: 0 -3px 6px #fff, 0 -8px 15px #ff0, 0 -15px 30px #ff8000, 0 -20px 45px #ff0000;
+    color: #fffae0;
+  }
+}
+
+@keyframes fire-master {
+
+  0%,
+  100% {
+    text-shadow: 0 -2px 4px #e0ffff, 0 -4px 10px #00ffff, 0 -8px 20px #1e90ff, 0 -12px 35px #0000ff;
+    color: white;
+  }
+
+  50% {
+    text-shadow: 0 -3px 6px #e0ffff, 0 -8px 15px #00ffff, 0 -15px 30px #1e90ff, 0 -20px 45px #0000ff;
+    color: #f0f8ff;
+  }
+}
+
+@keyframes fire-legend {
+
+  0%,
+  100% {
+    text-shadow: 0 -2px 4px #ffe4e1, 0 -4px 10px #ff00ff, 0 -8px 20px #9400d3, 0 -12px 35px #4b0082;
+    color: white;
+  }
+
+  33% {
+    text-shadow: 0 -3px 6px #ffe4e1, 0 -8px 15px #ff1493, 0 -15px 30px #8a2be2, 0 -20px 45px #4b0082;
+    color: #fff0f5;
+  }
+
+  66% {
+    text-shadow: 0 -4px 8px #ffe4e1, 0 -12px 20px #00ffff, 0 -20px 40px #9400d3, 0 -25px 60px #4b0082;
+    color: white;
+  }
+}
+
+.anim-fire-newbie {
+  animation: fire-newbie 2s infinite alternate ease-in-out;
+}
+
+.anim-fire-intermediate {
+  animation: fire-intermediate 1s infinite alternate ease-in-out;
+}
+
+.anim-fire-pro {
+  animation: fire-pro 0.8s infinite alternate ease-in-out;
+}
+
+.anim-fire-master {
+  animation: fire-master 0.6s infinite alternate ease-in-out;
+}
+
+.anim-fire-legend {
+  animation: fire-legend 1s infinite alternate ease-in-out;
 }

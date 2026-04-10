@@ -39,7 +39,7 @@ export default function GameOver() {
 
   let titleText = 'MATCH TIED!';
   let titleColor = 'text-yellow-500';
-  let xp = 100;
+  let xp = 0;
   
   if (isUserWin) {
     titleText = 'YOU WON!';

@@ -324,6 +324,10 @@ const getUserProfile = asyncHandler(async(req, res) => {
                 email: 1,
                 avatar: 1,
                 createdAt: 1,
+                volts:1,
+                level:1,
+                xp:1,
+                rank:1,
                 matchesPlayed: { $ifNull: ["$stats.matchesPlayed", 0] },
                 totalWins: { $ifNull: ["$stats.totalWins", 0] },
                 totalLosses: { $ifNull: ["$stats.totalLosses", 0] },
@@ -332,11 +336,7 @@ const getUserProfile = asyncHandler(async(req, res) => {
                 totalRunsConceded: { $ifNull: ["$stats.totalRunsConceded", 0] },
                 totalWicketsTaken: { $ifNull: ["$stats.totalWicketsTaken", 0] },
                 netRunRate: { $ifNull: ["$stats.netRunRate", 0] },
-                volts: { $ifNull: ["$stats.volts", 0] },
                 highestScore: { $ifNull: ["$stats.highestScore", 0] },
-                level: { $ifNull: ["$stats.level", 1] },
-                rank: { $ifNull: ["$stats.rank", "Newbie"] },
-                xp: { $ifNull: ["$stats.xp", 0] },
             }
         }
     ])
@@ -372,23 +372,46 @@ const updateUserStats = asyncHandler(async(req, res) => {
             totalRunsConceded: Number(runsConceded) || 0,
             totalWicketsTaken: Number(wicketsTaken) || 0,
             netRunRate: Number(netRunRate) || 0,
-            volts: Number(volts) || 0,
-            xp: Number(xp) || 0
         },
         $max: {
             highestScore: Number(userScore) || 0
-        },
-        $set: {
-            level: Math.floor((xp /3000)+1),
-            rank: volts >= 50000 ? "Legend" : volts >= 25000 ? "Master" : volts >= 10000 ? "Pro" : volts >= 5000 ? "Intermediate" : "Newbie"
         }
     };
 
-    const updatedStats = await UserStats.findOneAndUpdate(
+    let updatedStats = await UserStats.findOneAndUpdate(
         { userId: userId },
         updateQuery,
         { new: true, upsert: true }
     );
+
+    let user = await User.findByIdAndUpdate(
+        userId,
+        {
+            $inc: {
+                volts: Number(volts) || 0,
+                xp: Number(xp) || 0
+            }
+        },
+        {new: true, upsert: true}
+    );
+    const calculatedLevel = Math.floor((user.xp / 3000) + 1);
+    
+    let calculatedRank = "Newbie";
+    if (user.volts >= 100) {
+        calculatedRank = "Legend";
+    } else if (user.volts >= 50) {
+        calculatedRank = "Master";
+    } else if (user.volts >= 10) {
+        calculatedRank = "Pro";
+    } else if (user.volts >= 5) {
+        calculatedRank = "Intermediate";
+    }
+
+    if (user.level !== calculatedLevel || user.rank !== calculatedRank) {
+        user.level = calculatedLevel;
+        user.rank = calculatedRank;
+        await user.save();
+    }
 
     return res
     .status(200)
