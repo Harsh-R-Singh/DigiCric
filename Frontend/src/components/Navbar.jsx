@@ -96,7 +96,7 @@ export default function Navbar() {
                 <span className="material-symbols-outlined">notifications</span>
               </button>
               <button className="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
-                <span className="material-symbols-outlined">settings</span>
+                <span className="material-symbols-outlined" onClick={() => navigate('/settings')}>settings</span>
               </button>
               <button 
                 disabled={isLoggingOut}

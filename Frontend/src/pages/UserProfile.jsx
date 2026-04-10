@@ -101,7 +101,7 @@ export default function UserProfile() {
             <div className="flex-1 space-y-4 text-center md:text-left text-white">
               <div>
                 <span className="text-[#ec5b13] uppercase tracking-[0.2em] font-bold text-xs">{userProfile?.rank}</span>
-                <h1 className={`text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all py-2 ${getFireClass(userProfile?.rank)}`}>{userProfile?.username}</h1>
+                <h1 className={`text-4xl md:text-6xl font-black italic tracking-tighter leading-none break-all py-2`}>{userProfile?.username}</h1>
                 <div className="flex justify-between">
                   <p>Lvl {userProfile?.level}</p>
                   <p>Lvl {userProfile?.level+1}</p>
