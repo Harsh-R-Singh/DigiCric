@@ -1,149 +1,419 @@
-import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
+
+import { useSingleWicketGame } from '../hooks/useSingleWicketGame';
+import { useFiveOverGame } from '../hooks/useFiveOverGame';
+
+// Finger counting algorithm
+const countFingers = (landmarks) => {
+  if (!landmarks || landmarks.length === 0) return 0;
+  const hand = landmarks[0];
+  
+  // Calculate relative finger positions (y is top-down in video)
+  const indexUp = hand[8].y < hand[6].y;
+  const middleUp = hand[12].y < hand[10].y;
+  const ringUp = hand[16].y < hand[14].y;
+  const pinkyUp = hand[20].y < hand[18].y;
+  
+  // Thumb check: distance from tip (4) to wrist/pinky-base (17) compared to mcp (2)
+  const dist4_17 = Math.hypot(hand[4].x - hand[17].x, hand[4].y - hand[17].y);
+  const dist2_17 = Math.hypot(hand[2].x - hand[17].x, hand[2].y - hand[17].y);
+  const thumbUp = dist4_17 > dist2_17;
+
+  // Rule: Only Thumb = 6
+  if (thumbUp && !indexUp && !middleUp && !ringUp && !pinkyUp) {
+    return 6;
+  }
+
+  let count = 0;
+  if (indexUp) count++;
+  if (middleUp) count++;
+  if (ringUp) count++;
+  if (pinkyUp) count++;
+  if (thumbUp) count++; 
+
+  if (count > 5) count = 5; // Cap at 5 if more than 5 fingers detected (?)
+  return count;
+};
 
 export default function CameraMode() {
   const containerRef = useRef();
+  const videoRef = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const mode = location.state?.gameFormat || 'single_wicket';
+  const gameMode = location.state?.gameMode || 'camera';
+  const userProfile = location.state?.userProfile;
+
+  const singleWicketGame = useSingleWicketGame();
+  const fiveOverGame = useFiveOverGame();
+  const game = mode === '5_overs' ? fiveOverGame : singleWicketGame;
+
+  const {
+    phase, tossChoice, innings, userBatting,
+    userScore, cpuScore, target, userLastChoice, cpuLastChoice,
+    isGameOver, comments, ballsFaced, userBallsFaced, cpuBallsFaced, 
+    userWickets, cpuWickets, winner, playToss, chooseToss, chooseBatOrBowl, playBall
+  } = game;
+
+  const [handLandmarker, setHandLandmarker] = useState(null);
+  const [webcamRunning, setWebcamRunning] = useState(false);
+  const [fingersCount, setFingersCount] = useState(0);
+  const [countdown, setCountdown] = useState(null); 
+  const [gameStateActive, setGameStateActive] = useState(false);
+  const [inningsBreakWait, setInningsBreakWait] = useState(false);
+  const prevInnings = useRef(1);
+  const updateDbDone = useRef(false);
+
+  // Load MediaPipe
+  useEffect(() => {
+    const initLandmarker = async () => {
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+        );
+        const landmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            delegate: "GPU"
+          },
+          runningMode: "VIDEO",
+          numHands: 1
+        });
+        setHandLandmarker(landmarker);
+      } catch (err) {
+        console.error("Vision Tasks Error:", err);
+      }
+    };
+    initLandmarker();
+  }, []);
+
+  // Initialize Webcam
+  useEffect(() => {
+    if (!handLandmarker) return;
+    let stream;
+    const startCam = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.addEventListener("loadeddata", () => setWebcamRunning(true));
+        }
+      } catch (error) {
+        console.error("Camera access denied:", error);
+      }
+    };
+    startCam();
+    return () => {
+      if (stream) stream.getTracks().forEach(track => track.stop());
+    };
+  }, [handLandmarker]);
+
+  // Video Prediction Loop
+  useEffect(() => {
+    let animationFrameId;
+    let lastVideoTime = -1;
+
+    const renderLoop = async () => {
+      if (webcamRunning && handLandmarker && videoRef.current && videoRef.current.readyState >= 2) {
+        let startTimeMs = performance.now();
+        if (lastVideoTime !== videoRef.current.currentTime) {
+          lastVideoTime = videoRef.current.currentTime;
+          const results = handLandmarker.detectForVideo(videoRef.current, startTimeMs);
+          if (results.landmarks.length > 0) {
+            setFingersCount(countFingers(results.landmarks));
+          } else {
+            setFingersCount(0);
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(renderLoop);
+    };
+    renderLoop();
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [webcamRunning, handLandmarker]);
+
+  // Handle Innings Break
+  useEffect(() => {
+    if (innings === 2 && prevInnings.current === 1) {
+      setInningsBreakWait(true);
+      setGameStateActive(false); // Stop auto-round logic
+      const t = setTimeout(() => {
+        setInningsBreakWait(false);
+      }, 3000);
+      prevInnings.current = 2;
+      return () => clearTimeout(t);
+    }
+  }, [innings]);
+
+  // Game/Timer Loop
+  useEffect(() => {
+    let timer;
+    if ((phase === 'toss_play' || phase === 'playing') && !isGameOver && gameStateActive && !inningsBreakWait) {
+      if (countdown === null) {
+        setCountdown(3);
+      } else if (countdown > 0) {
+        timer = setTimeout(() => setCountdown(countdown - 1), 500);
+      } else if (countdown === 0) {
+        // Action Frame! If valid play (1 to 6)
+        if (fingersCount >= 1 && fingersCount <= 6) {
+           if (phase === 'toss_play') playToss(fingersCount);
+           else playBall(fingersCount);
+           setGameStateActive(false);
+        } else {
+           // Invalid (0), retry immediately
+           setCountdown(3);
+        }
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [countdown, phase, isGameOver, gameStateActive, fingersCount, inningsBreakWait, playBall, playToss]);
+
+  // Resume game after a play
+  useEffect(() => {
+    if (!gameStateActive && (phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait) {
+       // Wait 2.5s for users to see result before starting next count
+       const t = setTimeout(() => {
+         setCountdown(null);
+         setGameStateActive(true);
+       }, 2500); 
+       return () => clearTimeout(t);
+    }
+  }, [gameStateActive, phase, isGameOver, inningsBreakWait]);
+
+  // End Game DB push and Navigation
+  useEffect(() => {
+    if (isGameOver && !updateDbDone.current) {
+      updateDbDone.current = true;
+      const isUserWin = winner === 'user';
+      const isCpuWin = winner === 'cpu';
+      const isTie = winner === 'tie';
+
+      let xp = 100;
+      const uBalls = userBallsFaced || 1;
+      const cBalls = cpuBallsFaced || 1;
+      
+      if(game=='5_overs'){
+        if (isUserWin) xp = (((userScore / 5) - (cpuScore / 5))*100);
+        else if (isCpuWin) xp = (((cpuScore / 5) - (userScore / 5))*100);
+      }
+      else{
+        if (isUserWin) xp = (((userScore / uBalls) - (cpuScore / cBalls))*100);
+        else if (isCpuWin) xp = (((cpuScore / cBalls) - (userScore / uBalls))*100);
+      }
+
+      const formData = {
+        winner: isUserWin ? 1 : 0, loses: isCpuWin ? 1 : 0, draws: isTie ? 1 : 0,
+        userScore: userScore || 0, runsConceded: cpuScore || 0, wicketsTaken: cpuWickets || 0,
+        user: userProfile?.username,
+        netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+        volts: isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2)),
+        xp: isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3))
+      };
+
+      fetch('/api/v1/users/update-stats', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      }).catch(err => console.log(err));
+
+      setTimeout(() => {
+        navigate('/game-over', { state: { 
+          winner, userScore, cpuScore, userBallsFaced, cpuBallsFaced,
+          userWickets: userWickets ?? 1, cpuWickets: cpuWickets ?? 1,
+          target, gameFormat: mode, gameMode: gameMode, userProfile
+        } });
+      }, 3500); 
+    }
+  }, [isGameOver, navigate, winner, userScore, cpuScore, userBallsFaced, cpuBallsFaced, userWickets, cpuWickets, target, mode, gameMode, userProfile]);
 
   useGSAP(() => {
-    gsap.from(".animate-in", {
-      opacity: 0,
-      y: 50,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: "power3.out",
-    });
+    gsap.from(".animate-in", { opacity: 0, y: 50, duration: 0.8, stagger: 0.15, ease: "power3.out" });
   }, { scope: containerRef });
+
+  const formatOvers = (balls) => `${Math.floor(balls / 6)}.${balls % 6}`;
+
+  const renderTimerIndicator = () => {
+    if (countdown === null) return "WAIT";
+    if (countdown > 0) return countdown;
+    return "SHOOT!";
+  }
 
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden min-h-screen">
       <div className="relative flex min-h-screen w-full flex-col">
-
-
         <main className="flex-1 flex flex-col items-center justify-start p-4 lg:p-8 max-w-7xl mx-auto w-full gap-6">
-          {/* Game Status Header */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-center animate-in">
-            {/* Score Stats */}
-            <div className="flex flex-wrap gap-3 order-2 md:order-1">
-              <div className="flex-1 bg-white dark:bg-primary/5 border border-primary/10 rounded-xl p-4 flex flex-col items-center justify-center shadow-lg">
-                <span className="text-xs font-bold text-primary uppercase tracking-tighter">Current Score</span>
-                <span className="text-3xl font-bold">42 <span className="text-lg text-slate-500">/ 2</span></span>
-              </div>
-              <div className="flex-1 bg-white dark:bg-primary/5 border border-primary/10 rounded-xl p-4 flex flex-col items-center justify-center shadow-lg">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Target</span>
-                <span className="text-3xl font-bold">120</span>
-              </div>
-            </div>
-            {/* Game Instruction */}
-            <div className="order-1 md:order-2 text-center py-2">
-              <div className="inline-flex items-center gap-2 bg-primary px-6 py-2 rounded-full text-white font-bold animate-pulse shadow-lg shadow-primary/20">
-                <span className="material-symbols-outlined text-sm">front_hand</span>
-                <span>Show your hand now!</span>
-              </div>
-            </div>
-            {/* Timer */}
-            <div className="flex justify-end order-3">
-              <div className="flex gap-2 bg-slate-900/10 dark:bg-primary/10 p-2 rounded-xl border border-primary/20">
-                <div className="flex flex-col items-center px-3">
-                  <span className="text-2xl font-bold text-primary">00</span>
-                  <span className="text-[10px] uppercase font-bold text-slate-500">Min</span>
+          
+          {/* Top HUD identical to ActiveGame style */}
+          <div className="grid grid-cols-3 gap-4 animate-in w-full max-w-4xl mx-auto">
+            {phase === 'playing' || isGameOver ? (
+              <>
+                <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
+                  <p className="text-primary text-xs font-bold uppercase tracking-wider">Score</p>
+                  <div className="flex items-baseline gap-1">
+                    <p className="text-3xl font-bold font-display text-slate-900 dark:text-white">
+                      {userBatting ? userScore : cpuScore} {mode === '5_overs' && <span className="text-xl">/ {userBatting ? userWickets : cpuWickets}</span>}
+                    </p>
+                    <p className="text-slate-500 text-sm font-medium ml-1">({formatOvers(ballsFaced)})</p>
+                  </div>
                 </div>
-                <div className="text-2xl font-bold text-primary self-center">:</div>
-                <div className="flex flex-col items-center px-3">
-                  <span className="text-2xl font-bold text-primary">03</span>
-                  <span className="text-[10px] uppercase font-bold text-slate-500">Sec</span>
+                <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
+                  <p className="text-primary text-xs font-bold uppercase tracking-wider">Innings</p>
+                  <p className="text-3xl font-bold font-display text-slate-900 dark:text-white">{innings}</p>
                 </div>
-              </div>
-            </div>
+                <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary text-white items-center justify-center shadow-lg shadow-primary/20 transition-all duration-300">
+                  <p className="text-white/80 text-xs font-bold uppercase tracking-wider">Target</p>
+                  <p className="text-3xl font-bold font-display">{target || '-'}</p>
+                </div>
+              </>
+            ) : (
+                <div className="col-span-3 flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center text-center">
+                  <p className="text-primary text-xs font-bold uppercase tracking-wider">Toss Phase</p>
+                  <p className="text-2xl font-bold font-display text-slate-900 dark:text-white">
+                    {phase === 'toss_selection' ? 'Call Odd or Even' : phase === 'toss_play' ? `You called ${tossChoice?.toUpperCase()}` : 'Decision Time'}
+                  </p>
+                </div>
+            )}
           </div>
 
-          {/* Main Gameplay Arena */}
-          <div className="relative w-full aspect-video md:aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20 group animate-in">
-            {/* Camera Feed Placeholder */}
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
-              <img alt="Live camera feed background" className="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUmSynQOqEcvdL1jqSZPTSUVQqbV8LJ0MHOF-ZlIL23r9U81f6_kbrniamV3Rbyul75B-IyaH7vomX7bTI65BZyPzsKc05UpMP1QvdFKgYOsP0LZ0esNiFSpx7wsqmnTDXnEw5C8im3H4z0XtcVmOlGLahoIMgNsZ177RIU96EHLdvQNat_vMRpCpLQkp0n-fnSHnjFptn1wPJXKEWGdcDq_AaDsDCgezamr_UGeDtC3zJ0rh1B-0SP5qTxj4sV01StFzwvn9FLSs"/>
-              
-              {/* AI Bounding Box UI */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 border-2 border-dashed border-primary/80 rounded-3xl flex items-center justify-center">
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 rounded text-white text-xs font-bold whitespace-nowrap">
-                    HAND DETECTED
-                  </div>
-                  <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
-                    <span className="text-5xl font-black text-primary drop-shadow-md">4</span>
-                    <span className="text-xs font-bold uppercase text-white/70 tracking-widest">Gesture Match</span>
-                  </div>
-                  {/* Corner Accents */}
-                  <div className="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-primary"></div>
-                  <div className="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-primary"></div>
-                  <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-primary"></div>
-                  <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-primary"></div>
+          {/* Action Log Comment */}
+          {comments.length > 0 && (
+             <div className="bg-background-dark/90 px-6 py-2 rounded-full border border-primary/30 z-10 text-center w-full max-w-xl mx-auto shadow-lg animate-in">
+                 <p className="text-primary font-bold text-sm tracking-wide">{comments[0]}</p>
+             </div>
+          )}
+
+          {/* Main Webcam Feed Arena */}
+          <div className="relative w-full max-w-4xl aspect-video md:aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-primary/20 group animate-in">
+            <video 
+              ref={videoRef} 
+              autoPlay playsInline muted 
+              className="absolute inset-0 w-full h-full object-cover -scale-x-100 opacity-60"
+            />
+            
+            {/* Countdown Overlay */}
+            {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && gameStateActive && (
+                 <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/40">
+                     <span className={`text-[12rem] font-black italic drop-shadow-[0_0_15px_rgba(236,91,19,0.8)] ${countdown === 0 ? 'text-green-500 scale-125' : 'text-primary animate-pulse'} transition-transform duration-200`}>
+                       {renderTimerIndicator()}
+                     </span>
+                 </div>
+            )}
+
+            {/* AI Bounding Box UI showing current detected count */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+              <div className="relative w-64 h-64 md:w-80 md:h-80 border-2 border-dashed border-primary/80 rounded-3xl flex items-center justify-center overflow-visible">
+                <div className="absolute -top-6 bg-primary px-4 py-1 rounded-full text-white text-xs font-bold tracking-widest shadow-md">
+                   {fingersCount > 0 ? "HAND DETECTED" : "NO HAND FOUND"}
+                </div>
+                <div className="absolute -bottom-6 bg-background-dark/80 px-6 py-2 rounded-full flex gap-3 items-center border border-primary/30">
+                  <span className="text-2xl font-black text-primary drop-shadow-md">{fingersCount}</span>
+                  <span className="text-[10px] font-bold uppercase text-white/70 tracking-widest leading-none">Detected<br/>Fingers</span>
                 </div>
               </div>
             </div>
 
-            {/* Opponent Overlay (CPU) */}
-            <div className="absolute bottom-6 right-6 w-32 h-40 md:w-48 md:h-60 bg-background-dark/90 backdrop-blur rounded-xl border border-primary/40 overflow-hidden shadow-2xl transition-transform hover:scale-105">
-              <div className="h-full w-full flex flex-col">
-                <div className="flex-1 bg-slate-800 relative">
-                  <img alt="CPU Opponent Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIwyxKdiv3pdmlMQ5hpCvEaCu37Xaz4Is0IVK1ESiLlVwx77eDpDpx4EC47OBd4B2ChK8ETB4pkp-SBCrm0kmd0PkP7kSzAlbG-4B0uG1QuyHg3XSb9rFZ6BwFEAw5veGY8Ren1tkoyA8GLzw9DiM6GOB1jqU2VeDv8da-UZ8OEaOZWLn5wXDvDtVc7TiOMmNPytz08maC3CMZD7q8REemsejQi6SVWlEF24Zs71rt2yhWg3Lg1dJovU_xA9dsmN2CGANDY2i9bSQ"/>
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-500/80 px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase tracking-tighter">
-                    <span className="size-1.5 bg-white rounded-full animate-ping"></span> CPU Thinking
-                  </div>
-                </div>
-                <div className="p-3 bg-primary text-white flex flex-col items-center">
-                  <span className="text-[10px] uppercase font-bold opacity-80">CPU Played</span>
-                  <span className="text-2xl font-black leading-none">6</span>
-                </div>
-              </div>
+            {/* In-Game Opponent Stats / Played Values */}
+            <div className="absolute bottom-6 right-6 flex flex-col gap-3 z-30">
+               {userLastChoice && (
+                 <div className="bg-background-dark/90 px-4 py-2 rounded-xl border border-primary flex flex-col items-center shadow-lg">
+                   <span className="text-[10px] font-bold text-white/50 uppercase whitespace-nowrap">You Played</span>
+                   <span className="text-2xl font-black text-primary">{userLastChoice}</span>
+                 </div>
+               )}
+               {cpuLastChoice && (
+                 <div className="bg-background-dark/90 px-4 py-2 rounded-xl border border-slate-500 flex flex-col items-center shadow-lg">
+                   <span className="text-[10px] font-bold text-white/50 uppercase whitespace-nowrap">CPU Played</span>
+                   <span className="text-2xl font-black text-slate-400">{cpuLastChoice}</span>
+                 </div>
+               )}
             </div>
             
-            {/* Scanlines Overlay */}
-            <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
+            <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] z-20"></div>
           </div>
 
-          {/* Footer Controls & Indicators */}
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 pb-10 animate-in">
-            <div className="flex gap-4">
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold uppercase text-slate-500">Camera Status</span>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 border border-green-500/20">
-                  <span className="material-symbols-outlined text-sm">videocam</span>
-                  <span className="text-xs font-bold uppercase">Ready</span>
+          {/* Menus / Manual Controls */}
+          <div className="w-full max-w-4xl flex flex-col gap-6 pb-8 animate-in text-center">
+             
+            {phase === 'toss_selection' && (
+              <div className="flex flex-col gap-4">
+                <h3 className="text-slate-900 dark:text-white text-lg font-bold font-display">Toss Call</h3>
+                <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto w-full">
+                  <button onClick={() => chooseToss('odd')} className="group p-6 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all">
+                    <span className="text-3xl font-bold dark:text-white group-hover:text-white font-display">ODD</span>
+                  </button>
+                  <button onClick={() => chooseToss('even')} className="group p-6 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all">
+                    <span className="text-3xl font-bold dark:text-white group-hover:text-white font-display">EVEN</span>
+                  </button>
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold uppercase text-slate-500">AI Engine</span>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                  <span className="material-symbols-outlined text-sm">memory</span>
-                  <span className="text-xs font-bold uppercase">Active</span>
+            )}
+
+            {phase === 'toss_decision' && (
+              <div className="flex flex-col gap-4">
+                <h3 className="text-slate-900 dark:text-white text-lg font-bold font-display">Choose to Bat or Bowl</h3>
+                <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto w-full">
+                  <button onClick={() => { chooseBatOrBowl('bat'); setGameStateActive(true); }} className="group p-6 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all">
+                    <span className="text-3xl font-bold dark:text-white group-hover:text-white font-display">BAT</span>
+                  </button>
+                  <button onClick={() => { chooseBatOrBowl('bowl'); setGameStateActive(true); }} className="group p-6 rounded-xl bg-background-light dark:bg-primary/5 border border-primary/20 hover:bg-primary hover:border-primary transition-all">
+                    <span className="text-3xl font-bold dark:text-white group-hover:text-white font-display">BOWL</span>
+                  </button>
                 </div>
               </div>
+            )}
+
+            {(phase === 'toss_play' || phase === 'playing') && !gameStateActive && !inningsBreakWait && !isGameOver && (
+              <div className="flex justify-center mt-4">
+                 <button onClick={() => setGameStateActive(true)} className="bg-primary px-8 py-3 rounded-full text-white font-bold tracking-widest shadow-[0_0_20px_rgba(236,91,19,0.3)] animate-pulse">
+                   CLICK TO START NEXT ROUND
+                 </button>
+              </div>
+            )}
+
+            {inningsBreakWait && (
+              <div className="text-center py-6 bg-primary/10 rounded-xl border border-primary/20 animate-in mx-auto w-full max-w-md mt-4">
+                 <h3 className="text-primary text-2xl font-bold font-display animate-pulse">Innings Break!</h3>
+                 <p className="text-slate-500 font-medium mt-2">Get ready to {userBatting ? 'Bat' : 'Bowl'}! Target is {target}</p>
+                 <button onClick={() => { setInningsBreakWait(false); setGameStateActive(true); }} className="mt-4 bg-primary px-6 py-2 rounded-full text-white font-bold text-sm">
+                   Continue Now
+                 </button>
+              </div>
+            )}
+
+            {isGameOver && (
+              <div className="text-center py-4 bg-primary/10 rounded-xl border border-primary/20 mt-4 max-w-md mx-auto">
+                 <h3 className="text-primary text-xl font-bold font-display animate-pulse">Match Finished! Proceeding to results...</h3>
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center mt-6 p-4 border-t border-slate-700/20 w-full">
+               <div className="flex gap-4">
+                  <div className="flex flex-col gap-1 text-left">
+                    <span className="text-[10px] font-bold uppercase text-slate-500">Camera</span>
+                    <div className="flex items-center gap-1 text-xs font-bold text-green-500">
+                      <span className="material-symbols-outlined text-xs">videocam</span> {webcamRunning ? 'Ready' : 'Waiting...'}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1 text-left">
+                    <span className="text-[10px] font-bold uppercase text-slate-500">Engine</span>
+                    <div className="flex items-center gap-1 text-xs font-bold text-primary">
+                      <span className="material-symbols-outlined text-xs">memory</span> {handLandmarker ? 'Active' : 'Loading...'}
+                    </div>
+                  </div>
+               </div>
+               <Link to="/lobby" className="bg-slate-200 dark:bg-primary/10 hover:bg-slate-300 dark:hover:bg-primary/20 text-slate-700 dark:text-primary font-bold py-2 px-6 rounded-xl border border-primary/20 transition-all">
+                  FORFEIT
+               </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-primary/30 flex items-center gap-2 transition-all active:scale-95">
-                <span className="material-symbols-outlined">pause</span> PAUSE GAME
-              </button>
-              <Link to="/lobby" className="bg-slate-200 dark:bg-primary/10 hover:bg-slate-300 dark:hover:bg-primary/20 text-slate-700 dark:text-primary font-bold py-3 px-6 rounded-xl border border-primary/20 transition-all text-center block leading-loose">
-                FORFEIT
-              </Link>
-            </div>
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4, 5, 6].map(num => (
-                <div key={num} className="size-10 rounded-full border-2 border-background-dark bg-primary flex items-center justify-center text-white text-xs font-bold">{num}</div>
-              ))}
-              <div className="size-10 rounded-full border-2 border-background-dark bg-slate-700 flex items-center justify-center text-white text-[10px] font-bold">+10</div>
-            </div>
+            
           </div>
         </main>
-
-        {/* Floating Action Menu (Mobile Only) */}
-        <div className="md:hidden fixed bottom-6 right-6 flex flex-col gap-2">
-          <button className="size-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center border-4 border-background-dark">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -128,7 +128,7 @@ export default function GameOver() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 w-full pt-6 animate-in">
-            <button onClick={() => navigate('/game', { state: { gameFormat: state.gameFormat, gameMode: state.gameMode, userProfile: state.userProfile } })} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+            <button onClick={() => navigate(`/${state.gameMode}`, { state: { gameFormat: state.gameFormat, gameMode: state.gameMode, userProfile: state.userProfile } })} className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
               <span className="material-symbols-outlined">replay</span>
               REMATCH
             </button>

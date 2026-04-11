@@ -85,10 +85,13 @@ export default function ActiveGame() {
         const uBalls = userBallsFaced || 1;
         const cBalls = cpuBallsFaced || 1;
 
-        if (isUserWin) {
-          xp = (((userScore / Math.max(uBalls,cBalls)) -(cpuScore / Math.max(cBalls,uBalls)))*100);
-        } else if (isCpuWin) {
-          xp = (((cpuScore / Math.max(cBalls,uBalls)) -(userScore / Math.max(uBalls,cBalls)))*100);
+        if(game=='5_overs'){
+          if (isUserWin) xp = (((userScore / 5) - (cpuScore / 5))*100);
+          else if (isCpuWin) xp = (((cpuScore / 5) - (userScore / 5))*100);
+        }
+        else{
+          if (isUserWin) xp = (((userScore / uBalls) - (cpuScore / cBalls))*100);
+          else if (isCpuWin) xp = (((cpuScore / cBalls) - (userScore / uBalls))*100);
         }
 
         const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
