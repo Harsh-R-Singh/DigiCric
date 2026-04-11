@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
+const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
+
 export default function Settings() {
   const containerRef = useRef();
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ export default function Settings() {
   // Section state
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState('Avatar1');
   
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -35,6 +38,7 @@ export default function Settings() {
         const data = await res.json();
         setUsername(data.data.username);
         setEmail(data.data.email);
+        if (data.data.avatar) setAvatar(data.data.avatar);
       } catch (err) {
         console.error(err);
       } finally {
@@ -65,7 +69,7 @@ export default function Settings() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify({ username, email })
+        body: JSON.stringify({ username, email, avatar })
       });
       const data = await res.json();
       
@@ -165,6 +169,24 @@ export default function Settings() {
             )}
 
             <form onSubmit={handleUpdateAccount} className="space-y-6">
+              <div>
+                <label className="block text-white/40 text-xs font-bold uppercase mb-2">Select Avatar</label>
+                <div className="flex flex-wrap gap-4 pb-4">
+                  {Object.keys(avatarImages).map((path) => {
+                     const avatarName = path.split('/').pop().split('.')[0];
+                     const isSelected = avatar === avatarName;
+                     return (
+                       <div 
+                         key={avatarName} 
+                         onClick={() => setAvatar(avatarName)}
+                         className={`w-20 h-20 flex-shrink-0 rounded-full overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-[#ec5b13] shadow-[0_0_15px_rgba(236,91,19,0.5)] scale-105' : 'border-[#1b100b] hover:border-[#ec5b13]/50'}`}
+                       >
+                         <img className="w-full h-full object-cover scale-120" src={avatarImages[path]} alt={avatarName} />
+                       </div>
+                     );
+                  })}
+                </div>
+              </div>
               <div>
                 <label className="block text-white/40 text-xs font-bold uppercase mb-2">Username</label>
                 <input 

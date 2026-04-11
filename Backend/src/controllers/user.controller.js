@@ -254,7 +254,7 @@ const getCurrentUser = asyncHandler(async(req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {username, email} = req.body
+    const {username, email, avatar} = req.body
 
     if (!username || !email) {
         return res.status(400).json(new ApiResponse(400, {}, "All fields are required"));
@@ -273,13 +273,13 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
         // throw new ApiError(409, "Email already exists");
     }
 
+    const updateFields = { username, email };
+    if (avatar) updateFields.avatar = avatar;
+
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            $set: {
-                username,
-                email
-            }
+            $set: updateFields
         },
         {new: true}
         
@@ -397,14 +397,16 @@ const updateUserStats = asyncHandler(async(req, res) => {
     const calculatedLevel = Math.floor((user.xp / 3000) + 1);
     
     let calculatedRank = "Newbie";
-    if (user.volts >= 100) {
+    if (user.volts >= 40000) {
         calculatedRank = "Legend";
-    } else if (user.volts >= 50) {
+    } else if (user.volts >= 25000) {
         calculatedRank = "Master";
-    } else if (user.volts >= 10) {
+    } else if (user.volts >= 10000) {
         calculatedRank = "Pro";
-    } else if (user.volts >= 5) {
+    } else if (user.volts >= 5000) {
         calculatedRank = "Intermediate";
+    } else if (user.volts >= 500) {
+        calculatedRank = "Beginner";
     }
 
     if (user.level !== calculatedLevel || user.rank !== calculatedRank) {
