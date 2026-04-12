@@ -17,6 +17,7 @@ export default function UserProfile() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -29,6 +30,8 @@ export default function UserProfile() {
            navigate('/login');
            return;
         }
+        const currentUserData = await currentUserRes.json();
+        setIsOwnProfile(currentUserData.data.username === username);
 
         // Step 2: Get full profile including stats using the param username
         const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
@@ -112,12 +115,16 @@ export default function UserProfile() {
                 
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <button onClick={() => navigate('/settings')} className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
-                  <span className="material-symbols-outlined text-sm">edit</span> EDIT PROFILE
-                </button>
-                <button onClick={() => navigate('/settings')} className="bg-[#41312b] border border-[#5a4138]/30 text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-[#46352f] transition-all active:scale-95">
-                  <span className="material-symbols-outlined text-sm">lock</span> SECURITY
-                </button>
+                {isOwnProfile && (
+                  <>
+                    <button onClick={() => navigate('/settings')} className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
+                      <span className="material-symbols-outlined text-sm">edit</span> EDIT PROFILE
+                    </button>
+                    <button onClick={() => navigate('/settings')} className="bg-[#41312b] border border-[#5a4138]/30 text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-[#46352f] transition-all active:scale-95">
+                      <span className="material-symbols-outlined text-sm">lock</span> SECURITY
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -152,7 +159,7 @@ export default function UserProfile() {
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Net Run Rate</span>
-              <span className="text-4xl font-black text-white italic">{(userProfile?.netRunRate/userProfile?.matchesPlayed).toFixed(3) || 0}</span>
+              <span className="text-4xl font-black text-white italic">{(userProfile?.netRunRate).toFixed(3) || 0}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Volts</span>
