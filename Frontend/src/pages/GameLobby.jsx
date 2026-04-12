@@ -142,7 +142,7 @@ useEffect(() => {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: 'single_wicket' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'classic'}`} state={{ gameMode: selectedMode, gameFormat: 'single_wicket' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">Single Wicket</h3>
                           <p className="text-white/80 text-sm">Quick play. One wicket to decide the game.</p>
@@ -152,7 +152,7 @@ useEffect(() => {
                         </div>
                         <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">1W</div>
                       </Link>
-                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'game'}`} state={{ gameMode: selectedMode, gameFormat: '5_overs' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
+                      <Link to={`/${selectedMode === 'camera' ? 'camera' : 'classic'}`} state={{ gameMode: selectedMode, gameFormat: '5_overs' ,userProfile:userProfile,currentUser:currentUser}} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">5 Overs</h3>
                           <p className="text-slate-300 text-sm">A longer format game. Strategize and score.</p>

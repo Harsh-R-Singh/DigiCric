@@ -90,8 +90,8 @@ export default function ActiveGame() {
           else if (isCpuWin) xp = (((cpuScore / 5) - (userScore / 5))*100);
         }
         else{
-          if (isUserWin) xp = (((userScore / uBalls) - (cpuScore / cBalls))*100);
-          else if (isCpuWin) xp = (((cpuScore / cBalls) - (userScore / uBalls))*100);
+          if (isUserWin) xp = (((userScore /Math. max(uBalls,cBalls)) - (cpuScore / Math.max(cBalls,uBalls)))*100);
+          else if (isCpuWin) xp = (((cpuScore / Math.max(cBalls,uBalls)) - (userScore / Math.max(uBalls,cBalls)))*100);
         }
 
         const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
@@ -159,29 +159,42 @@ export default function ActiveGame() {
       <main className="flex-1 flex flex-col max-w-6xl mx-auto w-full p-4 gap-6">
         
         {/* Scoreboard Section */}
-        <div className="grid grid-cols-3 gap-4 animate-in">
+        <div className="w-full animate-in mb-4">
           {phase === 'playing' || isGameOver ? (
-            <>
-              <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
-                <p className="text-primary text-xs font-bold uppercase tracking-wider">Score</p>
-                <div className="flex items-baseline gap-1">
-                  <p className="text-3xl font-bold font-display text-slate-900 dark:text-white">
-                    {userBatting ? userScore : cpuScore} {mode === '5_overs' && <span className="text-xl">/ {userBatting ? userWickets : cpuWickets}</span>}
-                  </p>
-                  <p className="text-slate-500 text-sm font-medium ml-1">({formatOvers(ballsFaced)})</p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center">
-                <p className="text-primary text-xs font-bold uppercase tracking-wider">Innings</p>
-                <p className="text-3xl font-bold font-display text-slate-900 dark:text-white">{innings}</p>
-              </div>
-              <div className="flex flex-col gap-1 rounded-xl p-4 bg-primary text-white items-center justify-center shadow-lg shadow-primary/20 transition-all duration-300">
-                <p className="text-white/80 text-xs font-bold uppercase tracking-wider">Target</p>
-                <p className="text-3xl font-bold font-display">{target || '-'}</p>
-              </div>
-            </>
+            <div className="bg-background-dark/80 backdrop-blur-md rounded-2xl border border-primary/20 p-2 shadow-xl flex flex-col md:flex-row justify-between items-stretch gap-2">
+               {/* User Score Block */}
+               <div className={`flex flex-col justify-center items-center md:items-start w-full md:w-1/3 p-4 rounded-xl border transition-all ${userBatting ? 'bg-primary/20 border-primary shadow-[inset_0_0_20px_rgba(236,91,19,0.2)]' : 'bg-transparent border-transparent'}`}>
+                  <div className="flex items-center gap-2 mb-1 justify-center md:justify-start w-full">
+                     <p className="font-bold text-white uppercase tracking-wider text-sm">You</p>
+                     {userBatting ? <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold tracking-widest">BATTING</span> : <span className="text-[10px] bg-slate-600 text-white px-2 py-0.5 rounded-full font-bold tracking-widest">BOWLING</span>}
+                  </div>
+                  <div className="flex items-baseline gap-1 justify-center md:justify-start w-full">
+                    <p className="text-4xl font-bold font-display text-white">{userScore} {mode === '5_overs' && <span className="text-2xl text-white/50">/ {userWickets}</span>}</p>
+                    {userBatting && <p className="text-primary text-sm font-bold ml-1">({formatOvers(ballsFaced)} ov)</p>}
+                  </div>
+               </div>
+
+               {/* Match Info Block */}
+               <div className="flex flex-col items-center justify-center w-full md:w-1/3 px-4 border-y md:border-y-0 md:border-x border-slate-700/50 py-4 md:py-2">
+                  <p className="text-primary text-[10px] font-bold uppercase tracking-widest mb-1">{target ? 'Target' : 'Current Phase'}</p>
+                  <p className="text-4xl font-bold font-display text-white">{target || '1st Innings'}</p>
+                  <p className="text-slate-400 text-xs font-bold uppercase mt-1 tracking-widest">Innings {innings}</p>
+               </div>
+
+               {/* CPU Score Block */}
+               <div className={`flex flex-col justify-center items-center md:items-end w-full md:w-1/3 p-4 rounded-xl border transition-all ${!userBatting ? 'bg-primary/20 border-primary shadow-[inset_0_0_20px_rgba(236,91,19,0.2)]' : 'bg-transparent border-transparent'}`}>
+                  <div className="flex items-center gap-2 mb-1 justify-center md:justify-end flex-row-reverse w-full">
+                     <p className="font-bold text-white uppercase tracking-wider text-sm">CPU</p>
+                     {!userBatting ? <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold tracking-widest">BATTING</span> : <span className="text-[10px] bg-slate-600 text-white px-2 py-0.5 rounded-full font-bold tracking-widest">BOWLING</span>}
+                  </div>
+                  <div className="flex items-baseline gap-1 justify-center md:justify-end flex-row-reverse w-full">
+                    <p className="text-4xl font-bold font-display text-white">{cpuScore} {mode === '5_overs' && <span className="text-2xl text-white/50">/ {cpuWickets}</span>}</p>
+                    {!userBatting && <p className="text-primary text-sm font-bold mr-1">({formatOvers(ballsFaced)} ov)</p>}
+                  </div>
+               </div>
+            </div>
           ) : (
-             <div className="col-span-3 flex flex-col gap-1 rounded-xl p-4 bg-primary/10 border border-primary/20 items-center justify-center text-center">
+             <div className="w-full flex flex-col gap-1 rounded-xl p-6 bg-primary/10 border border-primary/20 items-center justify-center text-center shadow-lg">
                 <p className="text-primary text-xs font-bold uppercase tracking-wider">Toss Phase</p>
                 <p className="text-2xl font-bold font-display text-slate-900 dark:text-white">
                   {phase === 'toss_selection' ? 'Call Odd or Even' : phase === 'toss_play' ? `You called ${tossChoice?.toUpperCase()}` : 'Decision Time'}

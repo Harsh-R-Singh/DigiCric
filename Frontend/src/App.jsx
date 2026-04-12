@@ -21,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/lobby" element={<GameLobby />} />
-          <Route path="/game" element={<ActiveGame />} />
+          <Route path="/classic" element={<ActiveGame />} />
           <Route path="/game-over" element={<GameOver />} />
           <Route path="/guide" element={<UserGuide />} />
           <Route path="/profile/:username" element={<UserProfile />} />
