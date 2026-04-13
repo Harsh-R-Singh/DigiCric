@@ -47,7 +47,7 @@ useEffect(() => {
         const username = currentUserData.data.username;
 
         // Step 2: Get full profile including stats using the retrieved username
-        const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
+        const profileRes = await fetch(`${API_URL}/api/v1/users/profile/${username}`, {
           credentials: 'include'
         });
         if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
