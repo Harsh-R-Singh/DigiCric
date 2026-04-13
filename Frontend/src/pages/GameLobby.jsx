@@ -10,6 +10,8 @@ const getAvatarUrl = (avatarName) => {
   return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function GameLobby() {
   const [selectedMode, setSelectedMode] = useState(null);
   const containerRef = useRef();
@@ -33,7 +35,7 @@ useEffect(() => {
     const fetchProfileData = async () => {
       try {
         // Step 1: Get the current user session
-        const currentUserRes = await fetch('/api/v1/users/current-user', {
+        const currentUserRes = await fetch(`${API_URL}/api/v1/users/current-user`, {
           credentials: 'include'
         });
         if (!currentUserRes.ok) {

@@ -39,6 +39,8 @@ const countFingers = (landmarks) => {
   return count;
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function CameraMode() {
   const containerRef = useRef();
   const videoRef = useRef(null);
@@ -215,7 +217,7 @@ export default function CameraMode() {
         xp: isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3))
       };
 
-      fetch('/api/v1/users/update-stats', {
+      fetch(`${API_URL}/api/v1/users/update-stats`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

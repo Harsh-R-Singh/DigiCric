@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
@@ -19,7 +21,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/v1/users/login', {
+      const response = await fetch(`${API_URL}/api/v1/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

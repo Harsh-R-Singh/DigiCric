@@ -5,6 +5,8 @@ import { useGSAP } from '@gsap/react';
 
 const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Settings() {
   const containerRef = useRef();
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/v1/users/current-user', { credentials: 'include' });
+        const res = await fetch(`${API_URL}/api/v1/users/current-user`, { credentials: 'include' });
         if (!res.ok) {
           navigate('/login');
           return;
@@ -63,7 +65,7 @@ export default function Settings() {
     setAccountMsg({ type: '', text: '' });
     
     try {
-      const res = await fetch('/api/v1/users/update-account', {
+      const res = await fetch(`${API_URL}/api/v1/users/update-account`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -91,7 +93,7 @@ export default function Settings() {
     }
 
     try {
-      const res = await fetch('/api/v1/users/change-password', {
+      const res = await fetch(`${API_URL}/api/v1/users/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -121,7 +123,7 @@ export default function Settings() {
     }
 
     try {
-      const res = await fetch('/api/v1/users/delete-account', {
+      const res = await fetch(`${API_URL}/api/v1/users/delete-account`, {
         method: 'DELETE',
         credentials: 'include'
       });

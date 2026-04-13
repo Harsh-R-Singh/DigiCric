@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -13,13 +14,14 @@ const Register = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const response = await fetch('/api/v1/users/register', {
+      const response = await fetch(`${API_URL}/api/v1/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

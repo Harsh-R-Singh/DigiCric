@@ -10,6 +10,8 @@ const getAvatarUrl = (avatarName) => {
   return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Rankings() {
   const containerRef = useRef();
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ export default function Rankings() {
     const fetchLeaderboard = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/v1/rankings/leaderboard?type=${activeTab}`, {
+        const res = await fetch(`${API_URL}/api/v1/rankings/leaderboard?type=${activeTab}`, {
            credentials: 'include'
         });
         if (!res.ok) {

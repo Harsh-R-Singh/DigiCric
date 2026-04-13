@@ -10,6 +10,8 @@ const getAvatarUrl = (avatarName) => {
   return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function UserProfile() {
   const containerRef = useRef();
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ export default function UserProfile() {
     const fetchProfileData = async () => {
       try {
         // Step 1: Check if user is authenticated
-        const currentUserRes = await fetch('/api/v1/users/current-user', {
+        const currentUserRes = await fetch(`${API_URL}/api/v1/users/current-user`, {
           credentials: 'include'
         });
         if (!currentUserRes.ok) {
@@ -34,7 +36,7 @@ export default function UserProfile() {
         setIsOwnProfile(currentUserData.data.username === username);
 
         // Step 2: Get full profile including stats using the param username
-        const profileRes = await fetch(`/api/v1/users/profile/${username}`, {
+        const profileRes = await fetch(`${API_URL}/api/v1/users/profile/${username}`, {
           credentials: 'include'
         });
         if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
@@ -159,7 +161,7 @@ export default function UserProfile() {
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Net Run Rate</span>
-              <span className="text-4xl font-black text-white italic">{(userProfile?.netRunRate).toFixed(3) || 0}</span>
+              <span className="text-4xl font-black text-white italic">{(userProfile?.netRunRate || 0).toFixed(3)}</span>
             </div>
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Volts</span>

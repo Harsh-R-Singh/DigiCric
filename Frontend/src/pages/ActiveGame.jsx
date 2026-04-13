@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useSingleWicketGame } from '../hooks/useSingleWicketGame';
 import { useFiveOverGame } from '../hooks/useFiveOverGame';
-
+const API_URL = import.meta.env.VITE_API_URL;
 export default function ActiveGame() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,7 +112,7 @@ export default function ActiveGame() {
 
         const pushStats = async () => {
           try {
-            const response = await fetch('/api/v1/users/update-stats', {
+            const response = await fetch(`${API_URL}/api/v1/users/update-stats`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(formData),
