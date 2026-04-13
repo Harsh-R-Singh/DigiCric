@@ -5,7 +5,7 @@ import { useGSAP } from '@gsap/react';
 
 const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 
 export default function Settings() {
   const containerRef = useRef();

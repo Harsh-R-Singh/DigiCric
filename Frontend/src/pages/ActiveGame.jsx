@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useSingleWicketGame } from '../hooks/useSingleWicketGame';
 import { useFiveOverGame } from '../hooks/useFiveOverGame';
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 export default function ActiveGame() {
   const navigate = useNavigate();
   const location = useLocation();
