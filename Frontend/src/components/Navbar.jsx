@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
-
+const API_URL = import.meta.env.VITE_API_URL;
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function Navbar() {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const res = await fetch('/api/v1/users/current-user', { credentials: 'include' });
+        const res = await fetch(`${API_URL}/api/v1/users/current-user`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
           setUser(data.data);
@@ -36,7 +36,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const response = await fetch('/api/v1/users/logout', {
+      const response = await fetch(`${API_URL}/api/v1/users/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
