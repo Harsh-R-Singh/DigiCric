@@ -43,6 +43,7 @@ export default function Navbar() {
         },
         credentials: 'include'
       });
+      localStorage.removeItem('accessToken');
       // console.log("Logout", response);
       if (!response.ok) {
         console.error('Logout failed on server:', await response.text());

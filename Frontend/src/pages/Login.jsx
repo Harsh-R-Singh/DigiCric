@@ -35,7 +35,7 @@ const Login = () => {
       }
 
       // Optionally, you can store data.data.accessToken and user data in localStorage or Context
-      // localStorage.setItem('user', JSON.stringify(data.data.user));
+      localStorage.setItem('accessToken', data.data.accessToken);
       
       // Login successful, redirect to lobby or profile
       navigate('/lobby',{state:{
