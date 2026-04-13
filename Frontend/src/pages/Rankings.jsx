@@ -204,7 +204,7 @@ export default function Rankings() {
         )}
       </main>
 
-      {(userRank !== null && userScore !== null) && (
+      {loading && (userRank !== null && userScore !== null) && (
         <div className="fixed bottom-16 md:bottom-0 left-0 w-full z-40 px-6 py-4 md:py-6 animate-in">
           <div className="max-w-4xl mx-auto">
             <div className="bg-[#ec5b13] p-1 rounded-2xl shadow-[0_-10px_40px_rgba(236,91,19,0.3)]">
