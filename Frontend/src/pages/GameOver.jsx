@@ -15,6 +15,7 @@ export default function GameOver() {
     cpuScore: 0,
     userBallsFaced: 0,
     cpuBallsFaced: 0,
+
   };
 
   useGSAP(() => {
@@ -44,22 +45,13 @@ export default function GameOver() {
   if (isUserWin) {
     titleText = 'YOU WON!';
     titleColor = 'text-primary';
-    xp = (((state.userScore / state.userBallsFaced) -(state.cpuScore / state.cpuBallsFaced))*100);
   } else if (isCpuWin) {
     titleText = 'DEFEAT!';
     titleColor = 'text-red-500';
-    xp = (((state.cpuScore / state.cpuBallsFaced) -(state.userScore / state.userBallsFaced))*100);
   }
 
   const userStrikeRate = state.userBallsFaced > 0 ? ((state.userScore / state.userBallsFaced) * 100).toFixed(2) : '0.00';
   const cpuStrikeRate = state.cpuBallsFaced > 0 ? ((state.cpuScore / state.cpuBallsFaced) * 100).toFixed(2) : '0.00';
-
-  const highestScore = Math.max(state.userScore, state.cpuScore);
-  const highestScorer = state.userScore > state.cpuScore ? 'You' : (state.cpuScore > state.userScore ? 'CPU' : 'Tie');
-
-  const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
-  const xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
-
 
   return (
     <div ref={containerRef} className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
@@ -102,7 +94,7 @@ export default function GameOver() {
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">bolt</span>
               <p className="text-xs text-slate-500 uppercase font-bold">NET RUN-RATE</p>
-              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>{isUserWin ? '+' : (isTie ? '' : '-')}{(xp/100).toFixed(3)}</p>
+              <p className={`font-bold ${isUserWin ? 'text-primary' : 'text-slate-400'}`}>{isUserWin ? '+' : (isTie ? '' : '')}{state.netRunRate}</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">speed</span>
@@ -117,12 +109,12 @@ export default function GameOver() {
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-primary text-xl mb-2">stars</span>
               <p className="text-xs text-slate-500 uppercase font-bold">Volts</p>
-              <p className={`font-bold ${voltsEarned > 0 ? 'text-primary' : (voltsEarned < 0 ? 'text-red-500' : 'text-slate-400')}`}>{voltsEarned > 0 ? `+${voltsEarned}` : voltsEarned} Volts</p>
+              <p className={`font-bold ${state.voltsEarned > 0 ? 'text-primary' : (state.voltsEarned < 0 ? 'text-red-500' : 'text-slate-400')}`}>{state.voltsEarned > 0 ? `+${state.voltsEarned}` : state.voltsEarned} Volts</p>
             </div>
             <div className="p-4 rounded-lg glass-panel text-left">
               <span className="material-symbols-outlined text-purple-500 text-xl mb-2">military_tech</span>
               <p className="text-xs text-slate-500 uppercase font-bold">XP Gained</p>
-              <p className="font-bold text-purple-500">+{xpEarned} XP</p>
+              <p className="font-bold text-purple-500">+{state.xpEarned} XP</p>
             </div>
           </div>
 
