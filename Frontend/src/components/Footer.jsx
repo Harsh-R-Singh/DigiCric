@@ -22,9 +22,9 @@ export default function Footer() {
           <a href="mailto:harshrajsingh246@gmail.com" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Contact Us
           </a>
-          <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
-            Privacy Policy
-          </a>
+          <Link to="/rankings" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+            Rankings
+          </Link>
           <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Terms of Service
           </a>

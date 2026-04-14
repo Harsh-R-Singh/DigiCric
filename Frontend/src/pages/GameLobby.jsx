@@ -20,6 +20,9 @@ export default function GameLobby() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [userRank, setUserRank] = useState(null);
+  const [userScore, setUserScore] = useState(null);
   
   useGSAP(() => {
     gsap.from(".animate-in", {
@@ -54,6 +57,21 @@ useEffect(() => {
         const profileData = await profileRes.json();
 
         setUserProfile(profileData.data);
+
+        // Step 3: Fetch Leaderboard data (Top 3 Volts)
+        try {
+          const leaderboardRes = await fetch(`${API_URL}/api/v1/rankings/leaderboard?type=volts`, {
+            credentials: 'include'
+          });
+          if (leaderboardRes.ok) {
+            const leaderboardData = await leaderboardRes.json();
+            setLeaderboard(leaderboardData.data.leaderboard || []);
+            setUserRank(leaderboardData.data.userRank);
+            setUserScore(leaderboardData.data.userScore);
+          }
+        } catch (lbErr) {
+          console.error("Failed to fetch leaderboard", lbErr);
+        }
       } catch (err) {
         console.error(err);
         setError('Could not load user profile details.');
@@ -176,46 +194,30 @@ useEffect(() => {
                 </div>
                 <div className="bg-background-light dark:bg-background-dark/30 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden flex-1">
                   <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-800 h-full">
-                    {/* Top 3 Style */}
-                    <div className="flex items-center gap-4 p-6 bg-primary/5">
-                      <span className="text-primary font-bold text-2xl w-8">1</span>
-                      <div className="size-14 rounded-full border-2 border-primary overflow-hidden">
-                        <img alt="Top Player" className="w-full h-full object-cover" data-alt="Avatar of the rank 1 player" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxDvJ13S30zW5ONCLaKr_0K6W_GsZcicYM4lmtgvGwP144r50Tc6EzKV9826peJKfUvc_bke0LrsbpnGtaEwKX8gSHI6dSY9nYe6H36NfscYXGqpyZRIYw4HjjGlHq71b5HBIAn7qeNzrUOv-rxQZWlEy2_kwcXixpt-caA-9irhDAb4uFCCCrwG1oML_1x81aYPdAGkuc-efHC7l3uC0yYND6vITzR4UhRhB6f9UVyHp7UJFW1NJ_3sYqpE9Q_WtV6GKyl0pO-Nk"/>
+                    {/* Top 3 Players */}
+                    {leaderboard.slice(0, 3).map((player, index) => (
+                      <div key={player._id} className={`flex items-center gap-4 p-6 ${index === 0 ? 'bg-primary/5' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'}`}>
+                        <span className={`${index === 0 ? 'text-primary' : 'text-slate-500'} font-bold text-2xl w-8`}>{index + 1}</span>
+                        <div className={`size-14 rounded-full border-2 ${index === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-600'} overflow-hidden`}>
+                          <img alt={`Rank ${index + 1}`} className="w-full h-full object-cover" src={getAvatarUrl(player.avatar)}/>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">{player.username}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{player.scoreValue} Volts</p>
+                        </div>
+                        {index === 0 && <span className="material-symbols-outlined text-primary text-3xl">workspace_premium</span>}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">CrickKing_99</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">4,850 Pts</p>
-                      </div>
-                      <span className="material-symbols-outlined text-primary text-3xl">workspace_premium</span>
-                    </div>
-                    <div className="flex items-center gap-4 p-6 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                      <span className="text-slate-500 font-bold text-2xl w-8">2</span>
-                      <div className="size-14 rounded-full border-2 border-slate-300 dark:border-slate-600 overflow-hidden">
-                        <img alt="Rank 2" className="w-full h-full object-cover" data-alt="Avatar of the rank 2 player" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmqpj06QISRWyGV89gH8R9HVxZOyZp4w_Qva9Szg6fv_KBV9zSaXR7wfBm032MKmctuDU9uc-7a2GEr5nNzEnkbFeqAiwRZvmPSIjJEwVSGpggc4Ish-UCcSOWOcDKtQdZ8p5LckmkY_JNzFsAyPjqrvLVhwoIgv_2ZRGtdOjNgeF23cZLhsVZYPw8dMfi20jQ1_vSSx-OLH8VqSSL37OtHDfA7wwU5VxGfzHZ02RRqdeb_1MhXox1vLuj8RMa-QtjXiwGdQJ8znA"/>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">MasterBlaster</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">4,620 Pts</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 p-6 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                      <span className="text-slate-500 font-bold text-2xl w-8">3</span>
-                      <div className="size-14 rounded-full border-2 border-slate-300 dark:border-slate-600 overflow-hidden">
-                        <img alt="Rank 3" className="w-full h-full object-cover" data-alt="Avatar of the rank 3 player" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhvu8yQ_jSYzcLayZ8HCFmbgcsgExKP8xYQdp4ziTDZZZr21xTWXYrCpQ5QI3xb_RiiC4Dtzj330LnnjY1oqTLIjs2npL54ffyU_nkrwIJDYPzu52kTBuY7uIV5Yt3CBUFr2hqm_4VoxQoiDE5KFic98T3t7-0gY9UtHJKrMuMEHIev0N6cxS2IbdVmAZzflXIMBKdpJsHOQQADvC3q7oHKGhHRXgnjenA5bhwN_CHlEDurw7cBCC1LyksjeTffGfbRV5TrtIx5T8"/>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">GoatCricket</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">4,410 Pts</p>
-                      </div>
-                    </div>
+                    ))}
+                    
+                    {/* Current User Rank */}
                     <div className="mt-auto flex items-center gap-4 p-6 bg-primary/10 border-t border-primary/20">
-                      <span className="text-primary font-bold text-2xl w-8">12</span>
+                      <span className="text-primary font-bold text-2xl w-8">{userRank || '-'}</span>
                       <div className="size-14 rounded-full border-2 border-primary/40 overflow-hidden">
-                        <img alt="Your Rank" className="w-full h-full object-cover" data-alt="Avatar of the current player in the leaderboard" src={getAvatarUrl(userProfile?.avatar)}/>
+                        <img alt="Your Rank" className="w-full h-full object-cover" src={getAvatarUrl(userProfile?.avatar)}/>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-lg truncate text-slate-900 dark:text-slate-100">{userProfile?.username}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{userProfile?.volts} Volts</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{userScore !== null ? userScore : (userProfile?.volts || 0)} Volts</p>
                       </div>
                     </div>
                   </div>

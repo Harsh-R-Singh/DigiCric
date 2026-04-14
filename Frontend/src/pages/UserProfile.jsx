@@ -76,7 +76,7 @@ export default function UserProfile() {
   console.log(userProfile);
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
-      <main className="relative pt-12 px-4 md:px-8 max-w-8xl mx-40 overflow-hidden">
+      <main className="relative pt-12 px-4 md:px-8 max-w-8xl mx-auto lg:mx-40 overflow-hidden">
         {/* Background Decorative Watermark */}
         <div className="absolute top-20 -left-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">PRO PLAYER</div>
         <div className="absolute bottom-40 -right-20 z-0 pointer-events-none whitespace-nowrap text-[8rem] leading-none font-black text-[#ec5b13]/[0.05] -rotate-12 select-none">
@@ -132,7 +132,7 @@ export default function UserProfile() {
           </div>
 
           {/* Stats Quick View */}
-          <div className="lg:col-span-6 grid grid-cols-4 gap-4 animate-in">
+          <div className="lg:col-span-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-in">
             <div className="bg-[#2b1c17] p-6 rounded-xl flex flex-col justify-between border-b-4 border-[#ec5b13]/20">
               <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Total Matches</span>
               <span className="text-4xl font-black text-white italic">{userProfile?.matchesPlayed || 0}</span>
@@ -176,7 +176,7 @@ export default function UserProfile() {
           <div className="lg:col-span-8 space-y-8 animate-in ">
             {/* Performance Trend */}
             <div className="bg-[#2b1c17] p-8 rounded-xl relative overflow-hidden">
-              <div className="flex justify-between items-end mb-8 border-b border-[#5a4138]/20 pb-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8 border-b border-[#5a4138]/20 pb-4">
                 <div>
                   <h2 className="text-2xl font-black italic tracking-tight text-white">PERFORMANCE TREND</h2>
                   <p className="text-white/50 text-sm">Score progression over last 10 games</p>
@@ -200,9 +200,9 @@ export default function UserProfile() {
                 <h2 className="text-2xl font-black italic tracking-tight uppercase">Recent Match History</h2>
               </div>
               <div className="divide-y divide-[#5a4138]/10 blur-[2px]">
-                <div className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
-                  <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
+                <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
                     <div>
                       <div className="font-bold text-white text-lg">142 - 128</div>
                       <div className="text-white/50 text-sm">VS Computer • 5 Overs</div>
@@ -213,9 +213,9 @@ export default function UserProfile() {
                     <span className="material-symbols-outlined text-white/20 group-hover:text-[#ec5b13] transition-colors">chevron_right</span>
                   </div>
                 </div>
-                <div className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
-                  <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center font-black italic">LOSS</div>
+                <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center font-black italic">LOSS</div>
                     <div>
                       <div className="font-bold text-white text-lg">110 - 114</div>
                       <div className="text-white/50 text-sm">Camera Mode • 2 Overs</div>
@@ -226,9 +226,9 @@ export default function UserProfile() {
                     <span className="material-symbols-outlined text-white/20 group-hover:text-[#ec5b13] transition-colors">chevron_right</span>
                   </div>
                 </div>
-                <div className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
-                  <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
+                <div className="p-4 sm:p-6 flex items-center justify-between hover:bg-white/5 transition-colors group">
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center font-black italic">WIN</div>
                     <div>
                       <div className="font-bold text-white text-lg">186 - 140</div>
                       <div className="text-white/50 text-sm">VS Computer • 5 Overs</div>
