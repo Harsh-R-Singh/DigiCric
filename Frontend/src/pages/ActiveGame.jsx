@@ -142,6 +142,9 @@ export default function ActiveGame() {
             gameFormat: mode,
             gameMode: gameMode,
             userProfile: userProfile,
+            netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+            volts: voltsEarned,
+            xp: xpEarned
         } });
       }, 3500); 
       return () => clearTimeout(timer);
