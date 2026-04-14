@@ -74,6 +74,9 @@ export default function ActiveGame() {
 
   useEffect(() => {
     if (isGameOver) {
+      let netRunRate=0;
+      let voltsEarned=0;
+      let xpEarned=0;
       if (!updateDbDone.current) {
         updateDbDone.current = true;
         
@@ -94,9 +97,9 @@ export default function ActiveGame() {
           else if (isCpuWin) xp = (((cpuScore / Math.max(cBalls,uBalls)) - (userScore / Math.max(uBalls,cBalls)))*100);
         }
 
-        const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
-        const xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
-        const netRunRate = isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3)));
+        voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
+        xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
+        netRunRate = isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3)));
 
         const formData = {
           winner: isUserWin ? 1 : 0,
@@ -144,8 +147,8 @@ export default function ActiveGame() {
             gameMode: gameMode,
             userProfile: userProfile,
             netRunRate: netRunRate,
-            volts: voltsEarned,
-            xp: xpEarned
+            voltsEarned: voltsEarned,
+            xpEarned: xpEarned
         } });
       }, 3500); 
       return () => clearTimeout(timer);

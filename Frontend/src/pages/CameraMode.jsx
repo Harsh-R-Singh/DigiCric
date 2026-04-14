@@ -230,8 +230,8 @@ export default function CameraMode() {
           userWickets: userWickets ?? 1, cpuWickets: cpuWickets ?? 1,
           target, gameFormat: mode, gameMode: gameMode, userProfile,
           netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
-          volts: isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2)),
-          xp: isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3))
+          voltsEarned: isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2)),
+          xpEarned: isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3))
         } });
       }, 3500); 
     }
