@@ -96,6 +96,7 @@ export default function ActiveGame() {
 
         const voltsEarned = isUserWin ? Math.round(xp) : (isTie ? 0 : -Math.round(xp/2));
         const xpEarned = isUserWin ? Math.round(xp) : (isTie ? Math.round(xp/2) : Math.round(xp/3));
+        const netRunRate = isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3)));
 
         const formData = {
           winner: isUserWin ? 1 : 0,
@@ -105,7 +106,7 @@ export default function ActiveGame() {
           runsConceded: cpuScore || 0,
           wicketsTaken: cpuWickets || 0,
           user: userProfile?.username,
-          netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+          netRunRate: netRunRate,
           volts: voltsEarned,
           xp: xpEarned
         };
@@ -142,7 +143,7 @@ export default function ActiveGame() {
             gameFormat: mode,
             gameMode: gameMode,
             userProfile: userProfile,
-            netRunRate: isUserWin ? parseFloat((xp/100).toFixed(3)) : (isTie ? 0 : parseFloat((-xp/100).toFixed(3))),
+            netRunRate: netRunRate,
             volts: voltsEarned,
             xp: xpEarned
         } });
