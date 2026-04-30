@@ -9,8 +9,13 @@ dotenv.config({
 
 const app = express()
 
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  process.env.DEV_ORIGIN
+];
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: allowedOrigins ,
     credentials: true
 }))
 

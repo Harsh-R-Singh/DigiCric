@@ -19,6 +19,7 @@ export default function Rankings() {
   const [activeTab, setActiveTab] = useState('xp');
   const [leaderboard, setLeaderboard] = useState([]);
   const [userRank, setUserRank] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [userScore, setUserScore] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +45,8 @@ export default function Rankings() {
         setLeaderboard(data.data.leaderboard);
         setUserRank(data.data.userRank);
         setUserScore(data.data.userScore);
+        setUserName(data.data.leaderboard[data.data.userRank-1]?.username);
+        console.log(data.data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -84,10 +87,10 @@ export default function Rankings() {
         </div>
 
         <div className="relative z-10 mb-12 animate-in pt-8">
-          <h1 className=" text-5xl md:text-7xl font-black italic tracking-tighter uppercase font-headline text-[#f8ddd4] mb-4">
+          <h1 className=" text-5xl md:text-7xl font-black italic tracking-tighter select-none pointer-events-none uppercase font-headline text-[#f8ddd4] mb-4">
             Global <span className="text-[#ec5b13]">rankings</span>
           </h1>
-          <div className="flex flex-wrap gap-2 p-1 bg-[#261813] rounded-xl w-fit border border-[#5a4138]/20">
+          <div className="flex flex-wrap gap-2 p-1 bg-[#261813] rounded-xl w-fit select-none border border-[#5a4138]/20">
             {tabs.map((tab) => (
               <button 
                 key={tab.id}
@@ -105,7 +108,7 @@ export default function Rankings() {
         ) : (
           <>
           {(firstPlace || secondPlace || thirdPlace) && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end mb-16 relative z-10 animate-in">
+            <div className="grid grid-cols-1 select-none md:grid-cols-3 gap-8 items-end mb-16 relative z-10 animate-in">
               <div className="order-2 md:order-1 group">
                 {secondPlace ? (
                   <Link to={`/profile/${secondPlace.username}`} className="block bg-[#2b1c17] border-b-4 border-slate-400 p-8 rounded-xl relative overflow-hidden transition-all duration-300 hover:translate-y-[-8px] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
@@ -113,14 +116,14 @@ export default function Rankings() {
                       <span className="material-symbols-outlined text-[100px]">military_tech</span>
                     </div>
                     <div className="relative text-center md:text-left">
-                      <div className="w-20 h-20 bg-slate-400/20 rounded-xl mb-6 p-1 relative mx-auto md:mx-0">
+                      <div className="w-20 h-20 bg-slate-400 rounded-xl mb-6 p-1 relative mx-auto md:mx-0">
                         <img className="w-full h-full object-cover rounded-lg" src={getAvatarUrl(secondPlace.avatar)} alt="Silver rank player"/>
                         <div className="absolute -bottom-2 -right-2 bg-slate-400 text-background flex items-center justify-center font-black px-2 py-0.5 rounded text-sm italic text-[#221610]">2ND</div>
                       </div>
                       <h3 className="text-2xl font-bold uppercase tracking-tight mb-1 truncate">{secondPlace.username}</h3>
                       <p className="text-white/40 font-bold text-xs uppercase tracking-widest mb-4">{secondPlace.scoreValue} {currentLabel}</p>
                       <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] font-bold text-slate-400 uppercase">
-                        <span className="bg-slate-400/20 px-2 rounded-sm text-slate-300">Level {secondPlace.level}</span>
+                        <span className="bg-slate-400/20 px-2 rounded-sm text-slate-300">Level {secondPlace.level} - {secondPlace.rank}</span>
                       </div>
                     </div>
                   </Link>
@@ -129,18 +132,18 @@ export default function Rankings() {
 
               <div className="order-1 md:order-2 group">
                 {firstPlace && (
-                  <Link to={`/profile/${firstPlace.username}`} className="block bg-[#362621] border-b-4 border-[#ec5b13] p-10 rounded-xl relative overflow-hidden transition-all duration-300 hover:translate-y-[-12px] shadow-[0_0_50px_rgba(236,91,19,0.15)] ring-1 ring-[#ec5b13]/20 text-center md:text-left">
-                    <div className="absolute -right-8 -top-8 text-[#ec5b13]/10 group-hover:text-[#ec5b13]/20 transition-all">
+                  <Link to={`/profile/${firstPlace.username}`} className="block bg-[#362621] border-b-4 border-yellow-600 p-10 rounded-xl relative overflow-hidden transition-all duration-600 hover:translate-y-[-12px] shadow-[0_0_50px_rgba(236,91,19,0.15)] ring-1 ring-[#ec5b13]/20 text-center md:text-left">
+                    <div className="absolute -right-8 -top-8 text-yellow-600/10 group-hover:text-yellow-600/20 transition-all">
                       <span className="material-symbols-outlined text-[160px]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
                     </div>
                     <div className="relative">
-                      <div className="w-28 h-28 bg-[#ec5b13]/20 rounded-xl mb-8 p-1.5 relative mx-auto md:mx-0">
+                      <div className="w-28 h-28 bg-yellow-600 rounded-xl mb-8 p-1.5 relative mx-auto md:mx-0">
                         <img className="w-full h-full object-cover rounded-lg" src={getAvatarUrl(firstPlace.avatar)} alt="Gold rank player"/>
                         <div className="absolute -bottom-3 -right-3 bg-[#ec5b13] text-white flex items-center justify-center font-black px-4 py-1 rounded text-xl italic shadow-lg">1ST</div>
                       </div>
                       <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-2 italic truncate">{firstPlace.username}</h3>
-                      <p className="text-[#ec5b13] font-black text-sm uppercase tracking-[0.2em] mb-6">{firstPlace.scoreValue} {currentLabel}</p>
-                      <div className="flex items-center justify-center md:justify-start gap-3 text-sm font-bold text-[#ec5b13] uppercase">
+                      <p className="text-yellow-600 font-black text-sm uppercase tracking-[0.2em] mb-6">{firstPlace.scoreValue} {currentLabel}</p>
+                      <div className="flex items-center justify-center md:justify-start gap-3 text-sm font-bold text-yellow-600 uppercase">
                         <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
                         <span>Level {firstPlace.level} - {firstPlace.rank}</span>
                       </div>
@@ -156,14 +159,14 @@ export default function Rankings() {
                       <span className="material-symbols-outlined text-[100px]">stars</span>
                     </div>
                     <div className="relative text-center md:text-left">
-                      <div className="w-20 h-20 bg-amber-700/20 rounded-xl mb-6 p-1 relative mx-auto md:mx-0">
+                      <div className="w-20 h-20 bg-amber-700 rounded-xl mb-6 p-1 relative mx-auto md:mx-0">
                         <img className="w-full h-full object-cover rounded-lg" src={getAvatarUrl(thirdPlace.avatar)} alt="Bronze rank player"/>
                         <div className="absolute -bottom-2 -right-2 bg-amber-700 text-white flex items-center justify-center font-black px-2 py-0.5 rounded text-sm italic">3RD</div>
                       </div>
                       <h3 className="text-2xl font-bold uppercase tracking-tight mb-1 truncate">{thirdPlace.username}</h3>
                       <p className="text-white/40 font-bold text-xs uppercase tracking-widest mb-4">{thirdPlace.scoreValue} {currentLabel}</p>
                       <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] font-bold text-amber-600 uppercase">
-                        <span className="bg-amber-700/20 px-2 rounded-sm text-amber-600">Level {thirdPlace.level}</span>
+                        <span className="bg-amber-900/20 px-2 rounded-sm text-amber-600">Level {thirdPlace.level} - {thirdPlace.rank}</span>
                       </div>
                     </div>
                   </Link>
@@ -212,7 +215,7 @@ export default function Rankings() {
                 <div className="flex items-center gap-3 md:gap-5">
                   <div className="text-2xl md:text-3xl font-black italic text-[#ec5b13]">#{userRank}</div>
                   <div>
-                    <h4 className="font-black uppercase tracking-tight text-[#f8ddd4] text-base md:text-lg italic">YOUR POSITION</h4>
+                    <h4 className="font-black uppercase tracking-tight text-[#f8ddd4] text-base md:text-lg italic">{userName}</h4>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-[#ec5b13] uppercase tracking-widest bg-[#ec5b13]/10 px-2 rounded mt-1">Based on {currentLabel}</span>
                     </div>
