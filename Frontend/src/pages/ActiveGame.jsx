@@ -5,6 +5,12 @@ import { useGSAP } from '@gsap/react';
 import { useSingleWicketGame } from '../hooks/useSingleWicketGame';
 import { useFiveOverGame } from '../hooks/useFiveOverGame';
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
+const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
+const getAvatarUrl = (avatarName) => {
+  if (!avatarName) return avatarImages['../assets/avatar/Avatar1.png'];
+  const normalizedName = avatarName.charAt(0).toUpperCase() + avatarName.slice(1);
+  return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
+};
 export default function ActiveGame() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -224,7 +230,7 @@ export default function ActiveGame() {
             <div className="flex flex-col items-center gap-6">
               <div className="relative">
                 <div className="size-32 rounded-full border-4 border-primary bg-background-dark/80 flex items-center justify-center text-primary overflow-hidden shadow-[0_0_20px_rgba(236,91,19,0.2)]">
-                  <img alt="Player Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLfq4cz8N5xASugyuH6a3-VPqC2FlGZJ1fe0cpqh9tQTgeRLqVLgpMFRo_JePykl7Nd9oLi7cVzXfA170TKIKAlfNs4z9ZP6S814VgmIptcPiXLBpcpU_sHRE0J_RG43-M5O7DMpGTJdzD3jWqobes8_ZAnnvA2NuRKFNAe_6vIqd8X7uyYyyZYHdWxbeWQDaoUgd8EDDIzWDwbdsga6XI4zYGx7MiM4TTLvkdqGtywksH1EJ1ibMthlbCNc5mHNQohJ5xMKnTmlM" />
+                  <img alt="Player Avatar" className="w-full h-full object-cover" src={getAvatarUrl(userProfile?.avatar)} />
                 </div>
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 rounded-full text-xs font-bold text-white uppercase whitespace-nowrap">
                   You {phase === 'playing' ? (userBatting ? '(Batting)' : '(Bowling)') : ''}
