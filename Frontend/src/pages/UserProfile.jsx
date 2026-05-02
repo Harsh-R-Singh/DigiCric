@@ -39,13 +39,13 @@ export default function UserProfile() {
         setIsOwnProfile(isOwn);
 
         if (!isOwn) {
-            const friendsRes = await fetch(`${API_URL}/api/v1/friends/friends`, {
+            const statusRes = await fetch(`${API_URL}/api/v1/friends/friend-status/${username}`, {
                 credentials: 'include'
             });
-            if (friendsRes.ok) {
-                const friendsData = await friendsRes.json();
-                const friendExists = friendsData.data.some(f => f.username === username);
-                setIsFriend(friendExists);
+            if (statusRes.ok) {
+                const statusData = await statusRes.json();
+                setIsFriend(statusData.data.isFriend);
+                setRequestSent(statusData.data.hasSentRequest);
             }
         }
 

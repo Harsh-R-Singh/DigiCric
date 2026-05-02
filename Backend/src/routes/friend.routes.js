@@ -5,7 +5,8 @@ import {
     rejectFriendRequest, 
     removeFriend, 
     getFriends, 
-    getFriendRequests 
+    getFriendRequests,
+    checkFriendStatus 
 } from "../controllers/friend.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -17,5 +18,6 @@ router.route("/friend-request/reject/:username").post(verifyJWT, rejectFriendReq
 router.route("/friend/:username").delete(verifyJWT, removeFriend)
 router.route("/friends").get(verifyJWT, getFriends)
 router.route("/friend-requests").get(verifyJWT, getFriendRequests)
+router.route("/friend-status/:username").get(verifyJWT, checkFriendStatus)
 
 export default router;

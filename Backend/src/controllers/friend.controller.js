@@ -124,11 +124,30 @@ const getFriendRequests = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, currentUser.friendRequests, "Friend requests fetched successfully"));
 });
+const checkFriendStatus = asyncHandler(async (req, res) => {
+    const { username } = req.params;
+    const currentUser = req.user;
+
+    const targetUser = await User.findOne({ username });
+    if (!targetUser) {
+        throw new ApiError(404, "User not found");
+    }
+
+    const isFriend = targetUser.friends.includes(currentUser._id);
+    const hasSentRequest = targetUser.friendRequests.includes(currentUser._id);
+
+    return res.status(200).json(new ApiResponse(200, {
+        isFriend,
+        hasSentRequest
+    }, "Friend status fetched successfully"));
+});
+
 export {
     sendFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
     getFriends,
-    getFriendRequests
+    getFriendRequests,
+    checkFriendStatus
 }
