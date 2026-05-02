@@ -10,6 +10,7 @@ import {
     getCurrentUser,
     updateUserStats,
     deleteAccount,
+    searchUsers,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -26,5 +27,6 @@ router.route("/profile/:username").get(verifyJWT, getUserProfile)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 router.route("/update-stats").patch(verifyJWT, updateUserStats)
 router.route("/delete-account").delete(verifyJWT, deleteAccount)
+router.route("/search").get(verifyJWT, searchUsers)
 
 export default router

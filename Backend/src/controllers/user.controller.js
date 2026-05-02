@@ -453,6 +453,20 @@ const deleteAccount = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "User account successfully deleted"));
 });
 
+const searchUsers = asyncHandler(async (req, res) => {
+    const { query } = req.query;
+    if (!query || query.trim() === "") {
+        return res.status(200).json(new ApiResponse(200, [], "Empty query"));
+    }
+
+    const users = await User.find({
+        username: { $regex: query, $options: "i" },
+        _id: { $ne: req.user._id }
+    }).select("username avatar level rank").limit(20);
+
+    return res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
+});
+
 export {
      registerUser,
      loginUser,
@@ -464,4 +478,5 @@ export {
      getUserProfile,
      updateUserStats,
      deleteAccount,
+     searchUsers,
 }

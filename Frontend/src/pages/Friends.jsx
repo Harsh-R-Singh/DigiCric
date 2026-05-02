@@ -19,6 +19,8 @@ export default function Friends() {
   const [activeTab, setActiveTab] = useState('friends');
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   useGSAP(() => {
@@ -61,6 +63,25 @@ export default function Friends() {
     };
     fetchFriendsData();
   }, [navigate]);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/v1/users/search?query=${encodeURIComponent(searchQuery)}`, {
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSearchResults(data.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAcceptRequest = async (username) => {
     try {
@@ -120,7 +141,7 @@ export default function Friends() {
     }
   };
 
-  const renderUserCard = (user, isRequest) => (
+  const renderUserCard = (user, isRequest, isSearch = false) => (
     <div key={user._id} className="bg-[#2b1c17] rounded-xl overflow-hidden border border-[#5a4138]/20 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_10px_20px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-center p-6 gap-6 group">
       <Link to={`/profile/${user.username}`} className="flex items-center gap-6 flex-1 w-full">
         <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#41312b] rounded-xl p-1 shrink-0">
@@ -135,7 +156,11 @@ export default function Friends() {
         </div>
       </Link>
       <div className="flex gap-2 sm:gap-4 shrink-0 w-full sm:w-auto mt-4 sm:mt-0 justify-end">
-        {isRequest ? (
+        {isSearch ? (
+            <Link to={`/profile/${user.username}`} className="bg-[#ec5b13]/10 text-[#ec5b13] hover:bg-[#ec5b13] hover:text-white border border-[#ec5b13]/30 px-4 py-2 rounded-lg flex items-center justify-center transition-all w-full sm:w-auto font-bold text-xs uppercase tracking-widest">
+                View Profile
+            </Link>
+        ) : isRequest ? (
             <>
                 <button onClick={() => handleAcceptRequest(user.username)} className="bg-green-600/20 text-green-500 hover:bg-green-600 hover:text-white border border-green-500/50 p-2 sm:p-3 rounded-lg flex items-center justify-center transition-all shadow-[0_0_15px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] flex-1 sm:flex-none">
                     <span className="material-symbols-outlined text-sm sm:text-base">check</span>
@@ -182,21 +207,53 @@ export default function Friends() {
                 <span className="material-symbols-outlined text-sm">person_add</span>
                 Requests {requests.length > 0 && <span className="bg-white text-[#ec5b13] px-1.5 py-0.5 rounded-full text-[10px] ml-1">{requests.length}</span>}
             </button>
+            <button 
+                onClick={() => setActiveTab('search')}
+                className={`px-6 py-2.5 rounded-lg font-bold uppercase tracking-widest text-xs transition-all flex items-center gap-2 ${activeTab === 'search' ? 'bg-[#ec5b13] text-white shadow-[0_0_15px_rgba(236,91,19,0.4)]' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+            >
+                <span className="material-symbols-outlined text-sm">search</span>
+                Find Players
+            </button>
           </div>
         </div>
 
-        {loading ? (
+        {loading && activeTab !== 'search' ? (
              <div className="flex justify-center items-center py-32"><p className="text-primary animate-pulse text-2xl font-black italic uppercase">FETCHING DATA...</p></div>
         ) : (
           <div className="space-y-4 animate-in relative z-10">
-              {activeTab === 'friends' ? (
+              {activeTab === 'search' && (
+                  <div className="mb-6">
+                      <form onSubmit={handleSearch} className="flex gap-2">
+                          <input 
+                              type="text" 
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              placeholder="Search by username..." 
+                              className="w-full bg-[#2b1c17] border border-[#5a4138]/30 rounded-lg px-4 py-3 text-white outline-none focus:border-[#ec5b13]/50 transition-colors"
+                          />
+                          <button type="submit" disabled={loading} className="bg-[#ec5b13] hover:bg-[#ec5b13]/80 text-white font-bold px-6 py-3 rounded-lg transition-all flex items-center justify-center disabled:opacity-50">
+                              <span className="material-symbols-outlined">{loading ? "hourglass_empty" : "search"}</span>
+                          </button>
+                      </form>
+                  </div>
+              )}
+
+              {activeTab === 'search' ? (
+                  searchResults.length > 0 ? (
+                      searchResults.map(user => renderUserCard(user, false, true))
+                  ) : searchQuery && !loading ? (
+                      <div className="text-center py-10 text-white/40">No players found</div>
+                  ) : !loading ? (
+                      <div className="text-center py-10 text-white/40">Search for players to view their profiles</div>
+                  ) : null
+              ) : activeTab === 'friends' ? (
                   friends.length > 0 ? (
                       friends.map(user => renderUserCard(user, false))
                   ) : (
                       <div className="text-center py-20 bg-[#2b1c17]/50 rounded-2xl border border-white/5 border-dashed">
                           <span className="material-symbols-outlined text-[60px] text-white/10 mb-4">sentiment_dissatisfied</span>
                           <p className="text-white/40 font-bold uppercase tracking-widest">No friends yet</p>
-                          <button onClick={() => navigate('/rankings')} className="mt-6 bg-[#41312b] hover:bg-[#5a4138] text-white font-bold px-6 py-2 rounded-lg transition-colors text-sm uppercase tracking-widest">Find Players</button>
+                          <button onClick={() => setActiveTab('search')} className="mt-6 bg-[#41312b] hover:bg-[#5a4138] text-white font-bold px-6 py-2 rounded-lg transition-colors text-sm uppercase tracking-widest">Find Players</button>
                       </div>
                   )
               ) : (

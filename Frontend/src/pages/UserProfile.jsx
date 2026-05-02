@@ -87,7 +87,6 @@ export default function UserProfile() {
       default: return 'anim-fire-newbie text-[#f8ddd4]/80';
     }
   };
-  console.log(userProfile);
   return (
     <div ref={containerRef} className="bg-[#221610] text-[#f8ddd4] font-body min-h-screen pb-24 selection:bg-[#ec5b13] selection:text-white relative">
       <main className="relative pt-12 px-4 md:px-8 max-w-8xl mx-auto lg:mx-40 overflow-hidden">
@@ -152,7 +151,7 @@ export default function UserProfile() {
                     disabled={requestSent}
                     onClick={async () => {
                       try {
-                        const res = await fetch(`${API_URL}/api/v1/users/friend-request/${username}`, {
+                        const res = await fetch(`${API_URL}/api/v1/friends/friend-request/${username}`, {
                           method: 'POST',
                           credentials: 'include'
                         });
