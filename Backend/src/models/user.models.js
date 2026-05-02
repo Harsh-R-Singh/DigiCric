@@ -23,6 +23,18 @@ const userSchema = new mongoose.Schema({
         min:[6,"Password must be at least 6 characters long"],
         max:[20,"Password must be at most 20 characters long"]
     },
+    friendRequests:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    friends:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
     avatar:{
         type:String,
         enum:["Avatar1","Avatar2","Avatar3","Avatar4","Avatar5","Avatar6","Avatar7","Avatar8","Avatar9","Avatar10","Avatar11"],

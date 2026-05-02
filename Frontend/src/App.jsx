@@ -14,6 +14,7 @@ const CameraMode = lazy(() => import('./pages/CameraMode'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Friends = lazy(() => import('./pages/Friends'));
 
 const LoadingFallback = () => (
   <div className="flex-1 flex justify-center items-center bg-gray-950">
@@ -39,6 +40,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/friends" element={<Friends />} />
           </Routes>
         </Suspense>
       </main>

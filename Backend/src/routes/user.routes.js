@@ -26,6 +26,5 @@ router.route("/profile/:username").get(verifyJWT, getUserProfile)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 router.route("/update-stats").patch(verifyJWT, updateUserStats)
 router.route("/delete-account").delete(verifyJWT, deleteAccount)
-// router.route("/leaderboard").get(verifyJWT, getLeaderboard)
 
 export default router

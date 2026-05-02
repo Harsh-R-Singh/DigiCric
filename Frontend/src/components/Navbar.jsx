@@ -88,6 +88,12 @@ export default function Navbar() {
           >
             Guide
           </Link>
+          <Link 
+            to="/friends" 
+            className={`${path === '/friends' ? 'text-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary'} font-medium transition-colors`}
+          >
+            Friends
+          </Link>
         </div>
         
         {user ? (

@@ -20,6 +20,8 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -33,7 +35,19 @@ export default function UserProfile() {
            return;
         }
         const currentUserData = await currentUserRes.json();
-        setIsOwnProfile(currentUserData.data.username === username);
+        const isOwn = currentUserData.data.username === username;
+        setIsOwnProfile(isOwn);
+
+        if (!isOwn) {
+            const friendsRes = await fetch(`${API_URL}/api/v1/friends/friends`, {
+                credentials: 'include'
+            });
+            if (friendsRes.ok) {
+                const friendsData = await friendsRes.json();
+                const friendExists = friendsData.data.some(f => f.username === username);
+                setIsFriend(friendExists);
+            }
+        }
 
         // Step 2: Get full profile including stats using the param username
         const profileRes = await fetch(`${API_URL}/api/v1/users/profile/${username}`, {
@@ -117,7 +131,7 @@ export default function UserProfile() {
                 
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                {isOwnProfile && (
+                {isOwnProfile ? (
                   <>
                     <button onClick={() => navigate('/settings')} className="bg-[#ec5b13] text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] transition-all active:scale-95">
                       <span className="material-symbols-outlined text-sm">edit</span> EDIT PROFILE
@@ -126,6 +140,43 @@ export default function UserProfile() {
                       <span className="material-symbols-outlined text-sm">lock</span> SECURITY
                     </button>
                   </>
+                ) : isFriend ? (
+                  <button 
+                    disabled
+                    className="bg-[#2b1c17] border border-[#ec5b13]/50 text-[#ec5b13] font-bold px-6 py-3 rounded-lg flex items-center gap-2 cursor-default opacity-80"
+                  >
+                    <span className="material-symbols-outlined text-sm">group</span> FRIENDS
+                  </button>
+                ) : (
+                  <button 
+                    disabled={requestSent}
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`${API_URL}/api/v1/users/friend-request/${username}`, {
+                          method: 'POST',
+                          credentials: 'include'
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                          setRequestSent(true);
+                        } else {
+                          alert(data.message || 'Could not send friend request');
+                        }
+                      } catch (err) {
+                        alert('Error sending friend request');
+                      }
+                    }}
+                    className={`text-white font-bold px-6 py-3 rounded-lg flex items-center gap-2 transition-all ${
+                      requestSent 
+                        ? "bg-gray-600 cursor-not-allowed opacity-70" 
+                        : "bg-[#ec5b13] hover:shadow-[0_0_20px_rgba(236,91,19,0.5)] active:scale-95"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-sm">
+                      {requestSent ? "how_to_reg" : "person_add"}
+                    </span> 
+                    {requestSent ? "REQUEST SENT" : "ADD FRIEND"}
+                  </button>
                 )}
               </div>
             </div>
