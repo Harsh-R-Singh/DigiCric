@@ -19,7 +19,7 @@ export default function Footer() {
           <Link to="/guide" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Guide
           </Link>
-          <a href="mailto:harshrajsingh246@gmail.com" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+          <a href="https://www.linkedin.com/in/harsh-raj-singh-8a409524a/" target="_blank" rel="noopener noreferrer"className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Contact Us
           </a>
           <Link to="/rankings" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
