@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useSingleWicketGame } from '../hooks/useSingleWicketGame';
 import { useFiveOverGame } from '../hooks/useFiveOverGame';
+
 const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 const avatarImages = import.meta.glob('../assets/avatar/*.png', { eager: true, import: 'default' });
 const getAvatarUrl = (avatarName) => {
@@ -11,6 +12,7 @@ const getAvatarUrl = (avatarName) => {
   const normalizedName = avatarName.charAt(0).toUpperCase() + avatarName.slice(1);
   return avatarImages[`../assets/avatar/${normalizedName}.png`] || avatarImages['../assets/avatar/Avatar1.png'];
 };
+
 export default function ActiveGame() {
   const navigate = useNavigate();
   const location = useLocation();

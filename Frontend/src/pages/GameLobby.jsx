@@ -138,7 +138,7 @@ useEffect(() => {
                   </div>
                   
                   {!selectedMode ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <button onClick={() => setSelectedMode('camera')} className="group relative overflow-hidden bg-primary text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(236,91,19,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">Camera Mode</h3>
@@ -159,6 +159,16 @@ useEffect(() => {
                         </div>
                         <div className="absolute -right-4 -bottom-4 text-white/5 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">CPU</div>
                       </button>
+                      <Link to="/multiplayer" state={{userProfile, currentUser}} className="group relative overflow-hidden bg-purple-600 text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(147,51,234,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
+                        <div className="relative z-10">
+                          <h3 className="text-2xl font-bold mb-2">Play with Friend</h3>
+                          <p className="text-white/80 text-sm">Create or join a room to play with friends using camera</p>
+                        </div>
+                        <div className="flex justify-end relative z-10">
+                          <span className="material-symbols-outlined text-5xl">people</span>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black rotate-12 select-none group-hover:scale-110 transition-transform">PVP</div>
+                      </Link>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
