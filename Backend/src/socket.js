@@ -97,6 +97,8 @@ export default function setupSocket(io) {
           const sum = n1 + n2;
           const isEven = sum % 2 === 0;
           
+          game.tossPlays = {}; // reset for next phase
+          
           let tossWinnerId;
           // Player 1 made the choice (tossChoice)
           if ((isEven && game.tossChoice === "even") || (!isEven && game.tossChoice === "odd")) {
@@ -117,6 +119,8 @@ export default function setupSocket(io) {
           const bowlerId = game.bowlingPlayerId;
           const batterNumber = game.currentPlays[batterId];
           const bowlerNumber = game.currentPlays[bowlerId];
+          
+          game.currentPlays = {}; // reset for next ball
           
           const batter = game.players.find(p => p.id === batterId);
           const bowler = game.players.find(p => p.id === bowlerId);
@@ -157,7 +161,6 @@ export default function setupSocket(io) {
               }
             }
           }
-          game.currentPlays = {}; // reset for next ball
         }
       }
     });

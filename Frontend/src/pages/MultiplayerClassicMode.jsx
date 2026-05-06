@@ -26,6 +26,7 @@ export default function MultiplayerClassicMode() {
   const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
   const [lastPlay, setLastPlay] = useState(null);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [inningsBreakWait, setInningsBreakWait] = useState(false);
   const [comments, setComments] = useState([]);
 
@@ -44,7 +45,13 @@ export default function MultiplayerClassicMode() {
     });
 
     newSocket.on("gameStateUpdate", (data) => {
-      setGameState(data.gameState);
+      setGameState(prevState => {
+         if (data.gameState.innings === 2 && prevState?.innings === 1) {
+            setInningsBreakWait(true);
+         }
+         return data.gameState;
+      });
+      setHasPlayed(false);
       
       if(data.gameState.logs && data.gameState.logs.length > 0) {
         setComments(data.gameState.logs);
@@ -55,10 +62,6 @@ export default function MultiplayerClassicMode() {
          setTimeout(() => {
            setLastPlay(null);
          }, 2500);
-      }
-      
-      if (data.gameState.innings === 2 && gameState?.innings === 1) {
-         setInningsBreakWait(true);
       }
       
       if (data.gameState.state === "game_over") {
@@ -112,6 +115,7 @@ export default function MultiplayerClassicMode() {
   const isGameOver = phase === "game_over";
 
   const mode = gameState.gameFormat;
+  const userHasPlayed = hasPlayed || (phase === 'toss_play' ? gameState.tossPlays[socket?.id] : gameState.currentPlays[socket?.id]);
 
   const formatOvers = (balls) => {
     const overs = Math.floor(balls / 6);
@@ -122,8 +126,10 @@ export default function MultiplayerClassicMode() {
   const playNumber = (num) => {
     if (phase === 'toss_play') {
        socket.emit("playNumber", { roomId, number: num });
+       setHasPlayed(true);
     } else if (phase === 'playing' && !inningsBreakWait) {
        socket.emit("playNumber", { roomId, number: num });
+       setHasPlayed(true);
     }
   };
 
@@ -281,7 +287,7 @@ export default function MultiplayerClassicMode() {
              </div>
           )}
 
-          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && !lastPlay && !(phase === 'toss_play' ? gameState.tossPlays[socket?.id] : gameState.currentPlays[socket?.id]) && (
+          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && !lastPlay && !userHasPlayed && (
             <>
               <h3 className="text-center text-slate-900 dark:text-white text-lg font-bold font-display">
                 {phase === 'toss_play' ? 'Play for Toss' : 'Choose your move'}
@@ -305,17 +311,11 @@ export default function MultiplayerClassicMode() {
 
           {lastPlay && (
             <div className="text-center py-4">
-               <h3 className="text-xl font-bold text-slate-500 animate-pulse">Waiting for opponent to play...</h3>
+               <h3 className="text-xl font-bold text-slate-500 animate-pulse">Play resolving...</h3>
             </div>
           )}
           
-          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && !lastPlay && gameState.currentPlays[socket?.id] && (
-             <div className="text-center py-4">
-                <h3 className="text-xl font-bold text-slate-500 animate-pulse">Waiting for opponent to play...</h3>
-             </div>
-          )}
-          
-          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && !lastPlay && gameState.tossPlays[socket?.id] && phase === 'toss_play' && (
+          {(phase === 'toss_play' || phase === 'playing') && !isGameOver && !inningsBreakWait && !lastPlay && userHasPlayed && (
              <div className="text-center py-4">
                 <h3 className="text-xl font-bold text-slate-500 animate-pulse">Waiting for opponent to play...</h3>
              </div>

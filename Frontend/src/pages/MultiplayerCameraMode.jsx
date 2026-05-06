@@ -55,6 +55,7 @@ export default function MultiplayerCameraMode() {
   const [isActive, setIsActive] = useState(false);
 
   const [lastPlay, setLastPlay] = useState(null);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [inningsBreakWait, setInningsBreakWait] = useState(false);
 
   useEffect(() => {
@@ -73,19 +74,19 @@ export default function MultiplayerCameraMode() {
     });
 
     newSocket.on("gameStateUpdate", (data) => {
-      setGameState(data.gameState);
+      setGameState(prevState => {
+         if (data.gameState.innings === 2 && prevState?.innings === 1) {
+            setInningsBreakWait(true);
+         }
+         return data.gameState;
+      });
+      setHasPlayed(false);
       if (data.lastPlay) {
          setLastPlay(data.lastPlay);
          // Show results then reset
          setTimeout(() => {
            setLastPlay(null);
-           setIsActive(true); // Auto-restart round
-           setCountdown(3);
          }, 2500);
-      }
-      
-      if (data.gameState.innings === 2 && gameState?.innings === 1) {
-         setInningsBreakWait(true);
       }
       
       if (data.gameState.state === "game_over") {
@@ -106,6 +107,19 @@ export default function MultiplayerCameraMode() {
       newSocket.disconnect();
     };
   }, [roomId, currentUser, navigate]);
+
+  // Auto-start round when appropriate
+  useEffect(() => {
+    if (!gameState) return;
+    if ((gameState.state === "toss_play" || gameState.state === "playing") && 
+        !isActive && 
+        !lastPlay && 
+        !inningsBreakWait && 
+        !hasPlayed) {
+       setIsActive(true);
+       setCountdown(3);
+    }
+  }, [gameState.state, isActive, lastPlay, inningsBreakWait, hasPlayed]);
 
   // Load MediaPipe
   useEffect(() => {
@@ -184,6 +198,7 @@ export default function MultiplayerCameraMode() {
        } else if (countdown === 0) {
           if (fingersCount >= 1 && fingersCount <= 6) {
              setIsActive(false);
+             setHasPlayed(true);
              if (gameState.state === "toss_play") {
                 socket.emit("playNumber", { roomId, number: fingersCount });
              } else if (gameState.state === "playing") {
@@ -257,14 +272,9 @@ export default function MultiplayerCameraMode() {
             )}
 
             {/* Waiting for other player */}
-            {!isActive && (gameState.state === "toss_play" || gameState.state === "playing") && !lastPlay && !inningsBreakWait && (
+            {!isActive && (gameState.state === "toss_play" || gameState.state === "playing") && !lastPlay && !inningsBreakWait && hasPlayed && (
                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/60">
-                  <button 
-                     onClick={() => { setIsActive(true); setCountdown(3); }} 
-                     className="bg-primary px-8 py-3 rounded-full text-white font-bold tracking-widest animate-pulse"
-                  >
-                     READY!
-                  </button>
+                  <span className="text-3xl md:text-4xl text-white font-bold tracking-widest animate-pulse">Waiting for opponent...</span>
                </div>
             )}
 
