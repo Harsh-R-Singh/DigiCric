@@ -91,7 +91,15 @@ export default function MultiplayerCameraMode() {
       
       if (data.gameState.state === "game_over") {
          setTimeout(() => {
-            navigate('/lobby'); // Simplified game over
+            navigate('/multiplayer-game-over', {
+               state: {
+                  gameState: data.gameState,
+                  currentUser,
+                  userProfile,
+                  roomId,
+                  mode: data.gameState.gameFormat
+               }
+            });
          }, 4000);
       }
     });

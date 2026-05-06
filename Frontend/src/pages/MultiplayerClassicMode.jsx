@@ -66,7 +66,15 @@ export default function MultiplayerClassicMode() {
       
       if (data.gameState.state === "game_over") {
          setTimeout(() => {
-            navigate('/lobby'); 
+            navigate('/multiplayer-game-over', {
+               state: {
+                  gameState: data.gameState,
+                  currentUser,
+                  userProfile,
+                  roomId,
+                  mode: data.gameState.gameFormat
+               }
+            });
          }, 4000);
       }
     });

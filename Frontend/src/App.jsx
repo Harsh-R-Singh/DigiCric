@@ -14,6 +14,7 @@ const CameraMode = lazy(() => import('./pages/CameraMode'));
 const MultiplayerLobby = lazy(() => import('./pages/MultiplayerLobby'));
 const MultiplayerCameraMode = lazy(() => import('./pages/MultiplayerCameraMode'));
 const MultiplayerClassicMode = lazy(() => import('./pages/MultiplayerClassicMode'));
+const MultiplayerGameOver = lazy(() => import('./pages/MultiplayerGameOver'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Settings = lazy(() => import('./pages/Settings'));
@@ -43,6 +44,7 @@ function App() {
             <Route path="/multiplayer" element={<MultiplayerLobby />} />
             <Route path="/multiplayer/play" element={<MultiplayerCameraMode />} />
             <Route path="/multiplayer/classic" element={<MultiplayerClassicMode />} />
+            <Route path="/multiplayer-game-over" element={<MultiplayerGameOver />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/settings" element={<Settings />} />
