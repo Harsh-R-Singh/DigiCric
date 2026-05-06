@@ -152,7 +152,7 @@ useEffect(() => {
                       <button onClick={() => setSelectedMode('classic')} className="group relative overflow-hidden bg-slate-800 dark:bg-slate-700 text-white rounded-xl p-8 transition-all hover:bg-slate-700 dark:hover:bg-slate-600 flex flex-col justify-between min-h-[200px] border border-slate-600 text-left block">
                         <div className="relative z-10">
                           <h3 className="text-2xl font-bold mb-2">Classic Mode</h3>
-                          <p className="text-slate-300 text-sm">Play using mouse or keyboard</p>
+                          <p className="text-slate-300 text-sm">Play using your mouse</p>
                         </div>
                         <div className="flex justify-end relative z-10">
                           <span className="material-symbols-outlined text-5xl">memory</span>
@@ -161,8 +161,8 @@ useEffect(() => {
                       </button>
                       <Link to="/multiplayer" state={{userProfile, currentUser}} className="group relative overflow-hidden bg-purple-600 text-white rounded-xl p-8 transition-all hover:shadow-[0_0_25px_rgba(147,51,234,0.5)] flex flex-col justify-between min-h-[200px] text-left block">
                         <div className="relative z-10">
-                          <h3 className="text-2xl font-bold mb-2">Play with Friend</h3>
-                          <p className="text-white/80 text-sm">Create or join a room to play with friends using camera</p>
+                          <h3 className="text-2xl font-bold mb-2">Play with a Friend</h3>
+                          <p className="text-white/80 text-sm">Create or join a room to play with friends using camera or without camera</p>
                         </div>
                         <div className="flex justify-end relative z-10">
                           <span className="material-symbols-outlined text-5xl">people</span>

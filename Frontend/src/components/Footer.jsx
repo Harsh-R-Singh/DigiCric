@@ -25,6 +25,9 @@ export default function Footer() {
           <Link to="/rankings" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Rankings
           </Link>
+          <Link to="/friends" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
+            Friends
+          </Link>
           <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">
             Terms of Service
           </a>
