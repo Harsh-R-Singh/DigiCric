@@ -21,6 +21,7 @@
     "mongodb": "^7.1.0",
     "mongoose": "^9.3.1",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
+    "nodemailer": "^8.0.7",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import crypto from "crypto";
 // import {Avatar1 ,Avatar2,Avatar3,Avatar4,Avatar5} from "../assets/avatars"
 const userSchema = new mongoose.Schema({
     username: {
@@ -58,8 +59,9 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String
-    }
-    
+    },
+    forgotPasswordToken: String,
+    forgotPasswordExpiry: Date,
 },{timestamps:true})
 
 userSchema.pre("save", async function () {
@@ -97,4 +99,18 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
+
+userSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(20).toString("hex");
+
+    this.forgotPasswordToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+    this.forgotPasswordExpiry = Date.now() + 15 * 60 * 1000; // 15 mins
+
+    return resetToken;
+}
+
 export const User = mongoose.model("User", userSchema)

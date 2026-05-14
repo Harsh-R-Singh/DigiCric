@@ -19,6 +19,8 @@ const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Friends = lazy(() => import('./pages/Friends'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 const LoadingFallback = () => (
   <div className="flex-1 flex justify-center items-center bg-gray-950">
@@ -47,6 +49,8 @@ function App() {
             <Route path="/multiplayer-game-over" element={<MultiplayerGameOver />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/friends" element={<Friends />} />
           </Routes>

@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 import UserStats from "../models/userstats.models.js";
 import jwt from "jsonwebtoken"
+import crypto from "crypto";
+import { sendEmail } from "../utils/sendEmail.js";
 // import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async(userId) =>{
@@ -467,6 +469,71 @@ const searchUsers = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    
+    if (!email) {
+        return res.status(400).json(new ApiResponse(400, {}, "Email is required"));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(404).json(new ApiResponse(404, {}, "User with this email does not exist"));
+    }
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const origin = req.get("origin") || process.env.CORS_ORIGIN;
+    const resetUrl = `${origin}/reset-password/${resetToken}`;
+
+    const message = `You requested a password reset. Please go to this link to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: "DigiCric Password Reset",
+            message
+        });
+
+        return res.status(200).json(new ApiResponse(200, {}, `Password reset token sent to email`));
+    } catch (error) {
+        user.forgotPasswordToken = undefined;
+        user.forgotPasswordExpiry = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        throw new ApiError(500, "There was an error sending the email. Try again later");
+    }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+        return res.status(400).json(new ApiResponse(400, {}, "Password is required"));
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+        forgotPasswordToken: hashedToken,
+        forgotPasswordExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        return res.status(400).json(new ApiResponse(400, {}, "Token is invalid or has expired"));
+    }
+
+    user.password = password;
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordExpiry = undefined;
+    
+    await user.save();
+
+    return res.status(200).json(new ApiResponse(200, {}, "Password reset successfully"));
+});
+
 export {
      registerUser,
      loginUser,
@@ -479,4 +546,6 @@ export {
      updateUserStats,
      deleteAccount,
      searchUsers,
+     forgotPassword,
+     resetPassword,
 }
