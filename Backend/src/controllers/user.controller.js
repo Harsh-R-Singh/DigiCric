@@ -470,21 +470,32 @@ const searchUsers = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    let { email } = req.body;
     
-    if (!email) {
+    if (!email || !email.trim()) {
         return res.status(400).json(new ApiResponse(400, {}, "Email is required"));
     }
 
+    // 1. INPUT SANITIZATION: Ensure the email is trimmed and lowercased
+    email = email.trim().toLowerCase();
+
     const user = await User.findOne({ email });
     if (!user) {
-        return res.status(404).json(new ApiResponse(404, {}, "User with this email does not exist"));
+        // 2. PREVENT USER ENUMERATION (Security)
+        // Never reveal whether an email exists or not. An attacker could use a 404
+        // to check millions of emails and figure out who is registered on your site.
+        // We return a 200 OK with a generic message for both success and failure cases.
+        return res.status(200).json(new ApiResponse(200, {}, "If an account with that email exists, we have sent a password reset link."));
     }
 
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    const origin = process.env.CORS_ORIGIN;
+    // 3. FALLBACK CONFIGURATION
+    // Always provide a safe fallback just in case the env var fails to load
+    let origin = process.env.CORS_ORIGIN || "http://localhost:5173";
+    // Remove trailing slash if present to avoid double slashes in URL
+    origin = origin.replace(/\/$/, "");
     const resetUrl = `${origin}/reset-password/${resetToken}`;
 
     const message = `You requested a password reset. Please go to this link to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
@@ -496,11 +507,17 @@ const forgotPassword = asyncHandler(async (req, res) => {
             message
         });
 
-        return res.status(200).json(new ApiResponse(200, {}, `Password reset token sent to email`));
+        // Use the exact same success message as the failure case above
+        return res.status(200).json(new ApiResponse(200, {}, `If an account with that email exists, we have sent a password reset link.`));
     } catch (error) {
         user.forgotPasswordToken = undefined;
         user.forgotPasswordExpiry = undefined;
         await user.save({ validateBeforeSave: false });
+
+        // 4. PROPER LOGGING
+        // We log the actual SMTP error here so you can view it in your server console, 
+        // without leaking potentially sensitive config details to the client's browser.
+        console.error("Forgot Password Email Error:", error);
 
         throw new ApiError(500, "There was an error sending the email. Try again later");
     }
