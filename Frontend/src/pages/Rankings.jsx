@@ -46,7 +46,7 @@ export default function Rankings() {
         setUserRank(data.data.userRank);
         setUserScore(data.data.userScore);
         setUserName(data.data.leaderboard[data.data.userRank-1]?.username);
-        console.log(data.data);
+        // console.log(data.data);
       } catch (err) {
         console.error(err);
       } finally {

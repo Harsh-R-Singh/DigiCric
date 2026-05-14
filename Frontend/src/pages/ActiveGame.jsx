@@ -27,7 +27,7 @@ export default function ActiveGame() {
   const mode = location.state?.gameFormat || 'single_wicket';
   const gameMode = location.state?.gameMode || 'classic';
   const userProfile = location.state?.userProfile;
-  console.log(location.state);
+  // console.log(location.state);
   // console.log(userProfile);
   // We unconditionally call both hooks to satisfy React's rules of hooks
   const singleWicketGame = useSingleWicketGame();
