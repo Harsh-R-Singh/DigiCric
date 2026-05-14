@@ -125,7 +125,7 @@ export default function UserProfile() {
                   <p>Lvl {userProfile?.level+1}</p>
                 </div>
                 <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full ">
-                  <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>
+                  <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.xp%1000)/1000*100}%` }}></div>
                 </div>
                 
               </div>
