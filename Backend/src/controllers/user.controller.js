@@ -409,15 +409,15 @@ const updateUserStats = asyncHandler(async(req, res) => {
     const calculatedLevel = Math.floor((user.xp / 3000) + 1);
     
     let calculatedRank = "Newbie";
-    if (user.volts >= 40000) {
+    if (user.volts >= 25000) {
         calculatedRank = "Legend";
-    } else if (user.volts >= 25000) {
-        calculatedRank = "Master";
     } else if (user.volts >= 10000) {
-        calculatedRank = "Pro";
+        calculatedRank = "Master";
     } else if (user.volts >= 5000) {
+        calculatedRank = "Pro";
+    } else if (user.volts >= 1000) {
         calculatedRank = "Intermediate";
-    } else if (user.volts >= 500) {
+    } else if (user.volts >= 100) {
         calculatedRank = "Beginner";
     }
 
