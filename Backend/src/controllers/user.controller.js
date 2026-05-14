@@ -484,7 +484,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    const origin = req.get("origin") || process.env.CORS_ORIGIN;
+    const origin = process.env.CORS_ORIGIN;
     const resetUrl = `${origin}/reset-password/${resetToken}`;
 
     const message = `You requested a password reset. Please go to this link to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
