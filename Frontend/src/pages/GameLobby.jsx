@@ -37,10 +37,15 @@ export default function GameLobby() {
 useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Step 1: Get the current user session
-        const currentUserRes = await fetch(`${API_URL}/api/v1/users/current-user`, {
-          credentials: 'include'
-        });
+        // Fetch current user and leaderboard concurrently
+        const [currentUserRes, leaderboardRes] = await Promise.all([
+          fetch(`${API_URL}/api/v1/users/current-user`, { credentials: 'include' }),
+          fetch(`${API_URL}/api/v1/rankings/leaderboard?type=volts`, { credentials: 'include' }).catch(err => {
+            console.error("Failed to fetch leaderboard", err);
+            return { ok: false };
+          })
+        ]);
+
         if (!currentUserRes.ok) {
            navigate('/login');
            return;
@@ -58,19 +63,12 @@ useEffect(() => {
 
         setUserProfile(profileData.data);
 
-        // Step 3: Fetch Leaderboard data (Top 3 Volts)
-        try {
-          const leaderboardRes = await fetch(`${API_URL}/api/v1/rankings/leaderboard?type=volts`, {
-            credentials: 'include'
-          });
-          if (leaderboardRes.ok) {
-            const leaderboardData = await leaderboardRes.json();
-            setLeaderboard(leaderboardData.data.leaderboard || []);
-            setUserRank(leaderboardData.data.userRank);
-            setUserScore(leaderboardData.data.userScore);
-          }
-        } catch (lbErr) {
-          console.error("Failed to fetch leaderboard", lbErr);
+        // Handle Leaderboard data
+        if (leaderboardRes.ok) {
+          const leaderboardData = await leaderboardRes.json();
+          setLeaderboard(leaderboardData.data.leaderboard || []);
+          setUserRank(leaderboardData.data.userRank);
+          setUserScore(leaderboardData.data.userScore);
         }
       } catch (err) {
         console.error(err);

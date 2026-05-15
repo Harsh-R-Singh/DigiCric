@@ -133,7 +133,7 @@ export default function GameOver() {
 
         {/* Footer Info */}
         <footer className="mt-12 text-center text-slate-500 text-sm flex flex-col items-center gap-4">
-          <p>© 2024 Hand Cricket Pro League</p>
+          <p>© 2026 DigiCric. All rights reserved.</p>
         </footer>
       </div>
     </div>

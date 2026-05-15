@@ -26,17 +26,24 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Step 1: Check if user is authenticated
-        const currentUserRes = await fetch(`${API_URL}/api/v1/users/current-user`, {
-          credentials: 'include'
-        });
+        // Fetch current user and profile concurrently
+        const [currentUserRes, profileRes] = await Promise.all([
+          fetch(`${API_URL}/api/v1/users/current-user`, { credentials: 'include' }),
+          fetch(`${API_URL}/api/v1/users/profile/${username}`, { credentials: 'include' })
+        ]);
+
         if (!currentUserRes.ok) {
            navigate('/login');
            return;
         }
+        
         const currentUserData = await currentUserRes.json();
         const isOwn = currentUserData.data.username === username;
         setIsOwnProfile(isOwn);
+
+        if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
+        const profileData = await profileRes.json();
+        setUserProfile(profileData.data);
 
         if (!isOwn) {
             const statusRes = await fetch(`${API_URL}/api/v1/friends/friend-status/${username}`, {
@@ -48,15 +55,6 @@ export default function UserProfile() {
                 setRequestSent(statusData.data.hasSentRequest);
             }
         }
-
-        // Step 2: Get full profile including stats using the param username
-        const profileRes = await fetch(`${API_URL}/api/v1/users/profile/${username}`, {
-          credentials: 'include'
-        });
-        if (!profileRes.ok) throw new Error('Failed to fetch user profile stats');
-        const profileData = await profileRes.json();
-        
-        setUserProfile(profileData.data);
       } catch (err) {
         console.error(err);
         setError('Could not load user profile details.');
