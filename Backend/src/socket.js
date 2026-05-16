@@ -63,13 +63,13 @@ export default function setupSocket(io) {
         socket.emit("gameStateUpdate", { gameState: game });
       } else if (game.players.length === 1 && game.state === "waiting") {
         // New player 2 joining
-        game.players.push({ id: socket.id, username, score: 0, wickets: 0, ballsFaced: 0 });
+        game.players.push({ id: socket.id, username, avatar, score: 0, wickets: 0, ballsFaced: 0 });
         socket.join(roomId);
         game.state = "toss_selection";
         game.turn = game.players[0].id; // Player 1 chooses odd/even
         io.to(roomId).emit("gameStarted", { gameState: game,avatar:avatar});
       } else {
-        socket.emit("Room full or game already started");
+        socket.emit("roomError", "Room full or game already started");
       }
     });
 
@@ -239,6 +239,8 @@ export default function setupSocket(io) {
         game.winner = "tie";
       }
       io.to(roomId).emit("gameStateUpdate", { gameState: game, lastPlay: null });
+      // Clean up game from memory after a delay to allow clients to receive the final state
+      setTimeout(() => { delete games[roomId]; }, 30000);
     }
   }
 }

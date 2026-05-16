@@ -63,7 +63,7 @@ export default function UserProfile() {
       }
     };
     fetchProfileData();
-  }, [navigate]);
+  }, [navigate, username]);
 
   useGSAP(() => {
     gsap.from(".animate-in", {

@@ -10,9 +10,17 @@ dotenv.config({
 })
 
 const server = createServer(app);
+
+const allowedOrigins = [
+    process.env.CORS_ORIGIN,
+    process.env.DEV_ORIGIN,
+    "http://localhost:5173",
+    "http://localhost:5174"
+].filter(Boolean);
+
 const io = new Server(server, {
     cors: {
-        origin: [process.env.CORS_ORIGIN, process.env.DEV_ORIGIN, "http://localhost:5173", "http://localhost:5174"],
+        origin: allowedOrigins,
         credentials: true
     }
 });

@@ -133,6 +133,7 @@ export default function Settings() {
         throw new Error(data.message || 'Failed to delete account');
       }
       
+      localStorage.removeItem('accessToken');
       navigate('/login');
     } catch (err) {
       setDeleteMsg({ type: 'error', text: err.message });

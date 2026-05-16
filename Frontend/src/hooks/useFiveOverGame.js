@@ -187,6 +187,7 @@ export function useFiveOverGame() {
 
   return {
     ...gameState,
+    gameFormat: '5_overs',
     gameMode: '5 Overs',
     maxOvers: MAX_OVERS,
     maxWickets: MAX_WICKETS,

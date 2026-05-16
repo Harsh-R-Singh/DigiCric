@@ -96,7 +96,7 @@ export default function ActiveGame() {
         const uBalls = userBallsFaced || 1;
         const cBalls = cpuBallsFaced || 1;
 
-        if(game=='5_overs'){
+        if(mode==='5_overs'){
           if (isUserWin) xp = (((userScore / 5) - (cpuScore / 5))*100);
           else if (isCpuWin) xp = (((cpuScore / 5) - (userScore / 5))*100);
         }

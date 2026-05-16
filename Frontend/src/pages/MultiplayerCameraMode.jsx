@@ -127,7 +127,7 @@ export default function MultiplayerCameraMode() {
        setIsActive(true);
        setCountdown(3);
     }
-  }, [gameState.state, isActive, lastPlay, inningsBreakWait, hasPlayed]);
+  }, [gameState?.state, isActive, lastPlay, inningsBreakWait, hasPlayed]);
 
   // Load MediaPipe
   useEffect(() => {

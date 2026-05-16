@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[true,"Username is required"],
         unique:[true,"Username already exists"],
-        min:[5,"Username must be at least 5 characters long"],
-        max:[20,"Username must be at most 20 characters long"],
+        minlength:[5,"Username must be at least 5 characters long"],
+        maxlength:[20,"Username must be at most 20 characters long"],
         trim:true
     },
     email: {
@@ -21,8 +21,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type:String,
         required:[true,"Password is required"],
-        min:[6,"Password must be at least 6 characters long"],
-        max:[20,"Password must be at most 20 characters long"]
+        minlength:[6,"Password must be at least 6 characters long"],
+        maxlength:[20,"Password must be at most 20 characters long"]
     },
     friendRequests:[
         {

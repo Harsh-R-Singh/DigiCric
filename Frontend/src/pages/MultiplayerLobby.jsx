@@ -66,7 +66,7 @@ export default function MultiplayerLobby() {
     return () => {
       newSocket.disconnect();
     };
-  }, [currentUser, navigate, userProfile, inputMethod]);
+  }, [currentUser, navigate, userProfile]);
 
   const handleCreateRoom = () => {
     if (!socket) return;

@@ -53,6 +53,14 @@ function App() {
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/friends" element={<Friends />} />
+            <Route path="*" element={
+              <div className="flex-1 flex flex-col items-center justify-center bg-gray-950 text-white gap-4 py-20">
+                <span className="material-symbols-outlined text-6xl text-orange-500">error</span>
+                <h1 className="text-4xl font-bold">404 — Page Not Found</h1>
+                <p className="text-gray-400">The page you're looking for doesn't exist.</p>
+                <a href="/" className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600 transition-colors">Go Home</a>
+              </div>
+            } />
           </Routes>
         </Suspense>
       </main>

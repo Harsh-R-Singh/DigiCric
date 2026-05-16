@@ -1,18 +1,15 @@
 import express from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-
-dotenv.config({
-    path: './.env'
-})
 
 const app = express()
 
 const allowedOrigins = [
   process.env.CORS_ORIGIN,
-  process.env.DEV_ORIGIN
-];
+  process.env.DEV_ORIGIN,
+  "http://localhost:5173",
+  "http://localhost:5174"
+].filter(Boolean);
 
 app.use(cors({
     origin: allowedOrigins ,
@@ -34,4 +31,17 @@ import friendRouter from "./routes/friend.routes.js"
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/rankings", rankingRouter)
 app.use("/api/v1/friends", friendRouter)
+
+// Global error handler - converts ApiError throws to JSON responses
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        statusCode,
+        data: null,
+        message: err.message || "Internal Server Error",
+        success: false,
+        errors: err.errors || []
+    });
+});
+
 export {app}

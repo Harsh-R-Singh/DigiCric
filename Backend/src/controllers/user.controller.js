@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
         // throw new ApiError(500, "Something went wrong while registering the user")
     }
 
-    return res.status(201).json(new ApiResponse(200, createdUser, "User registered successfully"))
+    return res.status(201).json(new ApiResponse(201, createdUser, "User registered successfully"))
 })
 
 const loginUser = asyncHandler(async (req, res) =>{
@@ -198,7 +198,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             sameSite: "none"
         }
     
-        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
+        const {accessToken, refreshToken: newRefreshToken} = await generateAccessAndRefreshTokens(user._id)
     
         return res
         .status(200)
@@ -370,7 +370,7 @@ const updateUserStats = asyncHandler(async(req, res) => {
     const prevStats = await UserStats.findOne({ userId: userId });
     const matchesPlayed = prevStats ? prevStats.matchesPlayed : 0;
     const prevNrr = prevStats ? prevStats.netRunRate : 0;
-    const newNrr = Number(netRunRate) ? (Number(netRunRate) + prevNrr) / (matchesPlayed + 1) : 0;
+    const newNrr = Number(netRunRate) ? (prevNrr * matchesPlayed + Number(netRunRate)) / (matchesPlayed + 1) : prevNrr;
 
     const updateQuery = {
         $inc: {
@@ -435,6 +435,11 @@ const updateUserStats = asyncHandler(async(req, res) => {
 })
 
 const deleteAccount = asyncHandler(async(req, res) => {
+    // Remove this user from all other users' friends and friendRequests arrays
+    await User.updateMany(
+        { $or: [{ friends: req.user._id }, { friendRequests: req.user._id }] },
+        { $pull: { friends: req.user._id, friendRequests: req.user._id } }
+    );
     // Delete user stats from UserStats collection
     await UserStats.findOneAndDelete({ userId: req.user._id });
     // Delete user from User collection
@@ -461,8 +466,9 @@ const searchUsers = asyncHandler(async (req, res) => {
         return res.status(200).json(new ApiResponse(200, [], "Empty query"));
     }
 
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const users = await User.find({
-        username: { $regex: query, $options: "i" },
+        username: { $regex: escapedQuery, $options: "i" },
         _id: { $ne: req.user._id }
     }).select("username avatar level rank").limit(20);
 

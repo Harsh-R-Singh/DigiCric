@@ -158,6 +158,7 @@ export function useSingleWicketGame() {
 
   return {
     ...gameState,
+    gameFormat: 'single_wicket',
     gameMode: 'Single Wicket',
     chooseToss,
     playToss,
