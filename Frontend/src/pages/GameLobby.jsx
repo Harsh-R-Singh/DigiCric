@@ -97,9 +97,9 @@ useEffect(() => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{userProfile?.username}</h3>
-                      <p className="text-primary font-medium text-lg">Level {Math.round(userProfile?.volts/3000) +1|| 1} {userProfile?.rank?userProfile?.rank:"Newbie"}</p>
+                      <p className="text-primary font-medium text-lg">Level {userProfile?.level ||1 } {userProfile?.rank?userProfile?.rank:"Newbie"}</p>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full mt-3">
-                        <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.volts%3000)/3000*100}%` }}></div>
+                        <div className="bg-primary h-full rounded-full" style={{ width: `${(userProfile?.xp%1000)/1000*100}%` }}></div>
                       </div>
                     </div>
                   </div>
