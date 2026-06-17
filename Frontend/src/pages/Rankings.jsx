@@ -31,17 +31,31 @@ export default function Rankings() {
   }, { scope: containerRef, dependencies: [loading, activeTab] });
 
   useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/v1/users/current-user`, {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const userData = await res.json();
+          setUserName(userData.data.username);
+        } else if (res.status === 401) {
+          navigate('/login');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCurrentUser();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchLeaderboard = async () => {
       setLoading(true);
       try {
-        const [res, userRes] = await Promise.all([
-          fetch(`${API_URL}/api/v1/rankings/leaderboard?type=${activeTab}`, {
-            credentials: 'include'
-          }),
-          fetch(`${API_URL}/api/v1/users/current-user`, {
-            credentials: 'include'
-          })
-        ]);
+        const res = await fetch(`${API_URL}/api/v1/rankings/leaderboard?type=${activeTab}`, {
+          credentials: 'include'
+        });
         if (!res.ok) {
            if (res.status === 401) navigate('/login'); 
            return;
@@ -50,10 +64,6 @@ export default function Rankings() {
         setLeaderboard(data.data.leaderboard);
         setUserRank(data.data.userRank);
         setUserScore(data.data.userScore);
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          setUserName(userData.data.username);
-        }
       } catch (err) {
         console.error(err);
       } finally {

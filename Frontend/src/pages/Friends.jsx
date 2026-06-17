@@ -34,15 +34,17 @@ export default function Friends() {
     const fetchFriendsData = async () => {
       setLoading(true);
       try {
-        const [friendsRes, requestsRes] = await Promise.all([
-          fetch(`${API_URL}/api/v1/friends/friends`, { credentials: 'include' }),
-          fetch(`${API_URL}/api/v1/friends/friend-requests`, { credentials: 'include' })
-        ]);
-
-        if (friendsRes.status === 401 || requestsRes.status === 401) {
+        const friendsRes = await fetch(`${API_URL}/api/v1/friends/friends`, {
+           credentials: 'include'
+        });
+        if (friendsRes.status === 401) {
             navigate('/login');
             return;
         }
+
+        const requestsRes = await fetch(`${API_URL}/api/v1/friends/friend-requests`, {
+           credentials: 'include'
+        });
 
         if (friendsRes.ok) {
             const friendsData = await friendsRes.json();

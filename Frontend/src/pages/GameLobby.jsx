@@ -37,15 +37,10 @@ export default function GameLobby() {
 useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Fetch current user and leaderboard concurrently
-        const [currentUserRes, leaderboardRes] = await Promise.all([
-          fetch(`${API_URL}/api/v1/users/current-user`, { credentials: 'include' }),
-          fetch(`${API_URL}/api/v1/rankings/leaderboard?type=volts`, { credentials: 'include' }).catch(err => {
-            console.error("Failed to fetch leaderboard", err);
-            return { ok: false };
-          })
-        ]);
-
+        // Step 1: Get the current user session
+        const currentUserRes = await fetch(`${API_URL}/api/v1/users/current-user`, {
+          credentials: 'include'
+        });
         if (!currentUserRes.ok) {
            navigate('/login');
            return;
@@ -53,7 +48,6 @@ useEffect(() => {
         const currentUserData = await currentUserRes.json();
         setCurrentUser(currentUserData.data.username);
         const username = currentUserData.data.username;
-
         // Step 2: Get full profile including stats using the retrieved username
         const profileRes = await fetch(`${API_URL}/api/v1/users/profile/${username}`, {
           credentials: 'include'
@@ -63,12 +57,19 @@ useEffect(() => {
 
         setUserProfile(profileData.data);
 
-        // Handle Leaderboard data
-        if (leaderboardRes.ok) {
-          const leaderboardData = await leaderboardRes.json();
-          setLeaderboard(leaderboardData.data.leaderboard || []);
-          setUserRank(leaderboardData.data.userRank);
-          setUserScore(leaderboardData.data.userScore);
+        // Step 3: Fetch Leaderboard data (Top 3 Volts)
+        try {
+          const leaderboardRes = await fetch(`${API_URL}/api/v1/rankings/leaderboard?type=volts`, {
+            credentials: 'include'
+          });
+          if (leaderboardRes.ok) {
+            const leaderboardData = await leaderboardRes.json();
+            setLeaderboard(leaderboardData.data.leaderboard || []);
+            setUserRank(leaderboardData.data.userRank);
+            setUserScore(leaderboardData.data.userScore);
+          }
+        } catch (lbErr) {
+          console.error("Failed to fetch leaderboard", lbErr);
         }
       } catch (err) {
         console.error(err);
@@ -203,7 +204,7 @@ useEffect(() => {
                 <div className="bg-background-light dark:bg-background-dark/30 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden flex-1">
                   <div className="flex flex-col divide-y divide-slate-200 dark:divide-slate-800 h-full">
                     {/* Top 3 Players */}
-                    {leaderboard.slice(0, 3).map((player, index) => (
+                    {leaderboard.slice(0, 5).map((player, index) => (
                       <div key={player._id} className={`flex items-center gap-4 p-6 ${index === 0 ? 'bg-primary/5' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'}`}>
                         <span className={`${index === 0 ? 'text-primary' : 'text-slate-500'} font-bold text-2xl w-8`}>{index + 1}</span>
                         <div className={`size-14 rounded-full border-2 ${index === 0 ? 'border-primary' : 'border-slate-300 dark:border-slate-600'} overflow-hidden`}>

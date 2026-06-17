@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import Avatar from '../components/Avatar';
 
 export default function LandingPage() {
   const containerRef = useRef();
@@ -21,7 +22,7 @@ export default function LandingPage() {
 
 
         <main className="flex-1 px-6 md:px-20 lg:px-40 py-10">
-          <section className="flex flex-col gap-50 lg:flex-row items-center mb-16">
+          <section className="flex flex-col gap-50 lg:flex-row items-center mt-20">
             <div className="flex flex-col gap-8 lg:w-1/2">
               <div className="flex flex-col gap-4 animate-in">
                 <span className="text-primary font-bold tracking-widest uppercase text-sm">Nostalgia Reimagined</span>
@@ -42,13 +43,14 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="lg:w-1/2 w-full animate-in">
-              <div className="relative aspect-square md:aspect-video lg:aspect-square bg-gradient-to-br from-primary/20 to-transparent rounded-3xl overflow-hidden border border-primary/10 flex items-center justify-center">
+              {/* <div className="relative aspect-square md:aspect-video lg:aspect-square bg-gradient-to-br from-primary/20 to-transparent rounded-3xl overflow-hidden border border-primary/10 flex items-center justify-center">
                 <img className="w-full h-full object-cover opacity-80 mix-blend-overlay" alt="Illustration of hand gestures showing cricket scores" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF-Fls_69vCv-pJJZdsTHrS6OhaYgkteYKF-oiEvnIbCHC-tXfdfReLafJe6h09iLu7y3UTU5E_aB8pSI1VQ-B1yCJ5-5fFutpSZxOQgEsErpmJwOQmGl88cocsGCSAqGCLUoPlT82KoENMfH53bkaA4GDiWFIH3pM3yqk7TfN14bY62H2SFIOuB_Di2TZ5L47tfoG6ISv6GSGqIu_ptDPNpoWAFDSl2pZfpFazECEwP9ZxD5Jo-plnfFdTI7YLu-yULNWsiQ7hTY" />
                 <div className="absolute inset-0 flex items-center justify-center gap-8">
                   <span className="material-symbols-outlined text-8xl text-primary animate-pulse">pan_tool</span>
                   <span className="material-symbols-outlined text-8xl text-primary/50">back_hand</span>
                 </div>
-              </div>
+              </div> */}
+              <Avatar />
             </div>
           </section>
 
