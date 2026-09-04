@@ -6,6 +6,7 @@ import UserStats from "../models/userstats.models.js";
 import jwt from "jsonwebtoken"
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.js";
+import { redisClient } from "../db/redis.js";
 // import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async(userId) =>{
@@ -249,6 +250,35 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
 
 
 const getCurrentUser = asyncHandler(async(req, res) => {
+    const userId = req.user._id.toString();
+    const cacheKey = `currentUser:${userId}`;
+
+    if (redisClient && redisClient.isOpen) {
+        try {
+            const cachedUser = await redisClient.get(cacheKey);
+            if (cachedUser) {
+                return res
+                    .status(200)
+                    .json(new ApiResponse(
+                        200,
+                        JSON.parse(cachedUser),
+                        "User fetched successfully from cache"
+                    ));
+            }
+        } catch (error) {
+            console.error('Redis get error:', error);
+        }
+    }
+
+    if (redisClient && redisClient.isOpen) {
+        try {
+            // Cache user data for 30 minutes (1800 seconds)
+            await redisClient.setEx(cacheKey, 1800, JSON.stringify(req.user));
+        } catch (error) {
+            console.error('Redis set error:', error);
+        }
+    }
+
     return res
     .status(200)
     .json(new ApiResponse(

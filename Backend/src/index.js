@@ -1,5 +1,6 @@
 import dotenv from "dotenv"
 import connectDB from "./db/index.js";
+import { connectRedis } from "./db/redis.js";
 import {app} from './app.js'
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -28,7 +29,8 @@ const io = new Server(server, {
 setupSocket(io);
 
 connectDB()
-.then(() => {
+.then(async () => {
+    await connectRedis();
     server.listen(process.env.PORT || 8000, () => {
         console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
     })
