@@ -22,6 +22,9 @@ Welcome to **DigiCric**! This is an interactive, full-stack web application that
 - **Progressive Global Statistics & Rankings**  
   Climb the ranks! The MongoDB backend tracks every match you play, updating your Wins, Losses, Runs, Net Run Rate, XP, Volts, and dynamic Level/Rank.
 
+- **High-Performance Caching with Redis**  
+  Experience lightning-fast data retrieval for high-traffic endpoints. Current user profiles and global leaderboards are cached using Redis, drastically reducing MongoDB queries and improving overall scalability and responsiveness.
+
 - **Dynamic Polish & Animations**  
   Immersive visual experience utilizing **GSAP**. Smooth loading screen sequences, glowing profiles, interactive timing rhythms, and responsive UI components powered by Tailwind CSS.
 
@@ -33,6 +36,7 @@ DigiCric employs a modern React frontend and a Node.js/Express backend, bridged 
 
 ### 1. REST API (Authentication & Socials)
 - **User Management**: When a user registers or logs in, the server hashes the password with bcrypt and signs JWT tokens (Access and Refresh). These are sent back as secure `HttpOnly` cookies.
+- **High-Speed Caching**: Critical data such as the authenticated user's profile and global leaderboards are retrieved through an optimized **Redis caching layer**, minimizing database overhead.
 - **Friends System**: Operations like sending requests, accepting friends, and searching profiles occur over standard REST endpoints.
 - **Stats Sync**: Upon finishing a match, the client computes XP/Volts/Net Run Rate and triggers a `PATCH /api/v1/users/update-stats` request to securely update the user's document in MongoDB.
 
@@ -63,6 +67,7 @@ DigiCric employs a modern React frontend and a Node.js/Express backend, bridged 
 **Backend Core Dependencies**
 - `express` (v5) - Web server framework.
 - `mongoose` - MongoDB object modeling tool.
+- `redis` - In-memory data structure store used as a high-performance cache.
 - `socket.io` - Real-time websocket server.
 - `jsonwebtoken` - Secure JWT token generation/validation.
 - `bcrypt` - Password hashing.
@@ -76,6 +81,7 @@ DigiCric employs a modern React frontend and a Node.js/Express backend, bridged 
 Ensure you have the following installed on your machine:
 - Node.js (v18+)
 - MongoDB (Running locally or via MongoDB Atlas URI)
+- Redis (Running locally or via cloud Redis URL)
 - Git
 
 ### 2. Repository Setup
@@ -101,6 +107,7 @@ ACCESS_TOKEN_SECRET=your_super_secret_access_token_key_here
 ACCESS_TOKEN_EXPIRY=1d
 REFRESH_TOKEN_SECRET=your_super_secret_refresh_token_key_here
 REFRESH_TOKEN_EXPIRY=10d
+REDIS_URL=redis://localhost:6379
 ```
 *(Note: Replace `<username>`, `<password>`, and secrets with your own values).*
 
